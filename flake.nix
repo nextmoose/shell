@@ -12,7 +12,10 @@
 	        lib =
 		  (
 		    nixpkgs :
-		      builtins.getAttr "mkShell" ( builtins.getAttr system nixpkgs.legacyPackages ) { shellHook = "HI" ; }
+		      let
+		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			in
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HI" ; }
 		  ) ;
               }
       ) ;
