@@ -22,7 +22,7 @@
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = _.hook ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "," ( builtins.attrNames _ ) }" ; }
 		  ) ;
               }
       ) ;
