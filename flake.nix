@@ -15,7 +15,7 @@
 		    nixpkgs :
 		      let
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			utilsx = { } ;
+			utilsx = builtins.getAttr system utils.lib ;
 			in
 		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO ${ builtins.toString ( builtins.length ( builtins.attrValues utilsx ) ) }" ; }
 		  ) ;
