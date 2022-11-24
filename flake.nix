@@ -14,10 +14,15 @@
 		  (
 		    nixpkgs : scripts :
 		      let
+		        _ = utilsx.visit { string = x : x ; list = x : x : set = x : x ; } ( scripts structure ) ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			structure =
+			  {
+			    pkgs = pkgs ;
+			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO ${ builtins.toString ( builtins.length ( builtins.attrValues utilsx ) ) }" ; }
+		          pkgs.mkShell { shellHook = _.hook ; }
 		  ) ;
               }
       ) ;
