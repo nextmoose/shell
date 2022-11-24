@@ -14,7 +14,7 @@
 		  (
 		    nixpkgs : scripts :
 		      let
-		        _ = utilsx.visit { string = x : x ; list = x : x ; set = x : x ; } ( scripts structure ) ;
+		        _ = utilsx.visit { string = track : track.input ; list = track : track.input ; set = track : track.input ; } ( scripts structure ) ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 			structure =
 			  {
@@ -22,7 +22,7 @@
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "," ( builtins.attrNames { a = 1 ; } ) }" ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "," ( builtins.attrNames _ ) }" ; }
 		  ) ;
               }
       ) ;
