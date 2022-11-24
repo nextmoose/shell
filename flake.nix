@@ -9,7 +9,7 @@
           (
             system :
               {
-	        lib = ( pkgs : builtins.getAttr "mkShell" ( builtins.getAttr system nixpkgs.legacyPackages ) { }  );
+	        lib = ( nixpkgs : builtins.getAttr "mkShell" ( builtins.getAttr system nixpkgs.legacyPackages ) { }  );
               }
       ) ;
     }
