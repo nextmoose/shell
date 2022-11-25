@@ -22,7 +22,7 @@
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo } BEG${ scripts structure }END" ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo BEG${ scripts structure }END" ; }
 		  ) ;
               }
       ) ;
