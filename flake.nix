@@ -14,7 +14,7 @@
 		  (
 		    nixpkgs : scripts :
 		      let
-		        _ = utilsx.visit { string = track : builtins.concatStringsSep "," track.input  ; } ( scripts structure ) ;
+		        _ = utilsx.visit { string = track : track.input  ; } ( scripts structure ) ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
 			structure =		       			      
 			  {
