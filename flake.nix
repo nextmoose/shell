@@ -22,7 +22,7 @@
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.typeOf ( builtins.head  _ ) }" ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.head  _ }" ; }
 		  ) ;
               }
       ) ;
