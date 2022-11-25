@@ -15,14 +15,14 @@
 		    nixpkgs : scripts :
 		      let
 		        _ = utilsx.visit { string = track : builtins.typeOf track ; } ( scripts structure ) ;
-		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			structure =
+		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
+			structure =		       			      
 			  {
 			    pkgs = pkgs ;
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo BEG${ _ }END" ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ _ }" ; }
 		  ) ;
               }
       ) ;
