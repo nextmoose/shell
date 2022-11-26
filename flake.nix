@@ -35,7 +35,7 @@
 				      ''
 				        while ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0
 					do
-					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] in
+					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
 					    *)
 					      ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
 					        exit 64
