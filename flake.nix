@@ -14,7 +14,7 @@
 		  (
 		    nixpkgs : scripts :
 		      let
-		        _ = utilsx.visit { list = track : track.input ; string = track : "YES" ; } ( scripts structure ) ;
+		        _ = utilsx.visit { list = track : track.processed ; string = track : "YES" ; } ( scripts structure ) ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
 			structure =		       			      
 			  {
