@@ -38,7 +38,8 @@
 					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
 					    *)
 					      ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
-					        exit 64
+					        exit 64 &&
+						break
 				            ;;
 					  esace
 					done
