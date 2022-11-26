@@ -27,7 +27,24 @@
 			in
 		          pkgs.mkShell
 			    {
-			      buildInputs = [ ] ;
+			      buildInputs =
+			        [
+				  (
+				    pkgs.writeShellScriptBin
+				      "generate"
+				      ''
+				        while ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0
+					do
+					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] in
+					    *)
+					      ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
+					        exit 64
+				            ;;
+					  ecase
+					done
+				      ''
+				  )
+				] ;
 			      shellHook = hook ( structure.scripts ) ;
 			    }
 		  ) ;
