@@ -39,6 +39,11 @@
 				        while [ ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0 ]
 					do
 					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
+					    resource-directory)
+					      RESOURCE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+					        shift 2 &&
+						break
+				            ;;
 					    private-file)
 					      PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
 					        shift 2 &&
@@ -50,7 +55,10 @@
 						break
 				            ;;
 					  esac
-					done
+					done &&
+					  ${ pkgs.cat <<EOF
+					${ structures.scripts.program1 }
+					EOF
 				      ''
 				  )
 				] ;
