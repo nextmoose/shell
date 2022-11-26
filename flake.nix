@@ -21,7 +21,7 @@
 			    in
 			      {
 			        pkgs = pkgs ;
-			        scripts = _utils.visit { } ( scripts structure ) ;
+			        scripts = _utils.visit { list = track : track.processed ; string = track : track.processed ; } ( scripts structure ) ;
 			        utils = _utils ;
 			      } ;
 			in
