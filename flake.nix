@@ -41,7 +41,7 @@
 					        exit 64 &&
 						break
 				            ;;
-					  esace
+					  esac
 					done
 				      ''
 				  )
