@@ -14,7 +14,7 @@
 		  (
 		    nixpkgs : scripts :
 		      let
-		        _ = utilsx.visit { list = track : builtins.typeOf track.processed ; string = track : "YES" ; } ( scripts structure ) ;
+		        _ = utilsx.visit { list = track : track.processed ; string = track : "YES" ; } ( scripts structure ) ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
 			structure =		       			      
 			  {
@@ -22,7 +22,7 @@
 			  } ;
 			utilsx = builtins.getAttr system utils.lib ;
 			in
-		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ _ }" ; }
+		          pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo ${ builtins.head _ }" ; }
 		  ) ;
               }
       ) ;
