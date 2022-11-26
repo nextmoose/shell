@@ -40,7 +40,7 @@
 					      ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
 					        exit 64
 				            ;;
-					  ecase
+					  esace
 					done
 				      ''
 				  )
