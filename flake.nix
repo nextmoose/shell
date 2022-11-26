@@ -14,16 +14,16 @@
 		  (
 		    nixpkgs : scripts : hook :
 		      let
+			_utils = builtins.getAttr system utils.lib ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
-			structure =
-			  let
-			    _utils = builtins.getAttr system utils.lib ;
-			    in
-			      {
-			        pkgs = pkgs ;
-			        scripts = _utils.visit { set = track : track.processed ; string = track : track.processed ; } ( scripts structure ) ;
-			        utils = _utils ;
-			      } ;
+	                structure =
+			  resource-directory-seed :
+			    {
+			      pkgs = pkgs ;
+			      resource-directory = builtins.hashString "sha512" ( builtins.toString resource-directory ) ;
+			      scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure ) ;
+			      utils = _utils ;
+			    } ;
 			in
 		          pkgs.mkShell
 			    {
@@ -51,7 +51,7 @@
 				      ''
 				  )
 				] ;
-			      shellHook = hook ( structure.scripts ) ;
+			      shellHook = "${ pkgs.coreutils }/bin/echo HELLO!" ;
 			    }
 		  ) ;
               }
