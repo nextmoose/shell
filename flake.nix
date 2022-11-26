@@ -15,13 +15,15 @@
 		    nixpkgs : scripts : hook :
 		      let
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;	  
-			structure =		       			      
-			  {
-			    pkgs = pkgs ;
-			    scripts = builtins.getAttr "visit" ( builtins.getAttr system utils.lib ) ( scripts structure ) ;
-			    utils = builtins.getAttr "lib" ( builtins.getAttr system utils.lib ) ;
-			  } ;
-			utilsx = builtins.getAttr system utils.lib ;
+			structure =
+			  let
+			    _utils = builtins.getAttr system utils.lib ;
+			    in
+			      {
+			        pkgs = pkgs ;
+			        scripts = _utils.visit ( scripts structure ) ;
+			        utils = _utils ;
+			      } ;
 			in
 		          pkgs.mkShell
 			    {
