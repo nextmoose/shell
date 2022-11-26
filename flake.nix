@@ -33,7 +33,7 @@
 				    pkgs.writeShellScriptBin
 				      "generate"
 				      ''
-				        while ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0
+				        while [ ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0 ]
 					do
 					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
 					    private-file)
