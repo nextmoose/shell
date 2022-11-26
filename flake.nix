@@ -36,6 +36,11 @@
 				        while ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0
 					do
 					  case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
+					    private-file)
+					      PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+					        shift 2 &&
+						break
+					    ;;
 					    *)
 					      ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
 					        exit 64 &&
