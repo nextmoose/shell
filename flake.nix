@@ -60,6 +60,16 @@
                                                 shift 2 &&
                                                 break
                                             ;;
+                                            --hook)
+                                              HOOK=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                                shift 2 &&
+                                                break
+                                            ;;
+                                            --inputs)
+                                              INPUTS=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                                shift 2 &&
+                                                break
+                                            ;;
                                             --private-file)
                                               PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
