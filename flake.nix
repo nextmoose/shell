@@ -31,7 +31,7 @@
                                       } ;
                                   in
                                     {
-                                      success = _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ; string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" seed ) ] [ "" ] track.processed == track.processed ; } ( scripts structure 0 ) ;
+                                      success = _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.trace ( "YES" ) ( builtins.all ( x : x ) ( builtins.attrValues track.processed ) ) ; string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" seed ) ] [ "" ] track.processed == track.processed ; } ( scripts structure 0 ) ;
                                       value = structure seed ;
                                     }
                             ) ;
