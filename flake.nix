@@ -65,14 +65,18 @@
                                                 shift 2 &&
                                                 break
                                             ;;
+                                            SCRIPTS)
+                                              SCRIPTS=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                                shift 2 &&
+                                                break
+                                            ;;
                                             *)
                                               ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
                                                 exit 64 &&
                                                 break
                                             ;;
                                           esac
-                                        done &&
-					${ builtins.concatStringsSep "&&" ( builtins.map ( script : "${ pkgs.coreutils }/bin/echo ${ pkgs.gnused }/bin/sed -e \"s###g\"" ) structure.scripts ) }
+                                        done
                                        ''
                                   )
                                 ] ;
