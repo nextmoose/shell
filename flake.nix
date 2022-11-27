@@ -38,7 +38,7 @@
                                         success = _utils.visit {
                                           list = track : true ;
                                           set = track : true ;
-                                          string = track : false ;
+                                          string = track : builtins.replaceStrings [ ( builtins.hashStrings "512" "A" ) ] [ "" ] track.processed == track.processed ;
                                           } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
