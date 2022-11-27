@@ -55,17 +55,17 @@
                                         while [ ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0 ]
                                         do
                                           case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
-                                            resource-directory)
+                                            --resource-directory)
                                               RESOURCE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
                                             ;;
-                                            private-file)
+                                            --private-file)
                                               PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
                                             ;;
-                                            SCRIPTS)
+                                             --scripts)
                                               SCRIPTS=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
