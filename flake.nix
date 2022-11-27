@@ -30,7 +30,7 @@
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
-                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : builtins.trace zero.token track.processed ; } ( scripts structure seed ) ;
+                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
@@ -39,8 +39,8 @@
                                       {
                                         success = _utils.visit {
 					  list = track : builtins.trace "builtins.all ( x : x ) track.processed" true ;
-					  set = track : builtins.trace "builtins.all ( x : x ) ( builtins.attrValues track.processed )" true ;
-					  string = set : track : builtins.trace "string" true ;
+					  set = track : builtins.trace ( builtins.concatStringsSep "" builtins.map ( x : builtins.typeOf x ) ( builtins.attrValues track.processed ) ) true ;
+					  string = set : track : builtins.trace "string ${ zero.token }" true ;
 					  } ( structure 0 ) ;
                                         value = eye ;
                                       }
