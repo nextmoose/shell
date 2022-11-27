@@ -21,6 +21,7 @@
                             (
                               seed :
                                 let
+				  eye = structure seed ;
 				  structure =
 				    seed :
 				      let
@@ -33,9 +34,10 @@
                                             token = token ;
                                             utils = _utils ;
                                           } ;
+			            zero = structure 0 ;
                                     in
                                       {
-                                        success = _utils.visit { list = track : true ; set = track : true ; string = set : track : true ; } ( structure 0 ) ;
+                                        success = _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ; string = set : track : builtins.replaceStrings [ ( zero.token ) ] [ "" ] track.processed == track.processed ; } ( structure 0 ) ;
                                         value = structure seed ;
                                       }
                             ) ;
