@@ -37,7 +37,7 @@
                                       {
                                         success = _utils.visit {
 					  list = track : true ;
-					  set = track : builtins.trace ( "YES: ${ builtins.concatStringsSep " , " ( builtins.attrNames ( scripts fun ) ) }" ) true ;
+					  set = track : builtins.trace ( "YES: ${ builtins.concatStringsSep " , " ( builtins.attrNames ( scripts fun 0 ) ) }" ) true ;
 					  string = set : track : true ;
 					  } ( ( structure 0 ) ) ;
                                         value = fun seed ;
