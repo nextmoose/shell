@@ -35,7 +35,8 @@
                                           } ;
                                     in
                                       {
-                                        success = _utils.visit {
+				        success = true ;
+                                        success2 = _utils.visit {
                                           list = track : true ;
                                           set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                           string = track : builtins.replaceStrings ( builtins.hashString "sha512" [ ( builtins.toString seed ) ] [ "" ] track.reduced ) == track.reduced ;
