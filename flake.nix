@@ -35,7 +35,7 @@
 				        let
 					  a = structure 0 ;
 					  b = structure seed ;
-					  in _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ; string = track : builtins.replaceStrings [ a.resource-directory ] [ ] track.processed == track.processed ; } ;
+					  in _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ; string = track : builtins.replaceStrings [ a.resource-directory ] [ ] track.processed == track.processed ; } ( scripts structure seed );
                                       value = structure seed ;
                                     }
                             ) ;
