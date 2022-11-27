@@ -31,7 +31,7 @@
                                     } ;
                                   in
                                     {
-                                      success = 
+                                      success = true ;
                                       value = structure seed ;
                                     }
                             ) ;
