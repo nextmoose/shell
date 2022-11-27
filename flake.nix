@@ -38,7 +38,7 @@
                                         success = _utils.visit {
                                           list = track : true ;
                                           set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                          string = track : builtins.replaceStrings ( builtins.hashString "sha512" [ ( builtins.toString seed ) ) ] [ "" ] track.reduced == track.reduced ;
+                                          string = track : builtins.replaceStrings ( builtins.hashString "sha512" [ ( builtins.toString seed ) ] [ "" ] track.reduced == track.reduced ;
                                           } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
