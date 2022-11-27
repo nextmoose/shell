@@ -35,7 +35,7 @@
                                           } ;
                                     in
                                       {
-                                        success = _utils.visit { list = true ; set = true ; string = true ; } ( scripts structure 0 ) ;
+                                        success = true ;
                                         value = structure seed ;
                                       }
                             ) ;
