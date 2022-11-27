@@ -17,7 +17,7 @@
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
-                          try
+                          _utils.try
                             (
                               seed :
                                 let
