@@ -38,7 +38,7 @@
 				        success =
 					  _utils.visit
 					    {
-					      set = track : builtins.trace "02 : ${ builtins.typeOf track.reduced }" true ;
+					      set = track : builtins.trace "02 : ${ builtins.concatStringsSep " , " ( builtins.map ( builtins.attrNames track.reduced ) ) }" true ;
 					      string = track : "01 : ${ builtins.trace track.reduced }" true ;
 					    } ( scripts ( fun 0 ) ) ;
                                         success2 = _utils.visit {
