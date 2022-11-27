@@ -21,7 +21,7 @@
                             (
                               seed :
                                 let
-				  structure =
+				  fun =
 				    seed :
 				      let
 				        token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -29,7 +29,7 @@
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
-                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
+                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts fun seed ) ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
@@ -37,10 +37,10 @@
                                       {
                                         success = _utils.visit {
 					  list = track : true ;
-					  set = track : builtins.trace ( "YES: ${ builtins.concatStringsSep " , " ( builtins.attrNames ( scripts structure ) ) }" ) true ;
+					  set = track : builtins.trace ( "YES: ${ builtins.concatStringsSep " , " ( builtins.attrNames ( scripts fun ) ) }" ) true ;
 					  string = set : track : true ;
 					  } ( ( structure 0 ) ) ;
-                                        value = structure seed ;
+                                        value = fun seed ;
                                       }
                             ) ;
                         in
