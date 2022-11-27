@@ -40,7 +40,7 @@
                                           set = track : true ;
                                           string = track : builtins.replaceStrings [ ( builtins.hashString "512" ( builtins.toString seed ) ) ] [ "" ] track.processed == track.processed ;
                                           } ( scripts ( fun 0 ) ) ;
-                                        value = ( fun -1 ) ;
+                                        value = ( fun 0 ) ;
                                       }
                             ) ;
                         in
