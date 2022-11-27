@@ -22,21 +22,22 @@
                               seed :
                                 let
 				  structure =
-				    let
-				      token = builtins.hashString "sha512" ( builtins.toString seed ) ;
-				      in
-                                        {
-                                          pkgs = pkgs ;
-                                          resource-directory = token ;
-                                          scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
-                                          token = token ;
-                                          utils = _utils ;
-                                        } ;
-                                  in
-                                    {
-                                      success = true ;
-                                      value = structure ;
-                                    }
+				    seed :
+				      let
+				        token = builtins.hashString "sha512" ( builtins.toString seed ) ;
+				        in
+                                          {
+                                            pkgs = pkgs ;
+                                            resource-directory = token ;
+                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
+                                            token = token ;
+                                            utils = _utils ;
+                                          } ;
+                                    in
+                                      {
+                                        success = true ;
+                                        value = structure seed ;
+                                      }
                             ) ;
                         in
                           pkgs.mkShell
