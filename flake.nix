@@ -76,7 +76,7 @@
                                                 break
                                             ;;
                                           esac &&
-					    ${ _utils.visitor { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.getAttrValues track.processed ) ; string = track : "${ pkgs.coreutils }/echo ${ pkgs.gnused }/bin/sed -e s###g" ; } structures.script }
+					    ${ _utils.visitor { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.getAttrValues track.processed ) ; string = track : "${ pkgs.coreutils }/echo ${ pkgs.gnused }/bin/sed -e s###g" ; } structure.script }
                                         done
                                        ''
                                   )
