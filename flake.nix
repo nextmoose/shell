@@ -29,7 +29,7 @@
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
-                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts ( fun seed ) ) ;
+                                            scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
@@ -38,7 +38,7 @@
                                         success = _utils.visit {
                                           list = track : true ;
                                           set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                          string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.processed == track.reduced ;
+                                          string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.reduced == track.reduced ;
                                           } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
@@ -88,7 +88,7 @@
                                           esac
                                         done &&
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-                                        ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.processed ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/${ builtins.toString track.index }\" ${ pkgs.writeText "script" track.processed }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
+                                        ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.reduced ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/${ builtins.toString track.index }\" ${ pkgs.writeText "script" track.reduced }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
                                         ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }
                                        ''
                                   )
