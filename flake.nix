@@ -62,14 +62,11 @@
                                                 break
                                             ;;
                                           esac
-                                        done &&
-                                          ${ pkgs.coreutils }/bin/cat <<EOF
-                                        ${ structure.scripts.program1 }
-                                        EOF
-                                      ''
+                                        done
+                                       ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO!" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! resource-directory = ${ structure.resource-directory }" ;
                             }
                   ) ;
               }
