@@ -72,7 +72,7 @@
                                             ;;
                                           esac
                                         done &&
-					${ builtins.concatStringsSep "&&" ( builtins.map ( script : "${ pkgs.coreutils }/bin/echo ${ pkgs.gnused }/bin/sed -e "s###g" ) structure.scripts ) }
+					${ builtins.concatStringsSep "&&" ( builtins.map ( script : "${ pkgs.coreutils }/bin/echo ${ pkgs.gnused }/bin/sed -e \"s###g\"" structure.scripts ) }
                                        ''
                                   )
                                 ] ;
