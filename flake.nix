@@ -21,17 +21,17 @@
                             (
                               seed :
                                 let
-                                  structure =
-				    seed :
-                                      {
-                                        pkgs = pkgs ;
-                                        resource-directory = builtins.hashString "sha512" ( builtins.toString seed ) ;
-                                        scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
-                                        utils = _utils ;
-                                      } ;
+				  structure =
+                                    {
+                                      pkgs = pkgs ;
+                                      resource-directory = token ;
+                                      scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
+                                      token = token ;
+                                      utils = _utils ;
+                                    } ;
                                   in
                                     {
-                                      success = true ;
+                                      success = 
                                       value = structure seed ;
                                     }
                             ) ;
