@@ -76,7 +76,7 @@
                                                 break
                                             ;;
                                           esac &&
-					    ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.processed ) ; string = track : "${ pkgs.coreutils }/echo ${ pkgs.gnused }/bin/sed -e s###g" ; } structure.scripts }
+					    ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.processed ) ; string = track : "${ pkgs.coreutils }/echo ${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\"" ; } structure.scripts }
                                         done
                                        ''
                                   )
