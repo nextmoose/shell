@@ -35,7 +35,7 @@
                                           } ;
                                     in
                                       {
-                                        success = _utils.visit { list = track : true ; set = track : true ; string = set : track : true ; } ( { } ) ;
+                                        success = _utils.visit { list = track : true ; set = track : true ; string = set : track : true ; } ( structure 0 ) ;
                                         value = structure seed ;
                                       }
                             ) ;
