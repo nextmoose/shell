@@ -37,7 +37,7 @@
                                       {
                                         success = _utils.visit {
                                           list = track : true ;
-                                          set = track : builtins.trace true ;
+                                          set = track : true ;
                                           string = track : false ;
                                           } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
