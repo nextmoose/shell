@@ -64,7 +64,7 @@
                                           esac
                                         done &&
                                           ${ pkgs.coreutils }/bin/cat <<EOF
-                                        ${ structures.scripts.program1 }
+                                        ${ structure.scripts.program1 }
                                         EOF
                                       ''
                                   )
