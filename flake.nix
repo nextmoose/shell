@@ -37,7 +37,7 @@
                                       {
                                         success = _utils.visit {
 					  list = track : true ;
-					  set = track : builtins.trace ( "YES: ${ builtins.typeOf scripts structure }" ) true ;
+					  set = track : builtins.trace ( "YES: ${ builtins.typeOf scripts }" ) true ;
 					  string = set : track : true ;
 					  } ( ( structure 0 ) ) ;
                                         value = structure seed ;
