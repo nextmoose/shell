@@ -37,8 +37,8 @@
                                       {
                                         success = _utils.visit {
                                           list = track : true ;
-                                          set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ;
-                                          string = track : builtins.trace track.processed ( builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.processed == track.processed ) ;
+                                          set = track : builtins.trace "SET : " ( builtins.all ( x : x ) ( builtins.attrValues track.processed ) ) ;
+                                          string = track : builtins.trace "STRING : ${ track.processed }" ( builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.processed == track.processed ) ;
                                           } ( scripts ( fun 0 ) ) ;
                                         value = ( fun 0 ) ;
                                       }
