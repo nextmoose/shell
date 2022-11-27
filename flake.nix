@@ -39,7 +39,7 @@
 					  list = track : true ;
 					  set = track : true ;
 					  string = set : track : true ;
-					  } ( ( structure 0 ) ) ;
+					  } ( builtins.attr "script" ( structure 0 ) ) ;
                                         value = structure seed ;
                                       }
                             ) ;
