@@ -35,7 +35,7 @@
                                   in
                                     {
                                       success = true ;
-                                      value = structure seed ;
+                                      value = structure ;
                                     }
                             ) ;
                         in
