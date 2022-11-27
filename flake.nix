@@ -30,7 +30,7 @@
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
-                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
+                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : builtins.trace zero.token track.processed ; } ( scripts structure seed ) ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
