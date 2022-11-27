@@ -37,7 +37,7 @@
                                       {
                                         success = _utils.visit {
 					  list = track : true ;
-					  set = track : builtins.trace ( "YES: ${ builtins.typeOf ( scripts ( fun 0 ) ) }" ) true ;
+					  set = track : builtins.trace ( "YES: ${ builtins.typeOf track.processed } " ) true ;
 					  string = set : track : true ;
 					  } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
