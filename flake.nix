@@ -66,7 +66,7 @@
                                        ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! resource-directory = ${ structure.resource-directory }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! resource-directory = ${ builtins.concatStringsSep " , " ( builtins.attrNames structure ) }" ;
                             }
                   ) ;
               }
