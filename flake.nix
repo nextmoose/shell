@@ -38,7 +38,7 @@
 				        success =
 					  _utils.visit
 					    {
-					      set = track : trace "02 : " true ;
+					      set = track : builtins.trace "02 : " true ;
 					      string = track : "01 : ${ builtins.trace track.reduced }" true ;
 					    } ( scripts ( fun 0 ) ) ;
                                         success2 = _utils.visit {
