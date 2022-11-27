@@ -78,7 +78,7 @@
                                           esac
                                         done &&
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-                                        ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.processed ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/\" ${ pkgs.writeText "script" track.processed }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
+                                        ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.processed ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.processed ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/${ builtins.toString 1 }\" ${ pkgs.writeText "script" track.processed }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
                                         ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }
                                        ''
                                   )
