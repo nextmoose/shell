@@ -39,9 +39,9 @@
                                       {
                                         success = _utils.visit {
 					  list = track : builtins.trace "builtins.all ( x : x ) track.processed" true ;
-					  set = track : builtins.trace " SET ${ builtins.concatStringsSep " , " ( builtins.attrNames track.processed ) }" true ;
+					  set = track : builtins.trace " SET ${ builtins.concatStringsSep " , " ( builtins.attrValues track.processed ) }" true ;
 					  string = set : track : track.processed ;
-					  } ( structure 0 ) ;
+					  } ( scripts structure 0 ) ;
                                         value = eye ;
                                       }
                             ) ;
