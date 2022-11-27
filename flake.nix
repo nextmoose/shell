@@ -21,11 +21,11 @@
                             (
                               seed :
                                 let
-				  fun =
-				    seed :
-				      let
-				        token = builtins.hashString "sha512" ( builtins.toString seed ) ;
-				        in
+                                  fun =
+                                    seed :
+                                      let
+                                        token = builtins.hashString "sha512" ( builtins.toString seed ) ;
+                                        in
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
@@ -36,10 +36,10 @@
                                     in
                                       {
                                         success = _utils.visit {
-					  list = track : true ;
-					  set = track : builtins.trace ( "YES: ${ builtins.toString ( builtins.concatStringsSep " , " ( builtins.attrValues track.processed ) ) } " ) true ;
-					  string = set : track : true ;
-					  } ( scripts ( fun 0 ) ) ;
+                                          list = track : true ;
+                                          set = track : builtins.trace ( "YES: ${ builtins.toString ( builtins.length ( builtins.attrValues track.processed ) ) } " ) true ;
+                                          string = set : track : true ;
+                                          } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
                             ) ;
