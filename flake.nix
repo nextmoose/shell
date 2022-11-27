@@ -37,7 +37,11 @@
 			            zero = structure 0 ;
                                     in
                                       {
-                                        success = _utils.visit { list = track : builtins.all ( x : x ) track.processed ; set = track : builtins.all ( x : x ) ( builtins.attrValues track.processed ) ; string = set : track : builtins.replaceStrings [ ( zero.token ) ] [ "" ] track.processed == track.processed ; } ( structure 0 ) ;
+                                        success = _utils.visit {
+					  list = track : builtins.trace "builtins.all ( x : x ) track.processed" true ;
+					  set = track : builtins.trace "builtins.all ( x : x ) ( builtins.attrValues track.processed )" true ;
+					  string = set : track : builtins.trace "string" true ;
+					  } ( structure 0 ) ;
                                         value = eye ;
                                       }
                             ) ;
