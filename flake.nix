@@ -17,16 +17,23 @@
 			_utils = builtins.getAttr system utils.lib ;
 		        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 			structure =
-			  let
-	                    structure =
-			      resource-directory :
-			        {
-			          pkgs = pkgs ;
-			          resource-directory = builtins.hashString "sha512" ( builtins.toString resource-directory ) ;
-			          scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure resource-directory ) ;
-			          utils = _utils ;
-			        } ;
-			    in structure 0 ;
+			  try
+			    (
+			      seed :
+			        let
+				  structure =
+			            {
+			              pkgs = pkgs ;
+			              resource-directory = builtins.hashString "sha512" ( builtins.toString seed ) ;
+			              scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure resource-directory ) ;
+			              utils = _utils ;
+			            } ;
+				  in
+				    {
+				      success = true ;
+				      value = structure ;
+				    }
+			    ) ;
 			in
 		          pkgs.mkShell
 			    {
