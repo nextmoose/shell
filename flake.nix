@@ -72,7 +72,7 @@
                                             ;;
                                           esac
                                         done &&
-					${ builtins.map ( script : "${ pkgs.coreutils }/bin/echo ${ pkgs.gnused }/bin/sed -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "\"" "$" "{" "RESOURCE_DIRECTORY" "}" "\"" ] }#g" ${ builtins.writeShellScriptBin "program" script }" ) structure.scripts } 
+					${ builtins.map ( script : "${ pkgs.coreutils }/bin/echo ${ pkgs.gnused }/bin/sed -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "\"" "$" "{" "RESOURCE_DIRECTORY" "}" "\"" ] }#g" ${ builtins.writeShellScriptBin "program" script }/bin/program" ) structure.scripts } 
                                        ''
                                   )
                                 ] ;
