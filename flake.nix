@@ -40,7 +40,7 @@
 					  set = track : builtins.trace ( "YES: ${ builtins.typeOf ( scripts ( fun 0 ) ) }" ) true ;
 					  string = set : track : true ;
 					  } ( ( fun 0 ) ) ;
-                                        value = scripts ( fun seed ) ;
+                                        value = ( fun seed ) ;
                                       }
                             ) ;
                         in
