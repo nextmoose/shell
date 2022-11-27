@@ -39,7 +39,7 @@
                                       {
                                         success = _utils.visit {
 					  list = track : builtins.trace "builtins.all ( x : x ) track.processed" true ;
-					  set = track : builtins.trace " SET ${ builtins.typeOf track.input }" true ;
+					  set = track : builtins.trace " SET ${ builtins.typeOf track.processed }" true ;
 					  string = set : track : builtins.trace "string ${ zero.token }" true ;
 					  } ( structure 0 ) ;
                                         value = eye ;
