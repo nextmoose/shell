@@ -77,7 +77,7 @@
                                        ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! resource-directory = ${ structure.resource-directory }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token }" ;
                             }
                   ) ;
               }
