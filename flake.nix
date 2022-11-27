@@ -39,7 +39,7 @@
 					  list = track : true ;
 					  set = track : builtins.trace ( "YES: ${ builtins.typeOf ( scripts ( fun 0 ) ) }" ) true ;
 					  string = set : track : true ;
-					  } ( ( fun 0 ) ) ;
+					  } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
                             ) ;
