@@ -35,7 +35,12 @@
                                           } ;
                                     in
                                       {
-				        success = true ;
+				        success =
+					  _utils.visit
+					    {
+					      set = track : true ;
+					      string = track : true ;
+					    } ;
                                         success2 = _utils.visit {
                                           list = track : true ;
                                           set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
