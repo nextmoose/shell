@@ -21,7 +21,6 @@
                             (
                               seed :
                                 let
-				  eye = structure seed ;
 				  structure =
 				    seed :
 				      let
@@ -34,15 +33,14 @@
                                             token = token ;
                                             utils = _utils ;
                                           } ;
-			            zero = structure 0 ;
                                     in
                                       {
                                         success = _utils.visit {
-					  list = track : builtins.trace "builtins.all ( x : x ) track.processed" true ;
-					  set = track : builtins.trace " SET ${ builtins.concatStringsSep " , " ( builtins.attrValues track.processed ) }" true ;
-					  string = set : track : track.processed ;
+					  list = track : true ;
+					  set = track : true ;
+					  string = set : track : true ;
 					  } ( scripts structure 0 ) ;
-                                        value = eye ;
+                                        value = structure seed ;
                                       }
                             ) ;
                         in
