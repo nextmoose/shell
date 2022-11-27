@@ -39,7 +39,7 @@
 					  list = track : true ;
 					  set = track : true ;
 					  string = set : track : true ;
-					  } ( scripts structure 0 ) ;
+					  } ( ( structure 0 ).scripts ) ;
                                         value = structure seed ;
                                       }
                             ) ;
