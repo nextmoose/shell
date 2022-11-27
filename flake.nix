@@ -25,7 +25,7 @@
 				    seed :
                                       {
                                         pkgs = pkgs ;
-                                        resource-directory = builtins.hashString ( builtins.toString seed ) ;
+                                        resource-directory = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts structure seed ) ;
                                         utils = _utils ;
                                       } ;
