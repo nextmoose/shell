@@ -29,7 +29,7 @@
                                           {
                                             pkgs = pkgs ;
                                             resource-directory = token ;
-                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts fun seed ) ;
+                                            scripts = _utils.visit { list = track : track.processed ; set = track : track.processed ; string = track : track.processed ; } ( scripts ( fun seed ) ) ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
