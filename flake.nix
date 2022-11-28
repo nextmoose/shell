@@ -116,7 +116,7 @@
                                                             pkgs = builtins.getAttr system nixpkgs.legacyPackages  ;
                                                             in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
                                                       }
-                                                   )
+                                                   ) ;
                                           }      
                                         EOF
                                         ) &&
