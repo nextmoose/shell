@@ -120,7 +120,7 @@
                                         EOF
                                         ) &&
                                         ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.reduced ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/${ builtins.toString track.index }\" ${ pkgs.writeText "script" track.reduced }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
-					( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
+                                        ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
                                 ] ;
