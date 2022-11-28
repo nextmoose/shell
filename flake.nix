@@ -26,8 +26,7 @@
 				  ''
 				    ${ pkgs.gnused }/bin/sed \
 				      -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#" \
-				      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index } \
-				      ${ pkgs.writeTextFile "script" track.reduced } > /dev/null 2>&1
+				      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
 				  '' ;
 			    } structure.scripts ;
                         structure =
