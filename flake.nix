@@ -95,7 +95,7 @@
                                           esac
                                         done &&
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-					${ pkgs.nix }/bin/nix flake init ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] &&
+					${ pkgs.nix }/bin/nix flake init ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
                                         ( ${ pkgs.coreutils }/bin/cat > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/flake.nix <<EOF
                                           {
                                             inputs =
