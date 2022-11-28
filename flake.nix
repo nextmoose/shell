@@ -38,7 +38,7 @@
 				        success =
 					  _utils.visit
 					    {
-					      set = track : builtins.trace "02 : ${ builtins.concatStringsSep " , " ( builtins.map ( value : if value then "Y" else "N" ) ( builtins.attrValues track.reduced ) ) } - ${ builtins.typeOf track.reduced.program3 }" ( builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ) ;
+					      set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
 					      string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.reduced == track.reduced ;
 					    } ( scripts ( fun 0 ) ) ;
                                         success2 = _utils.visit {
