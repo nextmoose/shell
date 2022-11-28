@@ -17,18 +17,18 @@
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         alpha = pkgs.writeShellScriptBin "alpha" "${ pkgs.coreutils }/bin/echo alpha" ;
-			sed =
-			  _utils.visit
-			    {
-			      set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
-			      string =
-			        track :
-				  ''
-				    ${ pkgs.gnused }/bin/sed \
-				      -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#" \
-				      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
-				  '' ;
-			    } structure.scripts ;
+                        sed =
+                          _utils.visit
+                            {
+                              set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
+                              string =
+                                track :
+                                  ''
+                                    ${ pkgs.gnused }/bin/sed \
+                                      -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#" \
+                                      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
+                                  '' ;
+                            } structure.scripts ;
                         structure =
                           _utils.try
                             (
@@ -40,7 +40,7 @@
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
-					    log-directory = "${ token }-01" ;
+                                            log-directory = "${ token }-01" ;
                                             pkgs = pkgs ;
                                             resource-directory = "${ token }-02" ;
                                             scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
@@ -132,8 +132,8 @@
                                           }      
                                         EOF
                                         ) &&
-					${ pkgs.coreutils }/bin/mkdir scripts &&
-					${ sed } &&
+                                        ${ pkgs.coreutils }/bin/mkdir scripts &&
+                                        ${ sed } &&
                                         ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
