@@ -16,6 +16,7 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			alpha = pkgs.writeShellScriptBin "alpha" "${ pkgs.coreutils }/bin/echo alpha" ;
                         structure =
                           _utils.try
                             (
@@ -99,7 +100,7 @@
                                        ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } -- ${ alpha }" ;
                             }
                   ) ;
               }
