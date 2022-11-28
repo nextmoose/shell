@@ -95,6 +95,28 @@
                                           esac
                                         done &&
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
+					( ${ pkgs.coreutils }/bin/cat > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } <<EOF
+					  {
+      					    inputs =
+         				      {
+          				        nixpkgs.url = "github:nixos/nixpkgs" ;
+           					flake-utils.url = "github:numtide/flake-utils" ;
+				              } ;
+					    outputs =
+					      { self , nixpkgs ,flake-utils } :
+					        flake-utils.lib.eachDefaultSystem
+						  (
+						    system :
+						      {
+						        devShell =
+							  let
+							    pkgs = builtins.getAttr system nixpkgs.legacyPackages  ;
+							    in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
+				                      }
+						   )
+					  }	 
+					EOF
+					) &&
                                         ${ _utils.visit { list = track : builtins.concatStringsSep " &&\n" track.reduced ; set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ; string = track : "${ pkgs.gnused }/bin/sed -e \"s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#g\" -e \"w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/${ builtins.toString track.index }\" ${ pkgs.writeText "script" track.reduced }" ; } structure.scripts } && ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
                                         ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }
                                        ''
