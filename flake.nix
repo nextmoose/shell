@@ -28,8 +28,9 @@
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
+					    log-directory = "${ token }-01" ;
                                             pkgs = pkgs ;
-                                            resource-directory = token ;
+                                            resource-directory = "${ token }-02" ;
                                             scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
                                             token = token ;
                                             utils = _utils ;
@@ -42,11 +43,6 @@
                                               set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                               string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.reduced == track.reduced ;
                                             } ( scripts ( fun 0 ) ) ;
-                                        success2 = _utils.visit {
-                                          list = track : true ;
-                                          set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                          string = track : builtins.replaceStrings ( builtins.hashString "sha512" [ ( builtins.toString seed ) ] [ "" ] track.reduced ) == track.reduced ;
-                                          } ( scripts ( fun 0 ) ) ;
                                         value = ( fun seed ) ;
                                       }
                             ) ;
@@ -64,6 +60,11 @@
                                           case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
                                             --resource-directory)
                                               RESOURCE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                                shift 2 &&
+                                                break
+                                            ;;
+                                            --log-directory)
+                                              LOG_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
                                             ;;
