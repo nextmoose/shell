@@ -100,7 +100,7 @@
                                        ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } -- ${ alpha }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } -- ${ alpha } ${ pkgs }" ;
                             }
                   ) ;
               }
