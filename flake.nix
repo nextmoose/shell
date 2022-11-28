@@ -29,7 +29,7 @@
 				      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index } \
 				      ${ pkgs.writeTextFile "script" track.reduced } > /dev/null 2>&1
 				  '' ;
-			    } ;
+			    } structure.scripts ;
                         structure =
                           _utils.try
                             (
