@@ -23,11 +23,12 @@
                               set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
                               string =
                                 track :
-                                  ''
-                                    ${ pkgs.gnused }/bin/sed \
-                                      -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#" \
-                                      -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
-                                  '' ;
+				  _utils.strip
+                                    ''
+                                      ${ pkgs.gnused }/bin/sed \
+                                        -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#" \
+                                        -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
+                                    '' ;
                             } structure.scripts ;
                         structure =
                           _utils.try
@@ -102,11 +103,6 @@
                                                 shift 2 &&
                                                 break
                                             ;;
-                                            --log-directory)
-                                              LOG_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
-                                                shift 2 &&
-                                                break
-                                            ;;
                                             --hook)
                                               HOOK=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
@@ -119,11 +115,6 @@
                                             ;;
                                             --private-file)
                                               PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
-                                                shift 2 &&
-                                                break
-                                            ;;
-                                             --scripts)
-                                              SCRIPTS=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
                                             ;;
