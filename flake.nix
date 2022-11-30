@@ -26,8 +26,9 @@
 				  _utils.strip
                                     ''
                                       ${ pkgs.gnused }/bin/sed \
-                                        -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#" \
-                                        -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
+                                        -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#g" \
+                                        -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index } \
+					track.reduced
                                     '' ;
                             } structure.scripts ;
                         structure =
