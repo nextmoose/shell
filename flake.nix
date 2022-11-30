@@ -44,7 +44,7 @@
 					      log-directory = builtins.concatStringsSep "_" [ "LOGS" token ] ;
 					      in
                                                 ''
-                                    		  if [ ! -d ${ structure } ]
+                                    		  if [ ! -d ${ structure-directory } ]
                                                   then
                                                     ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                   fi &&
