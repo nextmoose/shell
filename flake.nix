@@ -37,13 +37,40 @@
                                   fun =
                                     seed :
                                       let
+                                        logger =
+                                          script :
+					    let
+					      log-directory = builtins.concatStringsSep "_" [ "LOGS" token ] ;
+					      in
+                                                ''
+                                    		  if [ ! -d ${ structure } ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                  fi &&
+                                                  if [ ! -d ${ structure-directory }/logs ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+                                                  fi &&
+                                                  ${ log-directory }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+					          exec 10 > ${ builtins.concatStringsSep "" [ "$" "{" log-directory "}" ] }/lock &&
+					          ${ pkgs.flock }/bin/flock -n 10  &&
+					          ${ pkgs.writeShellScriptBin "script" script }/bin/script > ${ log-directroy }/out 2> ${ log-directory }/err
+                                                '' ;
+				        loggers =
+					  {
+					    err = "/dev/stderr" ;
+					    out = "/dev/stdout" ;
+					    din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
+					    note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
+					  } ;
+					structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
-                                            log-directory = "${ token }-01" ;
+					    loggers = loggers ;
                                             pkgs = pkgs ;
-                                            resource-directory = "${ token }-02" ;
                                             scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
+                                            structure-directory = structure-directory ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
