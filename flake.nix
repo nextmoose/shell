@@ -54,7 +54,7 @@
                                                   ${ log-directory }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
 					          exec 10 > ${ builtins.concatStringsSep "" [ "$" "{" log-directory "}" ] }/lock &&
 					          ${ pkgs.flock }/bin/flock -n 10  &&
-					          ${ pkgs.writeShellScriptBin "script" script }/bin/script > ${ log-directroy }/out 2> ${ log-directory }/err
+					          ${ pkgs.writeShellScriptBin "script" script }/bin/script > ${ log-directory }/out 2> ${ log-directory }/err
                                                 '' ;
 				        loggers =
 					  {
