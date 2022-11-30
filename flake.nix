@@ -28,7 +28,7 @@
                                       ${ pkgs.gnused }/bin/sed \
                                         -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#g" \
                                         -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index } \
-					track.reduced
+					${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
                                     '' ;
                             } structure.scripts ;
                         structure =
