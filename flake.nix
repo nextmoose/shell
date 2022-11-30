@@ -25,8 +25,8 @@
                                 track :
                                   ''
                                     ${ pkgs.gnused }/bin/sed \
-                                      -e "s#${ structure.resource-directory }#${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }#" \
-                                      -e "w${ builtins.concatStringsSep "" [ "$" "{" "RESOURCE_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
+                                      -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#" \
+                                      -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index }
                                   '' ;
                             } structure.scripts ;
                         structure =
@@ -97,8 +97,8 @@
                                         while [ ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0 ]
                                         do
                                           case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
-                                            --resource-directory)
-                                              RESOURCE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                            --structure-directory)
+                                              STRUCTURE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
                                                 shift 2 &&
                                                 break
                                             ;;
