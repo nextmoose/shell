@@ -16,7 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        alpha = pkgs.writeShellScriptBin "alpha" "${ pkgs.coreutils }/bin/echo alpha" ;
                         sed =
                           _utils.visit
                             {
@@ -53,6 +52,10 @@
                                                   then
                                                     ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                                   fi &&
+						  cleanup ( )
+						  {
+						    ${ pkgs.coreutils }/bin/echo
+						  } &&
                                                   ${ log-directory }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
 					          exec 10 > ${ builtins.concatStringsSep "" [ "$" "{" log-directory "}" ] }/lock &&
 					          ${ pkgs.flock }/bin/flock -n 10  &&
@@ -66,6 +69,7 @@
 					    note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
 					  } ;
 					structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
+					temporary = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
@@ -73,6 +77,7 @@
                                             pkgs = pkgs ;
                                             scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : logger track.reduced ; } ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
+					    temporary-directory = temporary-directory ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
@@ -157,7 +162,7 @@
                                       ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } -- ${ alpha } ${ pkgs.coreutils }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token }" ;
                             }
                   ) ;
               }
