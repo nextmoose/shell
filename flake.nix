@@ -162,7 +162,7 @@
                                       ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } ${ pkgs.at } && ${ pkgs.coreutils }/bin/echo ${ pkgs.writeShellScriptBin "hook" "${ pkgs.coreutils }/bin/touch 701d5da2-d075-4787-9872-7bb247878dfd" }/bin/hook | ${ at }/bin/at now" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! token = ${ structure.token } ${ pkgs.at } && ${ pkgs.coreutils }/bin/echo ${ pkgs.writeShellScriptBin "hook" "${ pkgs.coreutils }/bin/touch 701d5da2-d075-4787-9872-7bb247878dfd" }/bin/hook | ${ at } now" ;
                             }
                   ) ;
               }
