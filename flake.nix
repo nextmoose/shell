@@ -69,7 +69,7 @@
 					    note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
 					  } ;
 					structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
-					temporary = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
+					temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
