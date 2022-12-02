@@ -113,7 +113,7 @@
                                                         devShell =
                                                           let
                                                             pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-							    scripts = ${ scripts } ;
+							    scripts = ${ scripts structure } ;
                                                             in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
                                                       }
                                                    ) ;
