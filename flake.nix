@@ -43,7 +43,7 @@
 					        {
 						  list = track : track.reduced ;
 						  set = track : track.reduced ;
-						  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( _utils.strip track.reduced ) ] ;
+						  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
 						} ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
