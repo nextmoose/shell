@@ -16,6 +16,13 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			sed =
+			  _utils.visit
+			    {
+			      list = track : builtins.concatStringsSep " &&" track.reduced ;
+			      set = track : builtins.concatStringsSep " &&" ( builtins.attrValues track.reduced ) ;
+			      string = track : 
+			    } ;
                         structure =
                           _utils.try
                             (
@@ -125,6 +132,8 @@
                                           }      
                                         EOF
                                         ) &&
+					${ pkgs.coreutils }/bin/mkdir scripts &&
+					${ sed } &&
                                         ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
