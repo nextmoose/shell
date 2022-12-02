@@ -129,7 +129,7 @@
                                       ''
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program3 }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program4 }" ;
                             }
                   ) ;
               }
