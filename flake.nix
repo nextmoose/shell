@@ -38,7 +38,13 @@
                                           {
                                             loggers = loggers ;
                                             pkgs = pkgs ;
-                                            scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
+                                            scripts =
+					      _utils.visit
+					        {
+						  list = track : track.reduced ;
+						  set = track : track.reduced ;
+						  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( _utils.strip track.reduced ) ] ;
+						} ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
