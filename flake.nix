@@ -24,23 +24,23 @@
                                   fun =
                                     seed :
                                       let
-				        loggers =
-					  {
-					    err = "/dev/stderr" ;
-					    out = "/dev/stdout" ;
-					    din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
-					    note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
-					  } ;
-					structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
-					temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
+                                        loggers =
+                                          {
+                                            err = "/dev/stderr" ;
+                                            out = "/dev/stdout" ;
+                                            din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
+                                            note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
+                                          } ;
+                                        structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
+                                        temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                         in
                                           {
-					    loggers = loggers ;
+                                            loggers = loggers ;
                                             pkgs = pkgs ;
                                             scripts = _utils.visit { list = track : track.reduced ; set = track : track.reduced ; string = track : track.reduced ; } ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
-					    temporary-directory = temporary-directory ;
+                                            temporary-directory = temporary-directory ;
                                             token = token ;
                                             utils = _utils ;
                                           } ;
@@ -113,7 +113,7 @@
                                                         devShell =
                                                           let
                                                             pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-							    scripts = ${ scripts structure } ;
+                                                            scripts = ${ scripts structure } ;
                                                             in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
                                                       }
                                                    ) ;
