@@ -16,20 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        sed =
-                          _utils.visit
-                            {
-                              set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
-                              string =
-                                track :
-				  _utils.strip
-                                    ''
-                                      ${ pkgs.gnused }/bin/sed \
-                                        -e "s#${ structure.structure-directory }#${ builtins.concatStringsSep "" [ "$" "{" "STRUCTURE_DIRECTORY" "}" ] }#g" \
-                                        -e "w${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/scripts/${ builtins.toString track.index } \
-					${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
-                                    '' ;
-                            } structure.scripts ;
                         structure =
                           _utils.try
                             (
@@ -126,15 +112,14 @@
                                                       {
                                                         devShell =
                                                           let
-                                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages  ;
+                                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+							    scripts = ${ scripts } ;
                                                             in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
                                                       }
                                                    ) ;
                                           }      
                                         EOF
                                         ) &&
-                                        ${ pkgs.coreutils }/bin/mkdir scripts &&
-                                        ${ sed } &&
                                         ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
