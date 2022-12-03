@@ -89,20 +89,15 @@
 					buildInputs = [ pkgs.makeWrapper ] ;
 					installPhase =
 					  ''
-					    ${ pkgs.coreutils }/bin/echo AAAA 1 &&
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
-					    ${ pkgs.coreutils }/bin/echo AAAA 2 &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
-					    ${ pkgs.coreutils }/bin/echo AAAA 3 &&
-					    ${ pkgs.coreutils }/bin/echo ${ pkgs.makeWrapper } &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
 					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
 					      --set COREUTILS ${ pkgs.coreutils } \
 					      --set MKTEMP ${ pkgs.mktemp } \
-					      --set NIX ${ pkgs.nix } &&
-					  ${ pkgs.coreutils }/bin/echo AAA 4
+					      --set NIX ${ pkgs.nix }
 				        '' ;
 				      }
 				  )
