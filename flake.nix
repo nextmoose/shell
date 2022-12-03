@@ -94,6 +94,7 @@
 					    ${ pkgs.coreutils }/bin/echo AAAA 2 &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
 					    ${ pkgs.coreutils }/bin/echo AAAA 3 &&
+					    ${ pkgs.coreutils }/echo ${ pkgs.makeWrapper } &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
 					    ${ pkgs.makeWrapper } \
 					      $out/src/generate.sh \
