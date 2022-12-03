@@ -90,7 +90,7 @@
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    cp --recursive . $out/src &&
 					    ${ pkgs.makeWrapper } \
-					      $src/generate.sh \
+					      $out/src/generate.sh \
 					      $out/bin/generate \
 					      --set COREUTILS ${ pkgs.coreutils } \
 					      --set MKTEMP ${ pkgs.mktemp } \
