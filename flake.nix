@@ -86,6 +86,7 @@
 				      {
 				        name = "generate" ;
 					src = ./src ;
+					buildInputs = [ pkgs.makeWrapper ] ;
 					installPhase =
 					  ''
 					    ${ pkgs.coreutils }/bin/echo AAAA 1 &&
