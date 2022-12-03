@@ -89,7 +89,8 @@
 					buildPhase =
 					  ''
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
-					    cp --recursive . $out/src &&
+					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
+					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
 					    ${ pkgs.makeWrapper } \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
