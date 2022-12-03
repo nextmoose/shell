@@ -85,7 +85,7 @@
 				    pkgs.stdenv.mkDerivation
 				      {
 				        name = "generate" ;
-					buildPhase = "${ pkgs.makeWrapper } bin/generate.sh ${ ./src/generate.sh } --set COREUTILS ${ pkgs.coreutils } --set MKTEMP ${ pkgs.mktemp } --set NIX ${ pkgs.nix }" ;
+					buildPhase = "${ pkgs.makeWrapper } ${ ./src/generate.sh } $out/bin/generate --set COREUTILS ${ pkgs.coreutils } --set MKTEMP ${ pkgs.mktemp } --set NIX ${ pkgs.nix }" ;
 				      }
 				  )
 				] ;
