@@ -27,7 +27,7 @@
                                     ''
                                       ${ pkgs.gnused }/bin/sed \
                                         -e "s#${ structure.loggers.note }#${ builtins.concatStringsSep "" [ "$" "{" "LOG_DIR" "}" ] }#" \
-                                        -e "wscripts/${ builtins.toString track.index } \
+                                        -e "wscripts/${ builtins.toString track.index }" \
                                         ${ track.reduced }
                                     '' 
                             } ;
