@@ -16,21 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        sed =
-                          _utils.visit
-                            {
-                              list = track : builtins.concatStringsSep " &&" track.reduced ;
-                              set = track : builtins.concatStringsSep " &&" ( builtins.attrValues track.reduced ) ;
-                              string =
-                                track :
-                                  _utils.strip
-                                    ''
-                                      ${ pkgs.gnused }/bin/sed \
-                                        -e "s#${ structure.loggers.note }#${ builtins.concatStringsSep "" [ "$" "{" "LOG_DIR" "}" ] }#" \
-                                        -e "wscripts/${ builtins.toString track.index }" \
-                                        ${ track.reduced }
-                                    '' ;
-                            } ;
                         structure =
                           _utils.try
                             (
@@ -91,10 +76,12 @@
 					  ''
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
+					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
 					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
 					      --set COREUTILS ${ pkgs.coreutils } \
+					      --set SHELL_HOME $out/src \
 					      --set MKTEMP ${ pkgs.mktemp } \
 					      --set NIX ${ pkgs.nix }
 				        '' ;

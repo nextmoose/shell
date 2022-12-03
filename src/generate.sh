@@ -28,7 +28,7 @@ done &&
     SCRIPT_DIRECTORY=$( ${MKTEMP}/bin/mktemp --directory ) &&
     cd ${SCRIPT_DIRECTORY} &&
     ${NIX}/bin/nix flake init &&
-    ${COREUTILS}/bin/cp ./src/flake.nix flake.nix &&
+    ${COREUTILS}/bin/cp ${SHELL_HOME}/flake.nix flake.nix &&
     ${COREUTILS}/bin/echo "${ _utils.bash-variable "hook" }" > hook.nix &&
     ${COREUTILS}/bin/echo "${ _utils.bash-variable "inputs" }" > inputs.nix &&
     ${COREUTILS}/bin/echo "${ _utils.bash-variable "inputs" }" > scripts.nix &&
