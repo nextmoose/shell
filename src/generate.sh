@@ -32,4 +32,5 @@ done &&
     ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "hook" }" > hook.nix &&
     ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "inputs" }" > inputs.nix &&
     ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "inputs" }" > scripts.nix &&
+    ${ sed1 } &&
     ${ pkgs.coreutils }/bin/chmode 0400 flake.nix hook.nix inputs.txt scripts.tex
