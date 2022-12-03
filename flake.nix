@@ -29,7 +29,7 @@
                                         -e "s#${ structure.loggers.note }#${ builtins.concatStringsSep "" [ "$" "{" "LOG_DIR" "}" ] }#" \
                                         -e "wscripts/${ builtins.toString track.index }" \
                                         ${ track.reduced }
-                                    '' 
+                                    '' ;
                             } ;
                         structure =
                           _utils.try
