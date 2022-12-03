@@ -103,11 +103,6 @@
                                                 shift 2 &&
                                                 break
                                             ;;
-                                            --private-file)
-                                              PRIVATE_FILE=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
-                                                shift 2 &&
-                                                break
-                                            ;;
                                             *)
                                               ${ pkgs.coreutils }/bin/echo UNEXPECTED &&
                                                 exit 64 &&
