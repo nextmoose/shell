@@ -89,7 +89,7 @@
                                         do
                                           case ${ _utils.bash-variable "1" } in
                                             --resource-directory)
-                                              STRUCTURE_DIRECTORY=${ _utils.bash-variable "2" } ;
+                                              RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } ;
                                                 shift 2 &&
                                                 break
                                             ;;
