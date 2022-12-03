@@ -88,8 +88,11 @@
 					src = ./src ;
 					installPhase =
 					  ''
+					    ${ pkgs.coreutils }/bin/echo AAAA 1 &&
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
+					    ${ pkgs.coreutils }/bin/echo AAAA 1 &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
+					    ${ pkgs.coreutils }/bin/echo AAAA 1 &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
 					    ${ pkgs.makeWrapper } \
 					      $out/src/generate.sh \
@@ -97,7 +100,7 @@
 					      --set COREUTILS ${ pkgs.coreutils } \
 					      --set MKTEMP ${ pkgs.mktemp } \
 					      --set NIX ${ pkgs.nix }
-					  '' ;
+				        '' ;
 				      }
 				  )
 				] ;
