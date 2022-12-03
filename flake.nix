@@ -85,6 +85,7 @@
 				    pkgs.stdenv.mkDerivation
 				      {
 				        name = "generate" ;
+					src = ./src ;
 					buildPhase =
 					  ''
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
