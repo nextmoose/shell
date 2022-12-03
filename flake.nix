@@ -79,7 +79,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = [ ( pkgs.writeShellScriptBin "generate" ( builtins.readFile ./src/generate.sh ) ) ] ;
+                              buildInputs = [ ( pkgs.stdenv.mkDerivation { name = "generate" ; buildPhase = "${ pkgs.makeWrapper } bin/generate.sh ${ ./src/generate.sh } --set COREUTILS ${ pkgs.coreutils } --set MKTEMP ${ pkgs.mktemp } --set NIX ${ pkgs.nix }" ; } ) ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program4 }" ;
                             }
                   ) ;
