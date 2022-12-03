@@ -118,30 +118,7 @@
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
                                         cd ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
                                         ${ pkgs.nix }/bin/nix flake init &&
-                                        ( ${ pkgs.coreutils }/bin/cat > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/flake.nix <<EOF
-                                          {
-                                            inputs =
-                                              {
-                                                nixpkgs.url = "github:nixos/nixpkgs" ;
-                                                flake-utils.url = "github:numtide/flake-utils" ;
-                                              } ;
-                                            outputs =
-                                              { self , nixpkgs ,flake-utils } :
-                                                flake-utils.lib.eachDefaultSystem
-                                                  (
-                                                    system :
-                                                      {
-                                                        devShell =
-                                                          let
-                                                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                                                            in pkgs.mkShell { shellHook = "${ pkgs.coreutils }/bin/echo HELLO" ; } ;
-                                                      }
-                                                   ) ;
-                                          }      
-                                        EOF
-                                        ) &&
                                         ${ pkgs.coreutils }/bin/mkdir scripts &&
-                                        ${ sed } &&
                                         ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
