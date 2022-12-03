@@ -85,21 +85,21 @@
                                     pkgs.writeShellScriptBin
                                       "generate"
                                       ''
-                                        while [ ${ builtins.concatStringsSep "" [ "$" "{" "#" "}" ] } -gt 0 ]
+                                        while [ ${ _utils.bash-variable "#" } -gt 0 ]
                                         do
-                                          case ${ builtins.concatStringsSep "" [ "\"" "$" "{" "1" "}" "\"" ] } in
-                                            --structure-directory)
-                                              STRUCTURE_DIRECTORY=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                          case ${ _utils.bash-variable "1" } in
+                                            --resource-directory)
+                                              STRUCTURE_DIRECTORY=${ _utils.bash-variable "2" } ;
                                                 shift 2 &&
                                                 break
                                             ;;
                                             --hook)
-                                              HOOK=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                              HOOK=${ _utils.bash-variable "2" } &&
                                                 shift 2 &&
                                                 break
                                             ;;
                                             --inputs)
-                                              INPUTS=${ builtins.concatStringsSep "" [ "\"" "$" "{" "2" "}" "\"" ] } &&
+                                              INPUTS=${ _utils.bash-variable "2" } &&
                                                 shift 2 &&
                                                 break
                                             ;;
@@ -111,10 +111,9 @@
                                           esac
                                         done &&
                                         SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-                                        cd ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] } &&
+                                        cd ${ _utils.bash-variable "SCRIPT_DIRECTORY" } &&
                                         ${ pkgs.nix }/bin/nix flake init &&
-                                        ${ pkgs.coreutils }/bin/mkdir scripts &&
-                                        ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
+                                        ${ pkgs.coreutils }/bin/mkdir scripts
                                       ''
                                   )
                                 ] ;
