@@ -79,7 +79,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = [ ( pkgs.writeShellScriptBin "generate" ( builtins.import ./src/generate.nix ) ) ] ;
+                              buildInputs = [ ( pkgs.writeShellScriptBin "generate" ( builtins.readFile ./src/generate.sh ) ) ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program4 }" ;
                             }
                   ) ;
