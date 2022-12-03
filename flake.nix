@@ -86,7 +86,7 @@
 				      {
 				        name = "generate" ;
 					src = ./src ;
-					buildPhase =
+					installPhase =
 					  ''
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
