@@ -16,21 +16,21 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			sed =
-			  _utils.visit
-			    {
-			      list = track : builtins.concatStringsSep " &&" track.reduced ;
-			      set = track : builtins.concatStringsSep " &&" ( builtins.attrValues track.reduced ) ;
-			      string =
-			        track :
-				  _utils.strip
-				    ''
-				      ${ pkgs.gnused }/bin/sed \
-				        -e "s#${ structure.loggers.note }#${ builtins.concatStringsSep "" [ "$" "{" "LOG_DIR" "}" ]#" \
-					-e "wscripts/${ builtins.toString track.index } \
-					${ track.reduced }
-				    '' 
-			    } ;
+                        sed =
+                          _utils.visit
+                            {
+                              list = track : builtins.concatStringsSep " &&" track.reduced ;
+                              set = track : builtins.concatStringsSep " &&" ( builtins.attrValues track.reduced ) ;
+                              string =
+                                track :
+                                  _utils.strip
+                                    ''
+                                      ${ pkgs.gnused }/bin/sed \
+                                        -e "s#${ structure.loggers.note }#${ builtins.concatStringsSep "" [ "$" "{" "LOG_DIR" "}" ]#" \
+                                        -e "wscripts/${ builtins.toString track.index } \
+                                        ${ track.reduced }
+                                    '' 
+                            } ;
                         structure =
                           _utils.try
                             (
@@ -54,12 +54,12 @@
                                             loggers = loggers ;
                                             pkgs = pkgs ;
                                             scripts =
-					      _utils.visit
-					        {
-						  list = track : track.reduced ;
-						  set = track : track.reduced ;
-						  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
-						} ( scripts ( fun seed ) ) ;
+                                              _utils.visit
+                                                {
+                                                  list = track : track.reduced ;
+                                                  set = track : track.reduced ;
+                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
+                                                } ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
@@ -140,8 +140,8 @@
                                           }      
                                         EOF
                                         ) &&
-					${ pkgs.coreutils }/bin/mkdir scripts &&
-					${ sed } &&
+                                        ${ pkgs.coreutils }/bin/mkdir scripts &&
+                                        ${ sed } &&
                                         ( ${ pkgs.coreutils }/bin/echo ${ builtins.concatStringsSep "" [ "\"" "$" "{" "FLAKE" "}" "\"" ] } > ${ builtins.concatStringsSep "" [ "$" "{" "SCRIPT_DIRECTORY" "}" ] }/hook.nix )
                                       ''
                                   )
