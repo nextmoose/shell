@@ -91,7 +91,6 @@
 					  ''
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
-					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
 					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
