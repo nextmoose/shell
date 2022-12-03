@@ -96,7 +96,7 @@
 					    ${ pkgs.coreutils }/bin/echo AAAA 3 &&
 					    ${ pkgs.coreutils }/bin/echo ${ pkgs.makeWrapper } &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh
-					    ${ pkgs.makeWrapper } \
+					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
 					      --set COREUTILS ${ pkgs.coreutils } \
