@@ -89,8 +89,9 @@
 					  ${ pkgs.nix }/bin/nix flake init &&
 					  ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
 					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
-					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash_variable "2" }" > inputs.nix &&
+					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-shariable "2" }" > inputs.nix &&
 				          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
+					  ${ pkgs.coreutils }/bin/mkdir scripts &&
 					  ${ pkgs.coreutils }/bin/touch scripts.nix &&
 					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
 				      ''
