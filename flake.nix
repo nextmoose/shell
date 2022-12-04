@@ -64,7 +64,7 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : _utils.bash-variable [ "SCRIPT" "TOKEN" ] ;
+                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ( builtins.toString track.index ) ] ;
                                                 } strings ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
