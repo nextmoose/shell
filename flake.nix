@@ -28,7 +28,7 @@
 				      -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
 				      -w scripts/${ builtins.toString track.index } \
 				      ${ pkgs.writeTextFile "script" track.reduced }
-				  '' ;
+                                  '' ;
                             } structure.scripts ;
                         structure =
                           _utils.try
@@ -37,7 +37,7 @@
                                 let
                                   fun =
                                     seed :
-				      let
+                                      let
                                         loggers =
                                           {
                                             err = "/dev/stderr" ;
@@ -81,17 +81,17 @@
                               buildInputs =
                                 [
                                   (
-				    pkgs.writeShellScriptBin
-				      "generate"
-				      ''
-					SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-					  cd ${ _utils.bash-variable "SCRIPT_DIRECTORY" } &&
-					  ${ pkgs.nix }/bin/nix flake init &&
-					  ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
-					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
-					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
-				          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
-					  ${ pkgs.coreutils }/bin/mkdir scripts &&
+                                    pkgs.writeShellScriptBin
+                                      "generate"
+                                      ''
+                                        SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
+                                          cd ${ _utils.bash-variable "SCRIPT_DIRECTORY" } &&
+                                          ${ pkgs.nix }/bin/nix flake init &&
+                                          ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
+                                          ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
+                                          ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
+                                          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
+                                          ${ pkgs.coreutils }/bin/mkdir scripts &&
 					  ${ sed } &&
 					  ${ pkgs.coreutils }/bin/touch scripts.nix &&
 					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
