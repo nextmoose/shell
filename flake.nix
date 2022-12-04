@@ -22,12 +22,12 @@
                               list = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip track.reduced ) ;
                               set = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip ( builtins.attrValues track.reduced ) ) ;
                               string =
-			        track :
-				  ''
-				    ${ pkgs.gnused }/bin/sed \
-				      -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
-				      -w scripts/${ builtins.toString track.index } \
-				      ${ pkgs.writeText "script" track.reduced }
+                                track :
+                                  ''
+                                    ${ pkgs.gnused }/bin/sed \
+                                      -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
+                                      -w scripts/${ builtins.toString track.index } \
+                                      ${ pkgs.writeText "script" track.reduced }
                                   '' ;
                             } structure.scripts ;
                         structure =
@@ -99,10 +99,10 @@
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
                                           STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
                                           ${ pkgs.coreutils }/bin/mkdir scripts &&
-					  ${ sed } &&
-					  ${ pkgs.coreutils }/bin/touch scripts.nix &&
-					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
-				      ''
+                                          ${ sed } &&
+                                          ${ pkgs.coreutils }/bin/touch scripts.nix &&
+                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
+                                      ''
                                   )
                                 ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.token }" ;
