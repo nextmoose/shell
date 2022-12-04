@@ -16,14 +16,14 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			sed =
-			  _utils.visit
-			    {
-			      list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
-			      set = track : builtins.concatStringsSep "" [ " { " ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " " ] ) track.reduced ) ) " } " ] ;
-			      path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
-			      string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
-			    } structure.scripts ;
+                        sed =
+                          _utils.visit
+                            {
+                              list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
+                              set = track : builtins.concatStringsSep "" [ " { " ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " " ] ) track.reduced ) ) " } " ] ;
+                              path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
+                              string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
+                            } structure.scripts ;
                         structure =
                           _utils.try
                             (
@@ -73,30 +73,30 @@
                           pkgs.mkShell
                             {
                               buildInputs =
-			        [
-			          (
-				    pkgs.stdenv.mkDerivation
-				      {
-				        name = "generate" ;
-					src = ./src ;
-					buildInputs = [ pkgs.makeWrapper ] ;
-					installPhase =
-					  ''
-					    ${ pkgs.coreutils }/bin/mkdir $out &&
-					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
-					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
-					    ${ pkgs.coreutils }/bin/cp ${ builtins.toFile "scripts.nix" sed } $out/src/scripts.nix &&
-					    makeWrapper \
-					      $out/src/generate.sh \
-					      $out/bin/generate \
-					      --set COREUTILS ${ pkgs.coreutils } \
-					      --set SHELL_HOME $out/src \
-					      --set MKTEMP ${ pkgs.mktemp } \
-					      --set NIX ${ pkgs.nix }
-				        '' ;
-				      }
-				  )
-				] ;
+                                [
+                                  (
+                                    pkgs.stdenv.mkDerivation
+                                      {
+                                        name = "generate" ;
+                                        src = ./src ;
+                                        buildInputs = [ pkgs.makeWrapper ] ;
+                                        installPhase =
+                                          ''
+                                            ${ pkgs.coreutils }/bin/mkdir $out &&
+                                            ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
+                                            ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
+                                            ${ pkgs.coreutils }/bin/cp ${ builtins.toFile "scripts.nix" sed } $out/src/scripts.nix &&
+                                            makeWrapper \
+                                              $out/src/generate.sh \
+                                              $out/bin/generate \
+                                              --set COREUTILS ${ pkgs.coreutils } \
+                                              --set SHELL_HOME $out/src \
+                                              --set MKTEMP ${ pkgs.mktemp } \
+                                              --set NIX ${ pkgs.nix }
+                                        '' ;
+                                      }
+                                  )
+                                ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program4 }" ;
                             }
                   ) ;
