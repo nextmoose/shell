@@ -22,6 +22,7 @@
 			      list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
 			      set = track : "true" ;
 			      path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
+			      string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
 			    } structure.scripts ;
                         structure =
                           _utils.try
