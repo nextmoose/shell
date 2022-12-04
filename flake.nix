@@ -21,9 +21,15 @@
                             {
                               list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
                               set = track : builtins.concatStringsSep "" [ " { " ( builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " ;" ] ) track.reduced ) ) ) " } " ] ;
-                              path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
-                              string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
-                            } structure.scripts2 ;
+                              string =
+			        track :
+				  ''
+				    ${ pkgs.gnused }/bin/sed \
+				      -e "s#${ token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
+				      -w scripts/${ track.index } \
+				      ${ track.reduced }
+				  '' ;
+                            } structure.scripts ;
                         structure =
                           _utils.try
                             (
@@ -31,7 +37,7 @@
                                 let
                                   fun =
                                     seed :
-                                      let
+				      let
                                         loggers =
                                           {
                                             err = "/dev/stderr" ;
@@ -52,13 +58,6 @@
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
                                                   string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
-                                                } ( scripts ( fun seed ) ) ;
-                                            scripts2 =
-                                              _utils.visit
-                                                {
-                                                  list = track : track.reduced ;
-                                                  set = track : track.reduced ;
-                                                  string = track : _utils.strip track.reduced ;
                                                 } ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
