@@ -82,26 +82,19 @@
                               buildInputs =
                                 [
                                   (
-                                    pkgs.stdenv.mkDerivation
-                                      {
-                                        name = "generate" ;
-                                        src = ./src ;
-                                        buildInputs = [ pkgs.makeWrapper ] ;
-                                        installPhase =
-                                          ''
-                                            ${ pkgs.coreutils }/bin/mkdir $out &&
-                                            ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
-                                            ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
-                                            ${ pkgs.coreutils }/bin/cp ${ builtins.toFile "scripts.nix" ( builtins.trace sed sed ) } $out/src/scripts.nix &&
-                                            makeWrapper \
-                                              $out/src/generate.sh \
-                                              $out/bin/generate \
-                                              --set COREUTILS ${ pkgs.coreutils } \
-                                              --set SHELL_HOME $out/src \
-                                              --set MKTEMP ${ pkgs.mktemp } \
-                                              --set NIX ${ pkgs.nix }
-                                        '' ;
-                                      }
+				    pkgs.writeShellScriptBin
+				      "generate"
+				      ''
+					SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
+					  cd ${ _utils.bash-variable "SCRIPT_DIRECTORY" } &&
+					  ${ pkgs.nix }/bin/nix flake init &&
+					  ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
+					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
+					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash_variable "2" }" > inputs.nix &&
+				          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
+					  ${ pkgs.coreutils }/bin/touch scripts.nix &&
+					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
+				      ''
                                   )
                                 ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.token }" ;
