@@ -24,13 +24,19 @@
                               string =
                                 track :
                                   ''
-				    ${ pkgs.coreutils }/bin/echo { name } &&
                                     ${ pkgs.gnused }/bin/sed \
                                       -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
                                       -w scripts/${ builtins.toString track.index } \
                                       ${ pkgs.writeText "script" track.reduced }
                                   '' ;
                             } structure.scripts ;
+                        strings =
+                          _utils.visit
+                            {
+                              list = track : track.reduced ;
+                              set = track : track.reduced ;
+                              string = track : _utils.strip track.reduced ;
+                            } scripts structure ;
                         structure =
                           _utils.try
                             (
