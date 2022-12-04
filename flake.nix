@@ -45,6 +45,13 @@
                                             din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
                                             note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
                                           } ;
+                                        strings =
+                                          _utils.visit
+                                            {
+                                              list = track : track.reduced ;
+                                              set = track : track.reduced ;
+                                              string = track : _utils.strip track.reduced ;
+                                            } ( scripts ( fun seed ) ) ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -57,8 +64,8 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
-                                                } ( scripts ( fun seed ) ) ;
+                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" track.reduced ) ] ;
+                                                } strings ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
