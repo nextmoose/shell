@@ -19,7 +19,7 @@
 			sed =
 			  _utils.visit
 			    {
-			      list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ;
+			      list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
 			      set = track : builtins.concatStringsSep "" [ " { " ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " ; " ] ) track.reduced ) ) " } " ] ;
 			      path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString ( path.reduced ) "\"" ] ;
 			    } structure.scripts ;
