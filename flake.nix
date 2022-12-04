@@ -30,13 +30,6 @@
                                       ${ pkgs.writeText "script" track.reduced }
                                   '' ;
                             } structure.scripts ;
-                        strings =
-                          _utils.visit
-                            {
-                              list = track : track.reduced ;
-                              set = track : track.reduced ;
-                              string = track : _utils.strip track.reduced ;
-                            } scripts structure ;
                         structure =
                           _utils.try
                             (
@@ -52,13 +45,13 @@
                                             din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
                                             note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
                                           } ;
-                                        strings =
-                                          _utils.visit
-                                            {
-                                              list = track : track.reduced ;
-                                              set = track : track.reduced ;
-                                              string = track : _utils.strip track.reduced ;
-                                            } ( scripts ( fun seed ) ) ;
+                                          strings =
+                                            _utils.visit
+                                              {
+                                                list = track : track.reduced ;
+                                                set = track : track.reduced ;
+                                                string = track : _utils.strip track.reduced ;
+                                              } scripts structure ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -71,7 +64,7 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" track.reduced ) ] ;
+                                                  string = track : _utils.bash-variable [ "SCRIPT" "TOKEN" ] ;
                                                 } strings ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
@@ -83,6 +76,7 @@
                                         success =
                                           _utils.visit
                                             {
+					      list = track : builtins.all ( x : x ) track.reduced ;
                                               set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                               string = track : builtins.replaceStrings [ ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] [ "" ] track.reduced == track.reduced ;
                                             } ( scripts ( fun 0 ) ) ;
