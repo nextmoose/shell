@@ -23,7 +23,7 @@
                               set = track : builtins.concatStringsSep "" [ " { " ( builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " ;" ] ) track.reduced ) ) ) " } " ] ;
                               path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
                               string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
-                            } structure.scripts ;
+                            } structure.scripts2 ;
                         structure =
                           _utils.try
                             (
@@ -52,6 +52,13 @@
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
                                                   string = track : builtins.concatStringsSep "_" [ "SCRIPT" token ( pkgs.writeText "script" ( _utils.strip track.reduced ) ) ] ;
+                                                } ( scripts ( fun seed ) ) ;
+                                            scripts2 =
+                                              _utils.visit
+                                                {
+                                                  list = track : track.reduced ;
+                                                  set = track : track.reduced ;
+                                                  string = track : _utils.strip track.reduced ;
                                                 } ( scripts ( fun seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
