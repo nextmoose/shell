@@ -16,6 +16,13 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			sed =
+			  _utils.visit
+			    {
+			      list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ;
+			      set = track : builtins.concatStringsSep "" [ " { " ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " ; " ] ) track.reduced ) ) " } " ] ;
+			      path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString ( path.reduced ) "\"" ] ;
+			    } structure.scripts ;
                         structure =
                           _utils.try
                             (
@@ -77,6 +84,7 @@
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
+					    ${ pkgs.coreutils }/bin/cp ${ builtins.toFile scripts.nix } &&
 					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
