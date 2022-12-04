@@ -15,6 +15,13 @@
                     nixpkgs : scripts : hook : at :
                       let
                         _utils = builtins.getAttr system utils.lib ;
+			names =
+			  _utils.visitor
+			    {
+			      list = track : builtins.concatLists track.reduced ;
+			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+			      string = track : [ ( builtins.writeText "script" track ) ] ;
+			    } strings ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         sed =
                           _utils.visit
@@ -24,6 +31,7 @@
                               string =
                                 track :
                                   ''
+				    ${ pkgs.coreutils }/bin/echo { name } &&
                                     ${ pkgs.gnused }/bin/sed \
                                       -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
                                       -w scripts/${ builtins.toString track.index } \
