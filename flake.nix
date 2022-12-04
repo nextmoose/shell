@@ -104,7 +104,7 @@
                                       }
                                   )
                                 ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.scripts.program4 }" ;
+                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.token }" ;
                             }
                   ) ;
               }
