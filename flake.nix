@@ -84,7 +84,7 @@
 					    ${ pkgs.coreutils }/bin/mkdir $out &&
 					    ${ pkgs.coreutils }/bin/cp --recursive . $out/src &&
 					    ${ pkgs.coreutils }/bin/chmod 0700 $out/src/generate.sh &&
-					    ${ pkgs.coreutils }/bin/cp ${ builtins.toFile scripts.nix sed } &&
+					    ${ pkgs.coreutils }/bin/cp ${ builtins.toFile "scripts.nix" sed } $out/src/scripts.nix &&
 					    makeWrapper \
 					      $out/src/generate.sh \
 					      $out/bin/generate \
