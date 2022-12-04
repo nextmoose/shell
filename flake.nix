@@ -19,8 +19,8 @@
                         sed =
                           _utils.visit
                             {
-                              list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
-                              set = track : builtins.concatStringsSep "" [ " { " ( builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : builtins.concatStringsSep "" [ " " name " = " value " ;" ] ) track.reduced ) ) ) " } " ] ;
+                              list = track : builtins.concatStringsSep " &&\n" track.reduced ;
+                              set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
                               string =
 			        track :
 				  ''
@@ -92,9 +92,9 @@
 					  ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
 				          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
 					  ${ pkgs.coreutils }/bin/mkdir scripts &&
-					  
+					  ${ sed } &&
 					  ${ pkgs.coreutils }/bin/touch scripts.nix &&
-					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
+					  ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
 				      ''
                                   )
                                 ] ;
