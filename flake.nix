@@ -19,8 +19,8 @@
                         sed =
                           _utils.visit
                             {
-                              list = track : builtins.concatStringsSep " &&\n" track.reduced ;
-                              set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
+                              list = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip track.reduced ) ;
+                              set = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip ( builtins.attrValues track.reduced ) ) ;
                               string =
 			        track :
 				  ''
