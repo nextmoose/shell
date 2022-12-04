@@ -20,7 +20,7 @@
                           _utils.visit
                             {
                               list = track : builtins.concatStringsSep "" [ " [ " ( builtins.concatStringsSep "" track.reduced ) " ] " ] ;
-                              set = track : builtins.concatStringsSep "" [ " { " " } " ] ;
+                              set = track : builtins.concatStringsSep "" [ " { " "type = \""${ builtins.typeOf track.reduced }"\" ; } " ] ;
                               path = track : builtins.concatStringsSep "" [ "\"" ( builtins.toString track.reduced ) "\"" ] ;
                               string = track : builtins.concatStringsSep "" [ "\"" track.reduced "\"" ] ;
                             } structure.scripts ;
