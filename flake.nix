@@ -25,7 +25,7 @@
 			        track :
 				  ''
 				    ${ pkgs.gnused }/bin/sed \
-				      -e "s#${ token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
+				      -e "s#${ str ucture.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
 				      -w scripts/${ track.index } \
 				      ${ track.reduced }
 				  '' ;
