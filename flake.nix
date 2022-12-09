@@ -16,20 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        sed =
-                          _utils.visit
-                            {
-                              list = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip track.reduced ) ;
-                              set = track : builtins.concatStringsSep " &&\n" ( builtins.map _utils.strip ( builtins.attrValues track.reduced ) ) ;
-                              string =
-                                track :
-                                  ''
-                                    ${ pkgs.gnused }/bin/sed \
-                                      -e "s#${ structure.token }#${ _utils.bash-variable "STRUCTURE_DIR" }#g" \
-                                      -w scripts/${ builtins.toString track.index } \
-                                      ${ pkgs.writeText "script" track.reduced }
-                                  '' ;
-                            } structure.scripts ;
                         structure =
                           _utils.try
                             (
