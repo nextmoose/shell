@@ -16,6 +16,20 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			sed-outer =
+			  _utils.visit
+			    {
+			      list = track :
+			      set = track :
+			      string =
+			        track :
+				  ''
+				    ${ pkgs.coreutils }/bin/echo \
+				      ${ pkgs.gnused }/bin/sed \
+				      -e "w${ builtins.toString track.index }"
+				      ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
+				  '' ;
+			    } scripts structure ;
                         structure =
                           _utils.try
                             (
@@ -78,6 +92,7 @@
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
                                           STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
+					  ${ sed-outer } &&
                                           ${ pkgs.coreutils }/bin/mkdir scripts &&
                                           ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix
                                       ''
