@@ -22,7 +22,7 @@
 			      list = track : builtins.concatStringsSep " \ # LIST\n" track.reduced ;
 			      set = track : builtins.concatStringsSep " \ # SET\n" ( builtins.attrValues track.reduced ) ;
 			      string =
-			        track
+			        track :
 				  _utils.strip
 				    ''
 				      # INNER ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
