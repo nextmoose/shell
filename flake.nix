@@ -15,6 +15,7 @@
                     nixpkgs : scripts : hook : at :
                       let
                         _utils = builtins.getAttr system utils.lib ;
+			files = fun : seed : builtins.map ( pkgs.writeText "script" ) ( strings fun seed ) ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 			strings =
 			  fun : seed :
