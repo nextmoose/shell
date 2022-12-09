@@ -64,7 +64,7 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ( builtins.toString track.index ) ] ;
+                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ;
                                                 } strings ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
