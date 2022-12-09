@@ -37,14 +37,14 @@
 					        list = track : builtins.concatLists track.reduced ;
 						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
 						string = track : [ { "${ builtins.toString track.index }" = builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ; } ] ;
-					      } scripts ( fun seed ) ;
+					      } scripts ;
                                           strings =
                                             _utils.visit
                                               {
                                                 list = track : builtins.concatLists track.reduced ;
                                                 set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                                 string = track : [ { "${ builtins.toString track.index }" = _utils.strip track.reduced ; } ] ;
-                                              } scripts ( fun seed ) ;
+                                              } scripts  ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -58,7 +58,7 @@
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
                                                   string = track : builtins.getElemAt names track.index ;
-                                                } strings ;
+                                                } ( fun ( seed ) ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
