@@ -19,18 +19,16 @@
 			sed-outer =
 			  _utils.visit
 			    {
-			      list = track : builtins.concatLists track.reduced ;
-			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+			      list = track : builtins.concatStringsSep " &&\n" track.reduced ;
+			      set = track : builtins.concatStringsSep " &&\n" ( builtins.attrValues track.reduced ) ;
 			      string =
 			        track :
-				  [
-				    ''
-				      ${ pkgs.coreutils }/bin/echo \
-				        ${ pkgs.gnused }/bin/sed \
-				        -e "w${ builtins.toString track.index }"
-				        ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
-				    ''
-				  ] ;
+				  ''
+				    ${ pkgs.coreutils }/bin/echo \
+				      ${ pkgs.gnused }/bin/sed \
+				      -e "w${ builtins.toString track.index }"
+				      ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
+				  '' ;
 			    } scripts structure ;
                         structure =
                           _utils.try
