@@ -25,12 +25,12 @@
                                 track :
                                   _utils.strip
                                     ''
-                                      # OUTER :  ${ builtins.concatStringsSep " /" ( builtins.map builtins.toString track.path ) }
+                                      # OUTER :  ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.gnused }/bin/sed \
                                         -e "wscripts/${ builtins.toString track.index }" \
                                         ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } &&
-                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index }" &&
+                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index } &&
                                       ${ pkgs.git }/bin/git add scripts/${ builtins.toString track.index }
                                     '' ;
                             } ( scripts structure ) ;
