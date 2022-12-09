@@ -16,6 +16,8 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			sed-inner =
+			  
                         sed-outer =
                           _utils.visit
                             {
@@ -28,6 +30,7 @@
                                       # OUTER :  ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.gnused }/bin/sed \
+					${ sed-inner track } \
                                         -e "wscripts/${ builtins.toString track.index }" \
                                         ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } &&
                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index } &&
