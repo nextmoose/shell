@@ -36,7 +36,7 @@
 					      {
 					        list = track : builtins.concatLists track.reduced ;
 						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-						string = track : [ { "${ builtins.toString index }" = builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString index ) token ] ; } ] ;
+						string = track : [ { "${ builtins.toString track.index }" = builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ; } ] ;
 					      } scripts ( fun seed ) ;
                                           strings =
                                             _utils.visit
