@@ -43,7 +43,7 @@
                                               {
                                                 list = track : builtins.concatLists track.reduced ;
                                                 set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                                string = track : [ { "${ builtins.toString index }" = _utils.strip track.reduced ; } ] ;
+                                                string = track : [ { "${ builtins.toString track.index }" = _utils.strip track.reduced ; } ] ;
                                               } scripts ( fun seed ) ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
