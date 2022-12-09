@@ -31,13 +31,20 @@
                                             din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
                                             note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
                                           } ;
+					  names =
+					    _utils.visit
+					      {
+					        list = track : builtins.concatLists track.reduced ;
+						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+						string = track : [ { "${ builtins.toString index }" = builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString index ) token ] ; } ] ;
+					      } scripts ( fun seed ) ;
                                           strings =
                                             _utils.visit
                                               {
-                                                list = track : track.reduced ;
-                                                set = track : track.reduced ;
-                                                string = track : _utils.strip track.reduced ;
-                                              } scripts structure ;
+                                                list = track : builtins.concatLists track.reduced ;
+                                                set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+                                                string = track : [ { "${ builtins.toString index }" = _utils.strip track.reduced ; } ] '
+                                              } scripts ( fun seed ) ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -50,7 +57,7 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ;
+                                                  string = track : builtins.getElemAt names track.index ;
                                                 } strings ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
