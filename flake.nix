@@ -23,12 +23,13 @@
                               set = track : builtins.concatStringsSep " && # SET\n" ( builtins.attrValues track.reduced ) ;
                               string =
                                 track :
-                                  ''
-                                    ${ pkgs.coreutils }/bin/echo \
-                                      ${ pkgs.gnused }/bin/sed \
-                                      -e "w${ builtins.toString track.index }" \
-                                      ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
-                                  '' ;
+                                  _utils.strip
+                                    ''
+                                      ${ pkgs.coreutils }/bin/echo \
+                                        ${ pkgs.gnused }/bin/sed \
+                                        -e "w${ builtins.toString track.index }" \
+                                        ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
+                                    '' ;
                             } ( scripts structure ) ;
                         structure =
                           _utils.try
