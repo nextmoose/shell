@@ -16,6 +16,14 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			strings =
+			  fun : seed :
+			    _utils.visitor
+			      {
+			        list = track : builtins.concatLists track.reduced ;
+			        set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+			        string = track : [ { "${ builtins.toString track.index }" = _utils.strip track.reduced ; } ] ;
+			      } scripts ( fun ( seed ) ) ;
                         structure =
                           _utils.try
                             (
@@ -31,20 +39,6 @@
                                             din = builtins.concatStringsSep "_" [ "DIN" structure-directory ] ;
                                             note = builtins.concatStringsSep "_" [ "NOTE" structure-directory ] ;
                                           } ;
-					  names =
-					    _utils.visit
-					      {
-					        list = track : builtins.concatLists track.reduced ;
-						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-						string = track : [ { "${ builtins.toString track.index }" = builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ; } ] ;
-					      } scripts ;
-                                          strings =
-                                            _utils.visit
-                                              {
-                                                list = track : builtins.concatLists track.reduced ;
-                                                set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                                string = track : [ { "${ builtins.toString track.index }" = _utils.strip track.reduced ; } ] ;
-                                              } scripts  ;
                                         structure-directory = builtins.concatStringsSep "_" [ "STRUCTURE" token ] ;
                                         temporary-directory = builtins.concatStringsSep "_" [ "TEMPORARY" token ] ;
                                         token = builtins.hashString "sha512" ( builtins.toString seed ) ;
@@ -53,12 +47,12 @@
                                             loggers = loggers ;
                                             pkgs = pkgs ;
                                             scripts =
-                                              _utils.visit
+                                              strings
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.getElemAt names track.index ;
-                                                } ( fun ( seed ) ) ;
+                                                  string = track : builtins.getElemAt strings track.index ;
+                                                } seed ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
