@@ -25,6 +25,7 @@
                                 track :
                                   _utils.strip
                                     ''
+                                      # OUTER :  ${ builtins.concatStringsSep " /" ( builtins.map builtins.toString track.path ) }
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.gnused }/bin/sed \
                                         -e "wscripts/${ builtins.toString track.index }" \
