@@ -29,7 +29,7 @@
 				      -e "w${ builtins.toString track.index }"
 				      ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }
 				  '' ;
-			    } scripts structure ;
+			    } ( scripts structure ) ;
                         structure =
                           _utils.try
                             (
