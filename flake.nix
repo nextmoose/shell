@@ -15,16 +15,7 @@
                     nixpkgs : scripts : hook : at :
                       let
                         _utils = builtins.getAttr system utils.lib ;
-			files = fun : seed : builtins.map ( pkgs.writeText "script" ) ( strings fun seed ) ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			strings =
-			  fun : seed :
-			    _utils.visitor
-			      {
-			        list = track : builtins.concatLists track.reduced ;
-			        set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-			        string = track : [ ( _utils.strip track.reduced ) ] ;
-			      } scripts ( fun ( seed ) ) ;
                         structure =
                           _utils.try
                             (
@@ -48,12 +39,12 @@
                                             loggers = loggers ;
                                             pkgs = pkgs ;
                                             scripts =
-                                              strings
+                                              _utils.visitor
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : builtins.getElemAt strings track.index ;
-                                                } seed ;
+                                                  string = track : pkgs.writeText "script" ( _utils.strip track.reduced ) ;
+                                                } scripts ( fun seed ) ;
                                             structure-directory = structure-directory ;
                                             temporary-directory = temporary-directory ;
                                             token = token ;
