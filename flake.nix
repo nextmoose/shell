@@ -35,7 +35,7 @@
 			    {
 			      list = track : builtins.concatLists track.reduced ;
 			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-			      string = track : [ "\"${ ( builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) structure.token ] }\"" ] ;
+			      string = track : [ "\"${ ( builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) structure.token ] ) }\"" ] ;
 			    } ( scripts structure ) ;
                         structure =
                           _utils.try
