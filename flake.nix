@@ -29,7 +29,7 @@
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "scripts : ${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
+                              string = track : "${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
 			search =
 			  _utils.visit
@@ -100,7 +100,7 @@
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
                                           ${ pkgs.coreutils }/bin/echo "\"${ _utils.bash-variable "3" }\"" > structure-directory.nix &&
-                                          ${ pkgs.coreutils }/bin/echo '${ scripts-expression }' > scripts.nix &&
+                                          ${ pkgs.coreutils }/bin/echo 'scripts : ${ scripts-expression }' > scripts.nix &&
 					  ${ pkgs.coreutils }/bin/echo "\"${ structure.token }\"" > token.nix &&
                                           ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix structure-directory.nix token.nix &&
                                           ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SCRIPT_DIRECTORY" }
