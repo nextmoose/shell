@@ -16,6 +16,7 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			listToString = list : builtins.concatStringsSep " " ( builtins.concatLists [ [ "[" ] list [ "]" ] ] ;
 			replace =
 			  _utils.visit
 			    {
@@ -28,7 +29,7 @@
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "scripts : builtins.replaceStrings [ ${ builtins.concatStringsSep " " search } ] [ ] ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
+                              string = track : "scripts : ${ listToString search } [ ] ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
 			search =
 			  _utils.visit
