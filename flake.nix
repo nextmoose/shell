@@ -17,42 +17,26 @@
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         scripts-expression =
+			replace =
+			  _utils.visit
+			    {
+			      list = track : builtins.concatLists track.reduction ;
+			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
+			      string = track : [ ( scripts track.reduction ) ] ;
+			    } ( scripts structure ) ;
                           _utils.visit
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
                               string = track : "scripts : builtins.replaceStrings [ ] [ ] ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
-                        sed-inner =
-                          _utils.visit
-                            {
-                              list = track : builtins.concatStringsSep " \ \n" track.reduced ;
-                              set = track : builtins.concatStringsSep " \ \n" ( builtins.attrValues track.reduced ) ;
-                              string =
-                                track :
-                                  _utils.strip
-                                    ''
-                                      -e "s#${ pkgs.writeScript "script" ( _utils.strip track.reduced ) }#scripts/${ builtins.toString track.index }#g"
-                                    '' ;
-                            } ( scripts structure ) ;
-                        sed-outer =
-                          _utils.visit
-                            {
-                              list = track : builtins.concatStringsSep " && \n" track.reduced ;
-                              set = track : builtins.concatStringsSep " && \n" ( builtins.attrValues track.reduced ) ;
-                              string =
-                                track :
-                                  _utils.strip
-                                    ''
-                                      # OUTER :  ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
-                                      ${ pkgs.coreutils }/bin/echo \
-                                        ${ pkgs.gnused }/bin/sed \
-                                        -e "wscripts/${ builtins.toString track.index }" \
-                                        ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } &&
-                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index } &&
-                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.git }/bin/git add scripts/${ builtins.toString track.index }
-                                    '' ;
-                            } ( scripts structure ) ;
+			search =
+			  _utils.visit
+			    {
+			      list = track : builtins.concatLists track.reduction ;
+			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
+			      string = track : [ ( builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) token ] ) ] ;
+			    } ( scripts structure ) ;
                         structure =
                           _utils.try
                             (
