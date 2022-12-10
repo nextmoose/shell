@@ -16,7 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        scripts-expression =
 			replace =
 			  _utils.visit
 			    {
@@ -24,6 +23,7 @@
 			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
 			      string = track : [ ( scripts track.reduction ) ] ;
 			    } ( scripts structure ) ;
+                        scripts-expression =
                           _utils.visit
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
