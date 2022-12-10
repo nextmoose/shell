@@ -15,18 +15,18 @@
                     nixpkgs : at : urandom : structure-directory : scripts : hook : inputs :
                       let
                         _utils = builtins.getAttr system utils.lib ;
-			fun = structure.scripts ;
+                        fun = structure.scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
-			  let
+                          let
                             _scripts =
                               _utils.try
                                 (
                                   seed :
                                     let
-				      unique = true ;
-				      unique2 =
-				        _utils.visit
+                                      unique = true ;
+                                      unique2 =
+                                        _utils.visit
                                           {
                                             list = track : builtins.all ( x : x ) track.reduced ;
                                             set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
@@ -45,7 +45,7 @@
                                                 track :
                                                   let
                                                     number = builtins.toString seed ;
-						    string = track.reduced structure ;
+                                                    string = track.reduced structure ;
                                                     token = builtins.hashString "sha512" number ;
                                                     in _utils.strip string ;
                                               list = track : track.reduced ;
@@ -57,19 +57,19 @@
                                           value = value seed ;
                                         }
                                   ) ;
-			    in
+                            in
                               {
                                 pkgs = pkgs ;
-				programs =
-				  _utils.visit
-				    {
-				      list = track : track.reduced ;
-				      set = track : track.reduced ;
-				      string =
-				        track :
+                                programs =
+                                  _utils.visit
+                                    {
+                                      list = track : track.reduced ;
+                                      set = track : track.reduced ;
+                                      string =
+                                        track :
                                           let
-					    script =
-					      ''
+                                            script =
+                                              ''
                                                 if [ ! -d ${ structure-directory } ]
                                                 then
                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -83,9 +83,9 @@
                                                 ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
                                                 ${ _utils.strip track.reduced }
                                               '' ;
-					    in "${ pkgs.writeShellScriptBin "script" script }/bin/script"
-				    } _scripts ;
-				scripts = _scripts ;
+                                            in "${ pkgs.writeShellScriptBin "script" script }/bin/script" ;
+                                    } _scripts ;
+                                scripts = _scripts ;
                                 urandom = urandom ;
                               } ;
                         in
