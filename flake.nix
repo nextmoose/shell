@@ -20,7 +20,7 @@
                           _utils.visit
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
-                              set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ;" ) track.reduced ) ) } }" ;
+                              set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
                               string = track : "builtins.readFile ./scripts/${ builtins.toString track.index }" ;
                             } ( scripts structure ) ;
                         sed-inner =
