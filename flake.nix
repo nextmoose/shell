@@ -16,19 +16,19 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			sed-inner =
-			  _utils.visit
-			    {
-			      list = track : builtins.concatStringsSep " \ # LIST\n" track.reduced ;
-			      set = track : builtins.concatStringsSep " \ # SET\n" ( builtins.attrValues track.reduced ) ;
-			      string =
-			        track :
-				  _utils.strip
-				    ''
-				      # INNER ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
-				      -e "s#${ pkgs.writeScript "script" ( _utils.strip track.reduced ) }#scripts/${ builtins.toString track.index }#g"
-				    '' ;
-			    } ( scripts structure ) ;
+                        sed-inner =
+                          _utils.visit
+                            {
+                              list = track : builtins.concatStringsSep " \ # LIST\n" track.reduced ;
+                              set = track : builtins.concatStringsSep " \ # SET\n" ( builtins.attrValues track.reduced ) ;
+                              string =
+                                track :
+                                  _utils.strip
+                                    ''
+                                      # INNER ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
+                                      -e "s#${ pkgs.writeScript "script" ( _utils.strip track.reduced ) }#scripts/${ builtins.toString track.index }#g"
+                                    '' ;
+                            } ( scripts structure ) ;
                         sed-outer =
                           _utils.visit
                             {
@@ -41,7 +41,7 @@
                                       # OUTER :  ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.gnused }/bin/sed \
-					${ sed-inner } \
+                                        ${ sed-inner } \
                                         -e "wscripts/${ builtins.toString track.index }" \
                                         ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } &&
                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index } &&
