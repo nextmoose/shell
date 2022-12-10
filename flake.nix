@@ -18,8 +18,7 @@
 			fun = structure.scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
-                          {
-                            pkgs = pkgs ;
+			  let
                             scripts =
                               _utils.try
                                 (
@@ -57,13 +56,13 @@
                                                         then
                                                           ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                                         fi &&
-                                                        LOCK_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                                        exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } &&
+                                                        LOG_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                                        exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                         ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
                                                         ${ _utils.strip ( track.reduced ) }
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
-                                                    in "${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script" ;
+                                                    in _utils.strips script ;
                                             } ( scripts structure ) ;
                                       in
                                         {
@@ -71,8 +70,19 @@
                                           value = value seed ;
                                         }
                                   ) ;
-                            urandom = urandom ;
-                          } ;
+			    in
+                              {
+                                pkgs = pkgs ;
+				programs =
+				  _utils.visit
+				    {
+				      list = track : track.reduced ;
+				      set = track : track.reduced ;
+				      string = track : pkgs.writeText "script" ( _utils.strip track.reduced ) ;
+				    } scripts ;
+				scripts = scripts ;
+                                urandom = urandom ;
+                              } ;
                         in
                           pkgs.mkShell
                             {
