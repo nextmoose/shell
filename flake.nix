@@ -45,21 +45,6 @@
                                                 track :
                                                   let
                                                     number = builtins.toString seed ;
-                                                    script =
-                                                      ''
-                                                        if [ ! -d ${ structure-directory } ]
-                                                        then
-                                                          ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                        fi &&
-                                                        if [ ! -d ${ structure-directory }/logs ]
-                                                        then
-                                                          ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                                        fi &&
-                                                        LOG_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                                        exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
-                                                        ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
-                                                        ${ _utils.strip track.reduced }
-                                                      '' ;
 						    string = track.reduced structure ;
                                                     token = builtins.hashString "sha512" number ;
                                                     in _utils.strip string ;
@@ -80,7 +65,25 @@
 				    {
 				      list = track : track.reduced ;
 				      set = track : track.reduced ;
-				      string = track : pkgs.writeText "script" ( _utils.strip track.reduced ) ;
+				      string =
+				        track :
+                                          let
+					    script =
+					      ''
+                                                if [ ! -d ${ structure-directory } ]
+                                                then
+                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                fi &&
+                                                if [ ! -d ${ structure-directory }/logs ]
+                                                then
+                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+                                                fi &&
+                                                LOG_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                                exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
+                                                ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
+                                                ${ _utils.strip track.reduced }
+                                              '' ;
+					    in "${ pkgs.writeShellScriptBin "script" script }/bin/script"
 				    } _scripts ;
 				scripts = _scripts ;
                                 urandom = urandom ;
