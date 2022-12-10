@@ -62,7 +62,7 @@
                                                         ${ _utils.strip ( track.reduced ) }
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
-                                                    in "${ pkgs.writeShellScriptBin "script" ( script ( _utils.strip track.reduced ) ) }/bin/script" ;
+                                                    in "${ pkgs.writeShellScriptBin "script" script }/bin/script" ;
                                             } ( scripts structure ) ;
                                       in
                                         {
