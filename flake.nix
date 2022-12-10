@@ -22,7 +22,7 @@
 			    {
 			      list = track : builtins.concatLists track.reduction ;
 			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
-			      string = track : [ "scripts.${ builtins.concatStringsSep "." path }" ] ;
+			      string = track : [ "scripts.${ builtins.concatStringsSep "." track.path }" ] ;
 			    } ( scripts structure ) ;
                         scripts-expression =
                           _utils.visit
