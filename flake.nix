@@ -12,7 +12,7 @@
               {
                 lib =
                   (
-                    nixpkgs : scripts : hook : at :
+                    nixpkgs : scripts : hook : inputs : at :
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
@@ -65,27 +65,8 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs =
-                                [
-                                  (
-                                    pkgs.writeShellScriptBin
-                                      "generate"
-                                      ''
-                                        SCRIPT_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ) &&
-                                          cd ${ _utils.bash-variable "SCRIPT_DIRECTORY" } &&
-                                          ${ pkgs.nix }/bin/nix flake init &&
-                                          ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
-                                          ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
-                                          ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
-                                          ${ pkgs.coreutils }/bin/echo "\"${ _utils.bash-variable "3" }\"" > structure-directory.nix &&
-                                          ${ pkgs.coreutils }/bin/echo 'scripts : ${ scripts-expression }' > scripts.nix &&
-					  ${ pkgs.coreutils }/bin/echo "\"${ structure.token }\"" > token.nix &&
-                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix structure-directory.nix token.nix &&
-                                          ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SCRIPT_DIRECTORY" }
-                                      ''
-                                    )
-                                ] ;
-                              shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.token }" ;
+			      buildInputs = inputs ( scripts structure ) ;
+			      shellHook = hook ( scripts structure ) ;
                             }
                   ) ;
               }
