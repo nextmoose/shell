@@ -69,7 +69,7 @@
                                         track :
                                           let
 					    token = "HELLO" ;
-					    number = 50 ;
+					    number = "50" ;
                                             script =
                                               ''
                                                 if [ ! -d ${ structure-directory } ]
