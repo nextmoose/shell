@@ -15,7 +15,6 @@
                     nixpkgs : at : urandom : structure-directory : scripts : hook : inputs :
                       let
                         _utils = builtins.getAttr system utils.lib ;
-                        fun = structure.scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
                           let
@@ -93,8 +92,8 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) ( inputs fun ) ) ;
-                              shellHook = hook fun ;
+                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) ( inputs structure.programs ) ) ;
+                              shellHook = hook structure.scripts ;
                             }
                   ) ;
               }
