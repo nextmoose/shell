@@ -27,8 +27,8 @@
 				      list = track : track.reduced ;
 				      set = track : track.reduced ;
 				      string = track : pkgs.writeText "script" ( utils.strip track.reduced ) ;
-				      urandom = urandom ;
 				    } ;
+				urandom = urandom ;
 			        utils = _utils ;
 			      } ;
                         in
