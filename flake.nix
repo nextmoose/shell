@@ -16,28 +16,6 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			listToString = list : builtins.concatStringsSep " " ( builtins.concatLists [ [ "[" ] list [ "]" ] ] ) ;
-			replace =
-			  _utils.visit
-			    {
-			      list = track : builtins.concatLists track.reducted ;
-			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-			      string = track : [ "scripts.${ builtins.concatStringsSep "." track.path }" ] ;
-			    } ( scripts structure ) ;
-                        scripts-expression =
-                          _utils.visit
-                            {
-                              list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
-                              set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "builtins.replaceStrings ${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
-                            } ( scripts structure ) ;
-			search =
-			  _utils.visit
-			    {
-			      list = track : builtins.concatLists track.reduced ;
-			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-			      string = track : [ "\"${ ( builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) structure.token ] ) }\"" ] ;
-			    } ( scripts structure ) ;
                         structure =
                           _utils.try
                             (
