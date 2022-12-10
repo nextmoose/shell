@@ -13,7 +13,8 @@
                 devShell =
 		  let
 		    pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-		    scripts = ( builtins.import scripts.tex ) scripts ;
+		    scripts-function = ( builtins.import scripts.tex ) ;
+		    scripts = scripts-function { boot = { hello = pkgs.mkShellScriptBin "${ pkgs.coreutils }/bin/echo HELLO" ; } ; } ;
 		    structure-directory = import ./structure-directory.nix ;
 		    token = import ./token.nix ;
 		      in pkgs.mkShell
