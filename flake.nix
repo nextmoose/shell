@@ -24,8 +24,7 @@
                                 (
                                   seed :
                                     let
-				      unique = true ;
-                                      unique2 =
+				      unique =
 				        _utils.visit
                                           {
                                             list = track : builtins.all ( x : x ) track.reduced ;
@@ -41,7 +40,9 @@
                                         seed :
                                           _utils.visit
                                             {
-                                              lambda =
+                                              list = track : track.reduced ;
+                                              set = track : track.reduced ;
+                                              string =
                                                 track :
                                                   let
                                                     number = builtins.toString seed ;
@@ -58,12 +59,10 @@
                                                         LOG_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                         exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                         ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
-                                                        ${ _utils.strip ( track.reduced structure ) }
+                                                        ${ _utils.strip track.reduced }
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
-                                                    in _utils.strip script ;
-                                              list = track : track.reduced ;
-                                              set = track : track.reduced ;
+                                                    in _utils.strip ( utils.strip track.reduced ) ;
                                             } scripts ;
                                       in
                                         {
