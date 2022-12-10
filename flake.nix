@@ -47,7 +47,7 @@
                                                     script =
 						      let
 				                        number = builtins.toString seed ;
-                                                        script :
+                                                        script =
                                                           ''
                                                             if [ ! -d ${ structure-directory } ]
                                                             then
