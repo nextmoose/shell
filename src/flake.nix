@@ -18,7 +18,7 @@
 		    token = import ./token.nix ;
 		      in pkgs.mkShell
 		        {
-			  buildInputs = builtins.attrValues ( builtins.map ( name : value : pkgs.writeShellScriptBin name value ; ) ( builtins.import ./inputs.nix scripts ) ;
+			  buildInputs = builtins.attrValues ( builtins.map ( name : value : pkgs.writeShellScriptBin name value ; ) ( builtins.import ./inputs.nix scripts ) ) ;
 			  shellHook = builtins.import ./hook.nix scripts ;
 			}
               }
