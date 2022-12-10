@@ -29,7 +29,7 @@
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
+                              string = track : "builtins.replaceStrings ${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
 			search =
 			  _utils.visit
