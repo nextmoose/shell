@@ -64,7 +64,7 @@
                                                     in _utils.strip string ;
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
-                                            } ( scripts structure ) ;
+                                            } scripts ;
                                       in
                                         {
                                           success = seed > 2 && unique ;
