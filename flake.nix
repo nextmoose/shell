@@ -64,7 +64,7 @@
                                                           '' ;
                                                         token = builtins.hashString "sha512" number ;
                                                         in "${ pkgs.writeShellScriptBin "script" ( script ( _utils.strip track.reduced ) ) }/bin/script" ;
-                                            } ;
+                                            } ( scripts structure ) ;
                                       in
                                         {
                                           success = seed > 2 && unique ;
