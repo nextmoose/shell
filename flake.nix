@@ -20,8 +20,8 @@
 			replace =
 			  _utils.visit
 			    {
-			      list = track : builtins.concatLists track.reduction ;
-			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
+			      list = track : builtins.concatLists track.reducted ;
+			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
 			      string = track : [ "scripts.${ builtins.concatStringsSep "." track.path }" ] ;
 			    } ( scripts structure ) ;
                         scripts-expression =
