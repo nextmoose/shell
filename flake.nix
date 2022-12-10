@@ -80,7 +80,7 @@
 				      list = track : track.reduced ;
 				      set = track : track.reduced ;
 				      string = track : pkgs.writeText "script" ( _utils.strip track.reduced ) ;
-				    } scripts ;
+				    } _scripts ;
 				scripts = _scripts ;
                                 urandom = urandom ;
                               } ;
