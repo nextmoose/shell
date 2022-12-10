@@ -16,7 +16,7 @@
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			listToString = list : builtins.concatStringsSep " " ( builtins.concatLists [ [ "[" ] list [ "]" ] ] ;
+			listToString = list : builtins.concatStringsSep " " ( builtins.concatLists [ [ "[" ] list [ "]" ] ] ) ;
 			replace =
 			  _utils.visit
 			    {
