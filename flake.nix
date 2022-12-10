@@ -47,7 +47,6 @@
                                       # OUTER :  ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.gnused }/bin/sed \
-                                        ${ sed-inner } \
                                         -e "wscripts/${ builtins.toString track.index }" \
                                         ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } &&
                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/chmod 0400 scripts/${ builtins.toString track.index } &&
