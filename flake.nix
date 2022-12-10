@@ -27,15 +27,14 @@
                                       unique =
 				        _utils.visit
                                           {
-                                            lambda =
+                                            list = track : builtins.all ( x : x ) track.reduced ;
+                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+                                            string =
                                               track :
                                                 let
                                                   number = builtins.toString seed ;
-						  string = track.reduced structure ;
                                                   token = builtins.hashString "sha512" number ;
-                                                  in builtins.replaceStrings [ token number ] [ "" "" ] string == string ;
-                                            list = track : builtins.all ( x : x ) track.reduced ;
-                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+                                                  in builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced ;
                                           } ( value 0 ) ;
                                       value =
                                         seed :
@@ -64,7 +63,7 @@
                                                     in _utils.strips script ;
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
-                                            } ( scripts structure ) ;
+                                            } scripts ;
                                       in
                                         {
                                           success = seed > 2 && unique ;
