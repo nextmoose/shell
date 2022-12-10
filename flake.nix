@@ -12,7 +12,7 @@
               {
                 lib =
                   (
-                    nixpkgs : scripts : hook : inputs : at :
+                    nixpkgs : at : structure-directory : scripts : hook : inputs :
                       let
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
