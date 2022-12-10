@@ -33,8 +33,8 @@
 			search =
 			  _utils.visit
 			    {
-			      list = track : builtins.concatLists track.reduction ;
-			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
+			      list = track : builtins.concatLists track.reduced ;
+			      set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
 			      string = track : [ ( builtins.concatStringsSep "_" [ "SCRIPT" ( builtins.toString track.index ) structure.token ] ) ] ;
 			    } ( scripts structure ) ;
                         structure =
