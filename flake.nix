@@ -33,7 +33,7 @@
                         in
                           pkgs.mkShell
                             {
-			      buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) ( inputs ( scripts structure ) ) ) ;
+			      buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.readFile value ) ) ( inputs ( scripts structure ) ) ) ;
 			      shellHook = hook ( scripts structure ) ;
                             }
                   ) ;
