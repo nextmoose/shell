@@ -19,7 +19,7 @@
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
 			  let
-                            scripts =
+                            _scripts =
                               _utils.try
                                 (
                                   seed :
@@ -81,7 +81,7 @@
 				      set = track : track.reduced ;
 				      string = track : pkgs.writeText "script" ( _utils.strip track.reduced ) ;
 				    } scripts ;
-				scripts = scripts ;
+				scripts = _scripts ;
                                 urandom = urandom ;
                               } ;
                         in
