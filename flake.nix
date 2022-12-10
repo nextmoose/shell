@@ -40,9 +40,7 @@
                                         seed :
                                           _utils.visit
                                             {
-                                              list = track : track.reduced ;
-                                              set = track : track.reduced ;
-                                              string =
+                                              lambda =
                                                 track :
                                                   let
                                                     number = builtins.toString seed ;
@@ -61,8 +59,11 @@
                                                         ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
                                                         ${ _utils.strip track.reduced }
                                                       '' ;
+						    string = track.reduced structure ;
                                                     token = builtins.hashString "sha512" number ;
-                                                    in _utils.strip track.reduced ;
+                                                    in _utils.strip string ;
+                                              list = track : track.reduced ;
+                                              set = track : track.reduced ;
                                             } ( scripts structure ) ;
                                       in
                                         {
