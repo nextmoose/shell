@@ -68,9 +68,7 @@
 			      buildInputs = [ ] ;
 			      shellHook =
 			        ''
-				  ${ pkgs.coreutils }/bin/echo HELLO ${ at } ${	structure-directory }
-
-
+				  ${ pkgs.coreutils }/bin/echo HELLO ${ at } ${	structure-directory }  ${ builtins.typeOf scripts }
 				'' ;
                             }
                   ) ;
