@@ -22,14 +22,14 @@
 			    {
 			      list = track : builtins.concatLists track.reduction ;
 			      set = track : builtins.concatLists ( builtins.attrValues track.reduction ) ;
-			      string = track : [ "scripts track.reduction" ] ;
+			      string = track : [ "scripts.${ builtins.concatStringsSep "." path }" ] ;
 			    } ( scripts structure ) ;
                         scripts-expression =
                           _utils.visit
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "scripts : ${ listToString search } [ ] ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
+                              string = track : "scripts : ${ listToString search } ${ listToString replace } ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
 			search =
 			  _utils.visit
