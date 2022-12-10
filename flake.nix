@@ -26,8 +26,8 @@
                         sed-inner =
                           _utils.visit
                             {
-                              list = track : builtins.concatStringsSep " \ # LIST\n" track.reduced ;
-                              set = track : builtins.concatStringsSep " \ # SET\n" ( builtins.attrValues track.reduced ) ;
+                              list = track : builtins.concatStringsSep " \ \n" track.reduced ;
+                              set = track : builtins.concatStringsSep " \ \n" ( builtins.attrValues track.reduced ) ;
                               string =
                                 track :
                                   _utils.strip
@@ -38,8 +38,8 @@
                         sed-outer =
                           _utils.visit
                             {
-                              list = track : builtins.concatStringsSep " && # LIST\n" track.reduced ;
-                              set = track : builtins.concatStringsSep " && # SET\n" ( builtins.attrValues track.reduced ) ;
+                              list = track : builtins.concatStringsSep " && \n" track.reduced ;
+                              set = track : builtins.concatStringsSep " && \n" ( builtins.attrValues track.reduced ) ;
                               string =
                                 track :
                                   _utils.strip
@@ -119,9 +119,10 @@
                                           ${ pkgs.coreutils }/bin/echo '${ scripts-expression }' > scripts.nix &&
                                           ${ pkgs.coreutils }/bin/mkdir scripts &&
                                           ${ sed-outer } &&
-                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
+                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
+                                          ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SCRIPT_DIRECTORY" }
                                       ''
-                                  )
+                                    )
                                 ] ;
                               shellHook = "${ pkgs.coreutils }/bin/echo HELLO! ${ structure.token }" ;
                             }
