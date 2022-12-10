@@ -63,7 +63,7 @@
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
                                                     in _utils.strip ( utils.strip track.reduced ) ;
-                                            } scripts ;
+                                            } ( scripts structure ) ;
                                       in
                                         {
                                           success = seed > 2 && unique ;
