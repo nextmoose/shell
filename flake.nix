@@ -70,6 +70,7 @@
                                           value = value seed ;
                                         }
                                   ) ;
+			    urandom = urandom ;
 		          } ;
                         in
                           pkgs.mkShell
