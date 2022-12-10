@@ -14,7 +14,7 @@
 		  let
 		    pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 		    scripts-function = ( builtins.import ./scripts.nix ) ;
-		    scripts = scripts-function { boot = { hello = pkgs.writeShellScriptBin "${ pkgs.coreutils }/bin/echo HELLO" ; } ; } ;
+		    scripts = scripts-function scripts ;
 		    structure-directory = import ./structure-directory.nix ;
 		    token = import ./token.nix ;
 		      in pkgs.mkShell
