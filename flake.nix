@@ -17,8 +17,8 @@
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
-			  {
-			    pkgs = pkgs ;
+                          {
+                            pkgs = pkgs ;
                             scripts =
                               _utils.try
                                 (
@@ -70,8 +70,8 @@
                                           value = value seed ;
                                         }
                                   ) ;
-			    urandom = urandom ;
-		          } ;
+                            urandom = urandom ;
+                          } ;
                         in
                           pkgs.mkShell
                             {
