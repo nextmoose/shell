@@ -48,7 +48,7 @@
                                                   in
                                                     {
                                                       success = builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
-                                                      value = pkgs.writeText "script" ( script ( utils.strip track.reduced ) )
+                                                      value = pkgs.writeText "script" ( script ( utils.strip track.reduced ) ) ;
                                                     }
 					    ) ;
                                     } ;
