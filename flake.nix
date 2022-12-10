@@ -117,7 +117,7 @@
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
                                           STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
-                                          ${ scripts-expression } > scripts.nix &&
+                                          ${ pkgs.coreutils }/bin/echo '${ scripts-expression }' > scripts.nix &&
                                           ${ pkgs.coreutils }/bin/mkdir scripts &&
                                           ${ sed-outer } &&
                                           ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix
