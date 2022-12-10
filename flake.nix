@@ -65,8 +65,11 @@
                         in
                           pkgs.mkShell
                             {
-			      buildInputs = inputs ( scripts structure ) ;
-			      shellHook = hook ( scripts structure ) ;
+			      buildInputs = [ ] ;
+			      shellHook =
+			        ''
+				  ${ pkgs.coreutils }/bin/echo HELLO
+				'' ;
                             }
                   ) ;
               }
