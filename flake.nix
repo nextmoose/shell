@@ -66,10 +66,7 @@
                           pkgs.mkShell
                             {
 			      buildInputs = [ ] ;
-			      shellHook =
-			        ''
-				  ${ ( scripts structure ).hello }
-				'' ;
+			      shellHook = hook ( scripts structure ) ;
                             }
                   ) ;
               }
