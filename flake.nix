@@ -21,7 +21,7 @@
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "builtins.readFile ./scripts/${ builtins.toString track.index }" ;
+                              string = track : "builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }" ;
                             } ( scripts structure ) ;
                         sed-inner =
                           _utils.visit
@@ -116,8 +116,6 @@
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
                                           STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
                                           ${ pkgs.coreutils }/bin/echo '${ scripts-expression }' > scripts.nix &&
-                                          ${ pkgs.coreutils }/bin/mkdir scripts &&
-                                          ${ sed-outer } &&
                                           ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
                                           ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SCRIPT_DIRECTORY" }
                                       ''
