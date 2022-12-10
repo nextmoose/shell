@@ -25,18 +25,7 @@
                                 (
                                   seed :
                                     let
-                                      unique =
-                                        _utils.visit
-                                          {
-                                            list = track : builtins.all ( x : x ) track.reduced ;
-                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                            string =
-                                              track :
-                                                let
-                                                  number = builtins.toString seed ;
-                                                  token = builtins.hashString "sha512" number ;
-                                                  in builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced ;
-                                          } value 0 ;
+                                      unique = true ;
                                       value =
                                         seed :
                                           _utils.visit
