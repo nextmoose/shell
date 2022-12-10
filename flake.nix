@@ -26,7 +26,7 @@
                                   seed :
                                     let
                                       unique =
-                                        _utils.visitor
+                                        _utils.visit
                                           {
                                             list = track : builtins.all ( x : x ) track.reduced ;
                                             set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
@@ -39,7 +39,7 @@
                                           } value 0 ;
                                       value =
                                         seed :
-                                          _utils.visitor
+                                          _utils.visit
                                             {
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
