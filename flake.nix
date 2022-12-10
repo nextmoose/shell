@@ -20,6 +20,7 @@
 			  let
 			    in
 			      {
+			        pkgs = builtins.getAttr system nixpkgs.legacyPackage ;
 			        scripts =
 				  _utils.visitor
 				    {
