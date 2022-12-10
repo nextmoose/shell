@@ -32,8 +32,8 @@
                                             (
                                               seed :
                                                 let
+						  number = builtins.toString seed ;
                                                   script =
-						    number = builtins.toString seed ;
                                                     script :
                                                       ''
                                                         if [ ! -d ${ structure-directory } ]
