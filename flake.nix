@@ -27,22 +27,21 @@
                                       unique =
 				        _utils.visit
                                           {
-                                            list = track : builtins.all ( x : x ) track.reduced ;
-                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                            string =
+                                            lambda =
                                               track :
                                                 let
                                                   number = builtins.toString seed ;
+						  string = track.reduced structure ;
                                                   token = builtins.hashString "sha512" number ;
-                                                  in builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced ;
+                                                  in builtins.replaceStrings [ token number ] [ "" "" ] string == string ;
+                                            list = track : builtins.all ( x : x ) track.reduced ;
+                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                           } ( value 0 ) ;
                                       value =
                                         seed :
                                           _utils.visit
                                             {
-                                              list = track : track.reduced ;
-                                              set = track : track.reduced ;
-                                              string =
+                                              lambda =
                                                 track :
                                                   let
                                                     number = builtins.toString seed ;
@@ -59,10 +58,12 @@
                                                         LOG_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                         exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                         ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
-                                                        ${ _utils.strip ( track.reduced ) }
+                                                        ${ _utils.strip ( track.reduced structure ) }
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
                                                     in _utils.strips script ;
+                                              list = track : track.reduced ;
+                                              set = track : track.reduced ;
                                             } ( scripts structure ) ;
                                       in
                                         {
