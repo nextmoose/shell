@@ -65,7 +65,7 @@
                         in
                           pkgs.mkShell
                             {
-			      buildInputs = [ ] ;
+			      buildInputs = inputs ( scripts structure ) ;
 			      shellHook = hook ( scripts structure ) ;
                             }
                   ) ;
