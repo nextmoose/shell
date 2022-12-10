@@ -21,7 +21,7 @@
                             {
                               list = track : "[ ${ builtins.concatStringsSep " " track.reduced } ]" ;
                               set = track : "{ ${ builtins.concatStringsSep "" ( builtins.attrValues ( builtins.mapAttrs ( name : value : "${ name } = ${ value } ; " ) track.reduced ) ) }}" ;
-                              string = track : "scripts : builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) }" ;
+                              string = track : "scripts : builtins.replaceStrings [ ] [ ] ( builtins.readFile ${ pkgs.writeText "script" ( _utils.strip track.reduced ) } )" ;
                             } ( scripts structure ) ;
                         sed-inner =
                           _utils.visit
