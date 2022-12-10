@@ -61,7 +61,7 @@
                                                         ${ _utils.strip ( track.reduced structure ) }
                                                       '' ;
                                                     token = builtins.hashString "sha512" number ;
-                                                    in _utils.strips script ;
+                                                    in _utils.strip script ;
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
                                             } scripts ;
