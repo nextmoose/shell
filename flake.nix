@@ -17,27 +17,27 @@
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structure =
-			  let
+                          let
                             scripts =
-			      _utils.try
-			        (
-				  seed :
-				    let
-				      unique =
-				        _utils.visitor
-					  {
-					    list = track : builtins.all ( x : x ) track.reduced ;
-					    set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-					    string =
-					      track :
-					        let
-						  number = builtins.toString seed ;
-						  token = builtins.hashString "sha512" number ;
-						  in builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced ;
-					  } value 0 ;
+                              _utils.try
+                                (
+                                  seed :
+                                    let
+                                      unique =
+                                        _utils.visitor
+                                          {
+                                            list = track : builtins.all ( x : x ) track.reduced ;
+                                            set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+                                            string =
+                                              track :
+                                                let
+                                                  number = builtins.toString seed ;
+                                                  token = builtins.hashString "sha512" number ;
+                                                  in builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced ;
+                                          } value 0 ;
                                       value =
-				        seed :
-				          _utils.visitor
+                                        seed :
+                                          _utils.visitor
                                             {
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
@@ -45,8 +45,8 @@
                                                 track :
                                                   let
                                                     script =
-						      let
-				                        number = builtins.toString seed ;
+                                                      let
+                                                        number = builtins.toString seed ;
                                                         script =
                                                           ''
                                                             if [ ! -d ${ structure-directory } ]
@@ -62,7 +62,7 @@
                                                             ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
                                                             ${ _utils.strip ( track.reduced ) }
                                                           '' ;
-				                        token = builtins.hashString "sha512" number ;
+                                                        token = builtins.hashString "sha512" number ;
                                                         in "${ pkgs.writeShellScriptBin "script" ( script ( _utils.strip track.reduced ) ) }/bin/script" ;
                                             } ;
                                       in
