@@ -33,6 +33,7 @@
                                               seed :
                                                 let
                                                   script =
+						    number = builtins.toString seed ;
                                                     script :
                                                       ''
                                                         if [ ! -d ${ structure-directory } ]
@@ -42,12 +43,16 @@
                                                         if [ ! -d ${ structure-directory }/logs ]
                                                         then
                                                           ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                                        fi
+                                                        fi &&
+							LOCK_${ token }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+							exec ${ number } <> ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } &&
+							${ pkgs.flock }/bin/flock --nonblock ${ number } &&
+							${ builtins.writeShellScriptBin "script" ( _utils.strip ( track.reduced ) ) }
                                                       '' ;
                                                     token = builtins.hashString "sha512" ( builtins.toString seed ) ;
                                                   in
                                                     {
-                                                      success = builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
+                                                      success = builtins.replaceStrings [ token number ] [ "" "" ] track.reduced == track.reduced && seed > 2 ;
                                                       value = pkgs.writeText "script" ( script ( utils.strip track.reduced ) ) ;
                                                     }
 					    ) ;
