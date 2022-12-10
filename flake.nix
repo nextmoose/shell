@@ -114,9 +114,10 @@
                                           ${ pkgs.coreutils }/bin/cp ${ ./src/flake.nix } flake.nix &&
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "1" }" > hook.nix &&
                                           ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "2" }" > inputs.nix &&
-                                          STRUCTURE_DIRECTORY="${ _utils.bash-variable "3" }" &&
-                                          ${ pkgs.coreutils }/bin/echo '${ builtins.toJSON scripts-expression }' | ${ pkgs.jq }/bin/jq --raw-output "." > scripts.nix &&
-                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix &&
+                                          ${ pkgs.coreutils }/bin/echo "${ _utils.bash-variable "3" }" > structure-directory.nix &&
+                                          ${ pkgs.coreutils }/bin/echo '${ scripts-expression }' > scripts.nix &&
+					  ${ pkgs.coreutils }/bin/echo '${ structure.token }' > token.nix &&
+                                          ${ pkgs.coreutils }/bin/chmod 0400 flake.nix hook.nix inputs.nix scripts.nix structure-directory.nix token.nix &&
                                           ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SCRIPT_DIRECTORY" }
                                       ''
                                     )
