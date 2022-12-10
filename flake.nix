@@ -32,7 +32,6 @@
                                 track :
                                   _utils.strip
                                     ''
-                                      # INNER ${ builtins.concatStringsSep " / " ( builtins.map builtins.toString track.path ) }
                                       -e "s#${ pkgs.writeScript "script" ( _utils.strip track.reduced ) }#scripts/${ builtins.toString track.index }#g"
                                     '' ;
                             } ( scripts structure ) ;
