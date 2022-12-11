@@ -51,7 +51,7 @@
                                                 {
                                                   list = track : track.reduced ;
                                                   set = track : track.reduced ;
-                                                  string = track : pkgs.writeShellScriptBin "script" track.reduced ;
+                                                  string = track : track.reduced ;
                                                 } _scripts ;
                                             scripts = _scripts ;
                                             urandom = urandom ;
@@ -65,7 +65,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.trace ( builtins.typeOf value ) value ) ) ( inputs structure.programs ) ) ;
+                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) ( inputs structure.programs ) ) ;
                               shellHook = hook structure.scripts ;
                             }
                   ) ;
