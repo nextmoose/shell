@@ -69,8 +69,8 @@
                                                             0400 \
                                                             ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out \
                                                             ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err &&
-                                                            ${ pkgs.findutils }/bin/find ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } -type f -exec ${ pkgs.coreutils }/bin/shred --force --release {} \; &&
-                                                            ${ pkgs.findutils }/bin/rm --recursive --force ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }
+                                                            ${ pkgs.findutils }/bin/find ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary -type f -exec ${ pkgs.coreutils }/bin/shred --force --release {} \; &&
+                                                            ${ pkgs.findutils }/bin/rm --recursive --force ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary
                                                           EOF
                                                             ) | ${ at } now 2> /dev/null
                                                           } &&
