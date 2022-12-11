@@ -21,6 +21,18 @@
                             (
                               seed :
                                 let
+                                  is-not-duplicate =
+                                    _utils.visit
+                                      {
+                                        list = track : builtins.all ( x : x ) track.reduced ;
+                                        set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced )
+                                        string =
+                                          track :
+                                            let
+                                              number = builtins.toString seed ;
+                                              token = builtins.hashString "sha512" number ;
+                                              in builtins.replaceStrings [ number token ] [ "" "" ] track.reduced == track.reduced ;
+                                      } ( builtins.getAttr "scripts" ( structure 0 ) ) ;
                                   structure =
                                     seed :
                                       let
@@ -33,20 +45,20 @@
                                             } scripts ;
                                         in
                                           {
-					    pkgs = pkgs ;
-					    programs =
-					      _utils.visit
-					        {
-						  list = track : track.reduced ;
-						  set = track : track.reduced ;
-						  string = track : pkgs.writeShellScriptBin "script" track.reduced ;
-						} _scripts ;
-					    scripts = _scripts ;
-					    urandom = urandom ;
+                                            pkgs = pkgs ;
+                                            programs =
+                                              _utils.visit
+                                                {
+                                                  list = track : track.reduced ;
+                                                  set = track : track.reduced ;
+                                                  string = track : pkgs.writeShellScriptBin "script" track.reduced ;
+                                                } _scripts ;
+                                            scripts = _scripts ;
+                                            urandom = urandom ;
                                           } ;
                                   in
                                     {
-                                      success = seed > 2 ;
+                                      success = seed > 2 && is-not-duplicate ;
                                       value = structure seed ;
                                     }
                             ) ;
