@@ -48,7 +48,7 @@
                                       success = seed > 2 ;
                                       value = structure seed ;
                                     }
-                            )
+                            ) ;
                         in
                           pkgs.mkShell
                             {
