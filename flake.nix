@@ -92,6 +92,7 @@
 					    {
 					      commands = commands ;
 					      numbers = numbers ;
+					      pkgs = pkgs ;
 					      procedures = procedures ;
 					      variables = variables ;
 					    } ;
