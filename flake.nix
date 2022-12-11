@@ -25,7 +25,7 @@
                                     _utils.visit
                                       {
                                         list = track : builtins.all ( x : x ) track.reduced ;
-                                        set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced )
+                                        set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                         string =
                                           track :
                                             let
