@@ -63,7 +63,9 @@
                                                             ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                                           fi &&
                                                           ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/log ) &&
-                                                          ${ track.reduced }
+                                                          exec ${ number }<>${ utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
+                                                          ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
+                                                          ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script
                                                         '' ;
                                                       token = builtins.hashString "sha512" number ;
                                                       in builtins.toString ( pkgs.writeShellScriptBin "script" script ) ;
