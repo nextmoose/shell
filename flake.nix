@@ -54,6 +54,27 @@
                                                       number = builtins.toString seed ;
                                                       script =
                                                         ''
+							  cleanup ( )
+							  {
+							    if
+							      [ ! -z ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } ] &&
+							      [ -d ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } ]  &&
+							      [ -f ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err ] &&
+							      [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err )" ]
+							    then
+							      exit ${ number }
+							    fi &&
+							    ( ${ pkgs.coreutils }/bin/cat <<EOF
+							  ${ pkgs.coreutils }/bin/chmod \
+							    0400 \
+							    ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out \
+							    ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err &&
+							    ${ pkgs.findutils }/bin/find ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } -type f -exec ${ coreutils }/bin/shred --force --release {} \; &&
+							    ${ pkgs.findutils }/bin/rm --recursive --force ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }
+							  EOF
+							    ) | ${ at } now
+							  } &&
+							  trap cleanup EXIT &&
                                                           if [ ! -d ${ structure-directory } ]
                                                           then
                                                             ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -65,6 +86,7 @@
                                                           ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                           exec ${ number }<>${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                           ${ pkgs.flock }/bin/flock -n ${ number } &&
+							  ${ pkgs.coreutils }/bin/mkdir ${ _util.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary 
                                                           ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) 2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
                                                         '' ;
                                                       token = builtins.hashString "sha512" number ;
