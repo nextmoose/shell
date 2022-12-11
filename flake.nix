@@ -43,19 +43,45 @@
                                               list = track : track.reduced ;
                                               set = track : track.reduced ;
                                             } scripts ;
-                                        in
-                                          {
-                                            pkgs = pkgs ;
-                                            programs =
-                                              _utils.visit
-                                                {
-                                                  list = track : track.reduced ;
-                                                  set = track : track.reduced ;
-                                                  string = track : track.reduced ;
+                                          programs =
+                                            _utils.visit
+                                              {
+                                                list = track : track.reduced ;
+                                                set = track : track.reduced ;
+                                                string =
+                                                  track :
+                                                    let
+                                                      number = builtins.toString seed ;
+                                                      script =
+                                                        ''
+                                                          if [ ! -d ${ structures-dir } ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structures-dir }
+                                                          fi &&
+                                                          if [ ! -d ${ structures-dir }/logs ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structures-dir }/logs
+                                                          fi &&
+                                                          ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structures-dir }/log ) &&
+                                                          ${ track.reduced }
+                                                        '' ;
+                                                      token = builtins.hashString "sha512" number ;
+                                                      in builtins.toString ( pkgs.writeShellScriptBin "script" script ) ;
                                                 } _scripts ;
-                                            scripts = _scripts ;
-                                            urandom = urandom ;
-                                          } ;
+                                          in
+                                            {
+					      commands =
+					        _utils.visit
+						  {
+						    list = track : track.reduced ;
+						    set = track : track.reduced ;
+						    string = track : "${ track.reduced }/bin/script" ;
+						  } ;
+                                              pkgs = pkgs ;
+                                              programs = programs ;
+                                              scripts = _scripts ;
+                                              urandom = urandom ;
+                                            } ;
                                   in
                                     {
                                       success = seed > 2 && is-not-duplicate ;
