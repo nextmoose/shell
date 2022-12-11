@@ -42,7 +42,7 @@
 						} _scripts ;
 					    scripts = _scripts ;
 					    urandom = urandom ;
-                                          }
+                                          } ;
                                   in
                                     {
                                       success = seed > 2 ;
