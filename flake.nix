@@ -108,8 +108,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.readFile value ) ) ( inputs fun.commands ) ) ;
-                              shellHook = hook fun.scripts ;
+                              shellHook = hook _scripts ;
                             }
                   ) ;
               }
