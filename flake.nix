@@ -65,7 +65,7 @@
                                                           ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                           exec ${ number }<>${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                           ${ pkgs.flock }/bin/flock -n ${ number } &&
-                                                          ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee /dev/stdout" )
+                                                          ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                                         '' ;
                                                       token = builtins.hashString "sha512" number ;
                                                       in builtins.toString ( pkgs.writeShellScriptBin "script" script ) ;
