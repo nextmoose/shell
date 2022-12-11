@@ -33,6 +33,7 @@
                                             } scripts ;
                                         in
                                           {
+					    pkgs = pkgs ;
 					    programs =
 					      _utils.visit
 					        {
