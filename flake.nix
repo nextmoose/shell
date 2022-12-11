@@ -36,8 +36,8 @@
 					    programs =
 					      _utils.visit
 					        {
-						  list = track : track.reduction ;
-						  set = track : track.reduction ;
+						  list = track : track.reduced ;
+						  set = track : track.reduced ;
 						  string = track : pkgs.writeShellScriptBin "script" track.reduced ;
 						} _scripts ;
 					    scripts = _scripts ;
