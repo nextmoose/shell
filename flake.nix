@@ -63,7 +63,7 @@
                                                             ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                                           fi &&
                                                           ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/log ) &&
-                                                          exec ${ number }<>${ utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
+                                                          exec ${ number }<>${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
                                                           ${ pkgs.flock }/bin/flock --nonblock ${ number } &&
                                                           ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script
                                                         '' ;
