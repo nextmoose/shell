@@ -14,112 +14,102 @@
                   (
                     nixpkgs : at : urandom : structure-directory : scripts : hook : inputs :
                       let
+			_scripts =
+			  _utils.visit
+			    {
+			      lambda =
+			        track :
+				  let
+				    base =
+				      {
+				        numbers = [ "structure" "logs" "log" "stderr" ] ;
+					variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
+				      } ;
+				    one =
+				      let
+				        numbers = builtins.foldl' reducers.numbers { } base.numbers ;
+					reducers =
+					  let
+					    string = track.reduced zero ;
+					    in
+					      {
+					        numbers =
+					          previous : current :
+					            _utils.try
+						      (
+						        seed :
+						          let
+					                    seed-string = builtins.toString seed ;
+						            in
+							      {
+						                success =
+							          let
+							            is-not-in-string = builtins.replace [ seed-string ] [ "" ] string == string ;
+							            is-not-duplicate = builtins.all ( p : p != seed-string ) previous ;
+							            is-not-small = seed > 2 ;
+							            in is-not-duplicate && is-not-small && is-not-in-string ;
+							        value = seed-string ;
+						              }
+						      ) ;
+						variables =
+						  previous : current :
+						    _utils.try
+						      (
+						        seed :
+							  let
+							    hash-string = builtins.hashString "sha512" ( builtins.toString seed ) ;
+							    in
+							      {
+							        success =
+								  let
+								    is-not-in-string = builtins.replace [ hash-string ] [ "" ] string = string ;
+								    is-not-duplicate = builtins.all ( p : p != hash-string ) previous ;
+								    in is-not-in-string && is-not-duplicate ;
+								value = hash-string ;
+							      }
+						      ) ;
+					  } ;
+					variables = builtins.foldl' reducers.variables { } base.variables ;
+				        in structure numbers variables ;
+				    structure =
+				      numbers : variables :
+				        let
+					  commands =
+					    _utils.visit
+					      {
+					      } procedures ;
+					  procedures =
+					    _utils.visit
+					      {
+					        list = track : track.reduced ;
+						set = track : track.reduced ;
+						string =
+						  ''
+						    ${ pkgs.makeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script
+						  ''
+					      } _scripts ;
+					  in
+					    {
+					      commands = commands ;
+					      numbers = numbers ;
+					      procedures = procedures ;
+					      variables = variables ;
+					    } ;
+			            zero =
+				      let
+				        mapper = item : { name = item ; value = "" ; } ;
+					in structure ( builtins.listToAttrs ( builtins.map mapper base.numbers ) ) ( builtins.listToAttrs ( builtins.map mapper base.variables ) ) ; 
+				    in track.reduced one ;
+			      list = track : track.reduced ;
+			      set = track : track.reduced ;
+			    } scripts ;
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        structure =
-                          _utils.try
-                            (
-                              seed :
-                                let
-                                  is-not-duplicate =
-                                    _utils.visit
-                                      {
-                                        list = track : builtins.all ( x : x ) track.reduced ;
-                                        set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-                                        string =
-                                          track :
-                                            let
-                                              number = builtins.toString seed ;
-                                              token = builtins.hashString "sha512" number ;
-                                              in builtins.replaceStrings [ number token ] [ "" "" ] track.reduced == track.reduced ;
-                                      } ( builtins.getAttr "scripts" ( structure 0 ) ) ;
-                                  structure =
-                                    seed :
-                                      let
-                                        _scripts =
-                                          _utils.visit
-                                            {
-                                              lambda = track : track.reduced ( structure seed ) ;
-                                              list = track : track.reduced ;
-                                              set = track : track.reduced ;
-                                            } scripts ;
-                                          programs =
-                                            _utils.visit
-                                              {
-                                                list = track : track.reduced ;
-                                                set = track : track.reduced ;
-                                                string =
-                                                  track :
-                                                    let
-                                                      number = builtins.toString seed ;
-                                                      script =
-                                                        ''
-                                                          cleanup ( )
-                                                          {
-                                                            if
-                                                              [ ! -z ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } ] &&
-                                                              [ -d ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) } ]  &&
-                                                              [ -f ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err ] &&
-                                                              [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err )" ]
-                                                            then
-                                                              exit ${ number }
-                                                            fi &&
-                                                            ( ${ pkgs.coreutils }/bin/cat <<EOF
-                                                          ${ pkgs.coreutils }/bin/chmod \
-                                                            0400 \
-                                                            ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out \
-                                                            ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err &&
-                                                            if [ -d ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary ]
-                                                            then
-                                                              ${ pkgs.findutils }/bin/find ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary -type f -exec ${ pkgs.coreutils }/bin/shred --force --release {} \; &&
-                                                              ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary
-                                                            fi
-                                                          EOF
-                                                            ) | ${ at } now 2> /dev/null
-                                                          } &&
-                                                          trap cleanup EXIT &&
-                                                          if [ ! -d ${ structure-directory } ]
-                                                          then
-                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                          fi &&
-                                                          if [ ! -d ${ structure-directory }/logs ]
-                                                          then
-                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                                          fi &&
-                                                          ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                                          exec ${ number }<>${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/lock &&
-                                                          ${ pkgs.flock }/bin/flock -n ${ number } &&
-                                                          ${ if builtins.replaceStrings [ ( _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) ) ] [ "" ] track.reduced == track.reduced then "${ pkgs.coreutils }/bin/mkdir ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/temporary" else "${ pkgs.coreutils }/bin/true" } &&
-                                                          ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) 2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable ( builtins.concatStringsSep "_" [ "LOG" token ] ) }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
-                                                        '' ;
-                                                      token = builtins.hashString "sha512" number ;
-                                                      in builtins.toString ( pkgs.writeShellScriptBin "script" script ) ;
-                                                } _scripts ;
-                                          in
-                                            {
-                                              commands =
-                                                _utils.visit
-                                                  {
-                                                    list = track : track.reduced ;
-                                                    set = track : track.reduced ;
-                                                    string = track : "${ track.reduced }/bin/script" ;
-                                                  } programs ;
-                                              pkgs = pkgs ;
-                                              programs = programs ;
-                                              scripts = _scripts ;
-                                              urandom = urandom ;
-                                            } ;
-                                  in
-                                    {
-                                      success = seed > 2 && is-not-duplicate ;
-                                      value = structure seed ;
-                                    }
-                            ) ;
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.readFile value ) ) ( inputs structure.commands ) ) ;
-                              shellHook = hook structure.scripts ;
+                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.readFile value ) ) ( inputs fun.commands ) ) ;
+                              shellHook = hook fun.scripts ;
                             }
                   ) ;
               }
