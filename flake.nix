@@ -70,13 +70,13 @@
                                                 } _scripts ;
                                           in
                                             {
-					      commands =
-					        _utils.visit
-						  {
-						    list = track : track.reduced ;
-						    set = track : track.reduced ;
-						    string = track : "${ track.reduced }/bin/script" ;
-						  } programs ;
+                                              commands =
+                                                _utils.visit
+                                                  {
+                                                    list = track : track.reduced ;
+                                                    set = track : track.reduced ;
+                                                    string = track : "${ track.reduced }/bin/script" ;
+                                                  } programs ;
                                               pkgs = pkgs ;
                                               programs = programs ;
                                               scripts = _scripts ;
