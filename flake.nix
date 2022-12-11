@@ -62,7 +62,7 @@
 							      {
 							        success =
 								  let
-								    is-not-in-string = builtins.replace [ hash-string ] [ "" ] string = string ;
+								    is-not-in-string = builtins.replace [ hash-string ] [ "" ] string == string ;
 								    is-not-duplicate = builtins.all ( p : p != hash-string ) previous ;
 								    in is-not-in-string && is-not-duplicate ;
 								value = hash-string ;
@@ -86,7 +86,7 @@
 						string =
 						  ''
 						    ${ pkgs.makeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script
-						  ''
+						  '' ;
 					      } _scripts ;
 					  in
 					    {
