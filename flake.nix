@@ -54,15 +54,15 @@
                                                       number = builtins.toString seed ;
                                                       script =
                                                         ''
-                                                          if [ ! -d ${ structures-dir } ]
+                                                          if [ ! -d ${ structure-directory } ]
                                                           then
-                                                            ${ pkgs.coreutils }/bin/mkdir ${ structures-dir }
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                           fi &&
-                                                          if [ ! -d ${ structures-dir }/logs ]
+                                                          if [ ! -d ${ structure-directory }/logs ]
                                                           then
-                                                            ${ pkgs.coreutils }/bin/mkdir ${ structures-dir }/logs
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                                           fi &&
-                                                          ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structures-dir }/log ) &&
+                                                          ${ builtins.concatStringsSep "_" [ "LOG" token ] }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/log ) &&
                                                           ${ track.reduced }
                                                         '' ;
                                                       token = builtins.hashString "sha512" number ;
