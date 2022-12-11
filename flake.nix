@@ -65,7 +65,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) ( inputs structure.programs ) ) ;
+                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( builtins.readFile value ) ) ( inputs structure.programs ) ) ;
                               shellHook = hook structure.scripts ;
                             }
                   ) ;
