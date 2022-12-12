@@ -14,7 +14,6 @@
                   (
                     nixpkgs : at : urandom : structure-directory : scripts : hook : inputs :
                       let
-			_scripts =
                         _utils = builtins.getAttr system utils.lib ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
