@@ -74,6 +74,12 @@
                                             in track.reduced _structure ;
                                         variables = builtins.foldl reducers.variables { } base.variables ;
                                         in track.reduced ( structure numbers variables ) ;
+                                    in string ;
+                            list = track : track.reduced ;
+                            set = track : track.reduced ;
+                          } scripts ;
+                        _utils = builtins.getAttr system utils.lib ;
+                        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                                     structure =
                                       numbers : variables :
                                         let
@@ -108,16 +114,10 @@
                                               pkgs = pkgs ;
                                               variables = variables ;
                                             } ;
-                                    in string ;
-                            list = track : track.reduced ;
-                            set = track : track.reduced ;
-                          } scripts ;
-                        _utils = builtins.getAttr system utils.lib ;
-                        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
                           pkgs.mkShell
                             {
-			      buildInputs = [ ];
+                              buildInputs = [ ];
                               shellHook = hook _scripts ;
                             }
                   ) ;
