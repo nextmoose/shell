@@ -118,7 +118,7 @@
                         in
                           pkgs.mkShell
                             {
-                              shellHook = hook _scripts true ;
+                              shellHook = hook ( _scripts true ) ;
                             }
                   ) ;
               }
