@@ -26,6 +26,12 @@
 				        numbers = [ "structure" "logs" "log" "stderr" ] ;
 					variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
 				      } ;
+			            string =
+				      let
+				        attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
+				        mapper = item : { name = item; value = "" ; } ;
+					_structure = structure ( attrs base.numbers ) ( attrs base.variables ) ;
+					in track.reduced _structure ;
 				    structure =
 				      numbers : variables :
 				        let
@@ -35,13 +41,7 @@
 					      pkgs = pkgs ;
 					      variables = variables ;
 					    } ;
-			            zero =
-				      let
-				        attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
-				        mapper = item : { name = item; value = "" ; } ;
-					_structure = structure ( attrs base.numbers ) ( attrs base.variables ) ;
-					in track.reduced _structure ;
-				    in zero ;
+				    in string ;
 			      list = track : track.reduced ;
 			      set = track : track.reduced ;
 			    } scripts ;
