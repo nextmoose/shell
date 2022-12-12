@@ -67,14 +67,14 @@
 							  }
 						  ) ;
 					  } ;
+			                string =
+				          let
+				            attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
+				            mapper = item : { name = item; value = "" ; } ;
+					    _structure = structure ( attrs base.numbers ) ( attrs base.variables ) ;
+					    in track.reduced _structure ;
 					variables = builtins.foldl reducers.variables { } base.variables ;
 				        in structure numbers variables ;
-			            string =
-				      let
-				        attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
-				        mapper = item : { name = item; value = "" ; } ;
-					_structure = structure ( attrs base.numbers ) ( attrs base.variables ) ;
-					in track.reduced _structure ;
 				    structure =
 				      numbers : variables :
 				        let
