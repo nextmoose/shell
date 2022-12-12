@@ -42,7 +42,8 @@
 					                    seed-string = builtins.toString seed ;
 						            in
 							      {
-						                success =
+							        success = true ;
+						                success2 =
 							          let
 							            is-not-in-string = builtins.replace [ seed-string ] [ "" ] string == string ;
 							            is-not-duplicate = builtins.all ( p : p != seed-string ) previous ;
@@ -60,7 +61,8 @@
 							    hash-string = builtins.hashString "sha512" ( builtins.toString seed ) ;
 							    in
 							      {
-							        success =
+							        success = true ;
+							        success2 =
 								  let
 								    is-not-in-string = builtins.replace [ hash-string ] [ "" ] string == string ;
 								    is-not-duplicate = builtins.all ( p : p != hash-string ) previous ;
