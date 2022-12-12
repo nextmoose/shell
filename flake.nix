@@ -63,7 +63,7 @@
 							        is-not-duplicate = builtins.all ( p : p != token ) ( builtins.attrValues previous ) ;
 								is-not-in-string = builtins.replaceStrings [ token ] [ "" ] string == string ;
 								in is-not-duplicate && is-not-in-string ;
-							    value  previous // { "${ current }" = token ; } ;
+							    value = previous // { "${ current }" = token ; } ;
 							  }
 						  ) ;
 					  } ;
