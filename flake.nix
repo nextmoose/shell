@@ -83,7 +83,7 @@
 					      {
 					        list = track : track.reduced ;
 						set = track : track.reduced ;
-						string = track : "${ pkgs.makeShellScriptBin "command" track.reduced }/bin/command" ;
+						string = track : "${ pkgs.writeShellScriptBin "command" track.reduced }/bin/command" ;
 					      } procedures ;
 					  procedures =
 					    _utils.visit
@@ -99,7 +99,7 @@
 						      fi &&
 						      exec ${ numbers.structure }<>${ structure-directory }/lock &&
 						      ${ pkgs.flock } -s ${ numbers.structure } &&
-						      ${ pkgs.makeShellScriptBin "script" track.reduced }/bin/script
+						      ${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
 						    '' ;
 					      } _scripts ;
 					  in
