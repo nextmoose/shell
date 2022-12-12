@@ -106,14 +106,14 @@
                                           ${ pkgs.flock } -s ${ numbers.structure } &&
                                           ${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
                                         '' ;
-                                      } _scripts ;
-                                      in
-                                        {
-                                          commands = commands ;
-                                          numbers = numbers ;
-                                          pkgs = pkgs ;
-                                          variables = variables ;
-                                        } ;
+                                    } _scripts ;
+                                    in
+                                      {
+                                        commands = commands ;
+                                        numbers = numbers ;
+                                        pkgs = pkgs ;
+                                        variables = variables ;
+                                      } ;
                         in
                           pkgs.mkShell
                             {
