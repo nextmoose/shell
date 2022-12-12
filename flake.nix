@@ -43,7 +43,7 @@
 							    success =
 							      let
 							        is-not-duplicate = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
-								is-not-in-string = builtins.replaceString [ number ] [ "" ] string == string ;
+								is-not-in-string = builtins.replaceStrings [ number ] [ "" ] string == string ;
 								is-not-small = seed > 2 ;
 							        in is-not-duplicate && is-not-in-string && is-not-small ;
 							    value = previous // { "${ current }" = number ; } ;
