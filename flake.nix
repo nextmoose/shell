@@ -78,8 +78,33 @@
 				    structure =
 				      numbers : variables :
 				        let
+					  commands =
+					    _utils.visit
+					      {
+					        list = track : track.reduced ;
+						set = track : track.reduced ;
+						string = track : "${ pkgs.makeShellScriptBin "command" track.reduced }/bin/command" ;
+					      } procedures ;
+					  procedures =
+					    _utils.visit
+					      {
+					        list = track : track.reduced ;
+						set = track : track.reduced ;
+						string =
+						  track :
+						    ''
+						      if [ ! -d ${ structure-directory } ]
+						      then
+						        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+						      fi &&
+						      exec ${ numbers.structure }<>${ structure-directory }/lock &&
+						      ${ pkgs.flock } -s ${ numbers.structure } &&
+						      ${ pkgs.makeShellScriptBin "script" track.reduced }/bin/script
+						    '' ;
+					      } _scripts ;
 					  in
 					    {
+					      commands = commands ;
 					      numbers = numbers ;
 					      pkgs = pkgs ;
 					      variables = variables ;
