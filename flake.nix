@@ -32,6 +32,7 @@
 					  in
 					    {
 					      numbers = numbers ;
+					      pkgs = pkgs ;
 					      variables = variables ;
 					    } ;
 			            zero =
