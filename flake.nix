@@ -84,7 +84,7 @@
 					      pkgs = pkgs ;
 					      variables = variables ;
 					    } ;
-				    in string ;
+				    in track.reduced one ;
 			      list = track : track.reduced ;
 			      set = track : track.reduced ;
 			    } scripts ;
