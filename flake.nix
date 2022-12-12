@@ -119,7 +119,7 @@
                           pkgs.mkShell
                             {
 			      buildInputs = [ ];
-                              shellHook = hook _scripts true ;
+                              shellHook = hook ( _scripts true ) ;
                             }
                   ) ;
               }
