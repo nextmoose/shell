@@ -73,7 +73,7 @@
                                             _structure = structures.generator ( attrs base.numbers ) ( attrs base.variables ) ;
                                             in track.reduced _structure ;
                                         variables = builtins.foldl reducers.variables { } base.variables ;
-                                        in track.reduced ( structure numbers variables ) ;
+                                        in track.reduced ( structures.generator numbers variables ) ;
                                     in string ;
                             list = track : track.reduced ;
                             set = track : track.reduced ;
