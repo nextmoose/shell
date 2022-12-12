@@ -26,7 +26,7 @@
 				        numbers = [ "structure" "logs" "log" "stderr" ] ;
 					variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
 				      } ;
-				    one =
+				    string =
 				      let
 				        numbers = builtins.foldl' reducers.numbers { } base.numbers ;
 					reducers =
@@ -74,7 +74,7 @@
 					    _structure = structure ( attrs base.numbers ) ( attrs base.variables ) ;
 					    in track.reduced _structure ;
 					variables = builtins.foldl reducers.variables { } base.variables ;
-				        in structure numbers variables ;
+				        in track.reduced ( structure numbers variables ) ;
 				    structure =
 				      numbers : variables :
 				        let
@@ -84,7 +84,7 @@
 					      pkgs = pkgs ;
 					      variables = variables ;
 					    } ;
-				    in track.reduced one ;
+				    in string ;
 			      list = track : track.reduced ;
 			      set = track : track.reduced ;
 			    } scripts ;
