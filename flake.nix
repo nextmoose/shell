@@ -122,12 +122,10 @@
                                             variables = variables ;
                                           } ;
                             zero =
-			      track :
                                 let
                                    attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
                                    mapper = item : { name = item; value = "" ; } ;
-                                  _structure = generator ( attrs base.numbers ) ( attrs base.variables ) ;
-                                   in track.reduced _structure ;
+                                   in generator ( attrs base.numbers ) ( attrs base.variables ) ;
 			    in
 			      {
 			        generator = generator ;
