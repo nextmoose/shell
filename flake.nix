@@ -68,7 +68,7 @@
                                           } ;
                                         string =
                                           let
-                                            attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
+                                            attrs = src : builtins.listToAttrs	( builtins.map mapper src ) ;
                                             mapper = item : { name = item; value = "" ; } ;
                                             _structure = structures.generator ( attrs base.numbers ) ( attrs base.variables ) ;
                                             in track.reduced _structure ;
@@ -82,6 +82,11 @@
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 			structures =
 			  let
+                            base =
+                              {
+                                numbers = [ "structure" "logs" "log" "stderr" ] ;
+                                variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
+                              } ;
                             generator =
                               numbers : variables :
                                 let
@@ -116,9 +121,16 @@
                                             pkgs = pkgs ;
                                             variables = variables ;
                                           } ;
+                            zero =
+                              let
+                                 attrs = src : builtins.listToAttrs builtins.map mapper src ) ;
+                                 mapper = item : { name = item; value = "" ; } ;
+                                _structure = generator ( attrs base.numbers ) ( attrs base.variables ) ;
+                                 in track.reduced _structure ;
 			    in
 			      {
 			        generator = generator ;
+				zero = zero ;
 			      } ;
                         in
                           pkgs.mkShell
