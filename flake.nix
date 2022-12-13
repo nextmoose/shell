@@ -100,7 +100,7 @@
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                       fi &&
-                                      exec ${ numbers..logs }<>${ structure-directory }/logs/lock &&
+                                      exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                       ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
                                       ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
