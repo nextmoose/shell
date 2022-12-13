@@ -81,7 +81,7 @@
                                       fi &&
                                       exec ${ n.structure }<>${ structure-directory }/lock &&
                                       ${ pkgs.flock } -s ${ n.structure } &&
-                                      ${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
+                                      ${ pkgs.writeShellScriptBin "script" string }/bin/script
                                   '' ;
 
                             reducers =
