@@ -149,6 +149,8 @@
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
+				      export ${ variables.out }=/dev/stdout &&
+				      export ${ variables.err }=/dev/stderr &&
 				      ${ if builtins.replaceStrings [ variables.din ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.din }=1" &&
 				      ${ if builtins.replaceStrings [ variables.debug ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.debug }=1" &&
 				      ${ if builtins.replaceStrings [ variables.notes ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.notes }=1" &&
