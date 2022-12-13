@@ -25,7 +25,10 @@
 			derivations =
                           _utils.visit
                             {
-                              lambda = track : track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+                              lambda = track :
+			        let
+				  string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+				  in string ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
@@ -75,47 +78,47 @@
 			      string :
                                 let
                                   numbers = builtins.foldl' reducers.numbers { } base.numbers ;
-                                  reducers =
-                                    {
-                                      numbers =
-                                        previous : current :
-                                          _utils.try
-                                            (
-                                              seed :
-                                                let
-                                                  number = builtins.toString seed ;
-                                                  in
-                                                    {
-                                                      success =
-                                                        let
-                                                          is-not-duplicate = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
-                                                          is-not-in-string = builtins.replaceStrings [ number ] [ "" ] string == string ;
-                                                          is-not-small = seed > 2 ;
-                                                          in is-not-duplicate && is-not-in-string && is-not-small ;
-                                                          value = previous // { "${ current }" = number ; } ;
-                                                    }
-                                            ) ;
-                                      variables =
-                                        previous : current :
-                                          _utils.try
-                                            (
-                                              seed :
-                                                let
-                                                  token = builtins.hashString "sha512" ( builtins.toString seed ) ;
-                                                  in
-                                                    {
-                                                      success =
-                                                        let
-                                                          is-not-duplicate = builtins.all ( p : p != token ) ( builtins.attrValues previous ) ;
-                                                          is-not-in-string = builtins.replaceStrings [ token ] [ "" ] string == string ;
-                                                          in is-not-duplicate && is-not-in-string ;
-                                                          value = previous // { "${ current }" = token ; } ;
-                                                    }
-                                            ) ;
-                                    } ;
                                   variables = builtins.foldl reducers.variables { } base.variables ;
                                   in generator numbers variables ;
-                            zero =
+                            reducers =
+                              {
+                                numbers =
+                                  previous : current :
+                                    _utils.try
+                                      (
+                                        seed :
+                                          let
+                                            number = builtins.toString seed ;
+                                            in
+                                              {
+                                                success =
+                                                  let
+                                                    is-not-duplicate = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
+                                                    is-not-in-string = builtins.replaceStrings [ number ] [ "" ] string == string ;
+                                                    is-not-small = seed > 2 ;
+                                                    in is-not-duplicate && is-not-in-string && is-not-small ;
+                                                    value = previous // { "${ current }" = number ; } ;
+                                              }
+                                      ) ;
+                                variables =
+                                  previous : current :
+                                    _utils.try
+                                      (
+                                        seed :
+                                          let
+                                            token = builtins.hashString "sha512" ( builtins.toString seed ) ;
+                                            in
+                                              {
+                                                success =
+                                                  let
+                                                    is-not-duplicate = builtins.all ( p : p != token ) ( builtins.attrValues previous ) ;
+                                                    is-not-in-string = builtins.replaceStrings [ token ] [ "" ] string == string ;
+                                                    in is-not-duplicate && is-not-in-string ;
+                                                    value = previous // { "${ current }" = token ; } ;
+                                              }
+                                      ) ;
+                              } ;
+			    zero =
                                 let
                                    attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
                                    mapper = item : { name = item; value = "" ; } ;
