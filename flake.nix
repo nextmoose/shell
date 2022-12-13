@@ -90,7 +90,9 @@
                                       ${ v.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ n.log }<>${ _utils.bash-variable v.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ n.log } &&
-                                      ${ pkgs.writeShellScriptBin "script" string }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                      ${ pkgs.writeShellScriptBin "script" string }/bin/script \
+				        > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
+				        2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
                                   '' ;
 
                             reducers =
