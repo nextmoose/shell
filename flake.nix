@@ -73,6 +73,11 @@
 			      string :
                                 let
                                   n = numbers string ;
+                                  v = variables string ;
+                                  in process-with string n v ;
+                            process-with =
+                              string : numbers : variables :
+			        let
                                   temporary =
                                     ''
                                       if [ ! -d ${ structure-directory }/temporary ]
@@ -85,10 +90,7 @@
                                       exec ${ n.temporary }<>${ _utils.bash-variable v.temporary }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ n.temporary }
                                     '' ;
-                                  v = variables string ;
-                                  in process-with string n v ;
-                            process-with =
-                              string : numbers : variables :
+				  in
                                     ''
                                       if [ ! -d ${ structure-directory } ]
                                       then
