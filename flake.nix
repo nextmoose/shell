@@ -124,7 +124,9 @@
 			    in
 			      {
 			        generator = generator ;
+				numbers = numbers ;
 				one = one ;
+				variables = variables ;
 				zero = zero ;
 			      } ;
                         in
