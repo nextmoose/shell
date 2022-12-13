@@ -40,7 +40,7 @@
                             base =
                               {
                                 numbers = [ "structure" "logs" "log" "stderr" ] ;
-                                variables = [ "logs" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
+                                variables = [ "log" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
                               } ;
                             generator =
                               numbers : variables :
@@ -87,10 +87,10 @@
                                       fi &&
                                       exec ${ n.logs }<>${ structure-directory }/logs/lock &&
                                       ${ pkgs.flock }/bin/flock -s ${ n.logs } &&
-                                      ${ v.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                      ${ v.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ n.log }<>${ _utils.bash-variable v.logs }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ n.log } &&
-                                      ${ pkgs.writeShellScriptBin "script" string }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/std/out" )
+                                      ${ pkgs.writeShellScriptBin "script" string }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                   '' ;
 
                             reducers =
