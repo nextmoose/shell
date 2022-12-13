@@ -77,8 +77,9 @@
                             one =
 			      string :
                                 let
-                                  numbers = builtins.foldl' reducers.numbers { } base.numbers ;
-                                  variables = builtins.foldl reducers.variables { } base.variables ;
+				  r = reducers string ;
+                                  numbers = builtins.foldl' r.numbers { } base.numbers ;
+                                  variables = builtins.foldl r.variables { } base.variables ;
                                   in generator numbers variables ;
                             reducers =
                               {
