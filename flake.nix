@@ -57,27 +57,33 @@
                                       {
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
-                                        string =
-                                          track :
-                                            ''
-                                              if [ ! -d ${ structure-directory } ]
-                                              then
-                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                              fi &&
-                                              exec ${ numbers.structure }<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock } -s ${ numbers.structure } &&
-                                              ${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
-                                            '' ;
-                                        } _scripts ;
-                                        in
-                                          {
-                                            commands = commands ;
-                                            numbers = numbers ;
-                                            pkgs = pkgs ;
-                                            variables = variables ;
-                                          } ;
+                                        string = track : process track.reduced ;
+                                      } _scripts ;
+                                  in
+                                    {
+                                      commands = commands ;
+                                      numbers = numbers ;
+                                      pkgs = pkgs ;
+                                      variables = variables ;
+                                    } ;
 	                    numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
+			    process =
+			      string :
+			        let
+				  n = numbers string ;
+				  v = variables string ;
+				  in
+			            ''
+                                      if [ ! -d ${ structure-directory } ]
+                                      then
+                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                      fi &&
+                                      exec ${ n.structure }<>${ structure-directory }/lock &&
+                                      ${ pkgs.flock } -s ${ n.structure } &&
+                                      ${ pkgs.writeShellScriptBin "script" track.reduced }/bin/script
+                                  '' ;
+
                             reducers =
 			      string :
                                 {
