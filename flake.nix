@@ -82,43 +82,44 @@
                                   variables = builtins.foldl r.variables { } base.variables ;
                                   in generator numbers variables ;
                             reducers =
-                              {
-                                numbers =
-                                  previous : current :
-                                    _utils.try
-                                      (
-                                        seed :
-                                          let
-                                            number = builtins.toString seed ;
-                                            in
-                                              {
-                                                success =
-                                                  let
-                                                    is-not-duplicate = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
-                                                    is-not-in-string = builtins.replaceStrings [ number ] [ "" ] string == string ;
-                                                    is-not-small = seed > 2 ;
-                                                    in is-not-duplicate && is-not-in-string && is-not-small ;
-                                                    value = previous // { "${ current }" = number ; } ;
-                                              }
-                                      ) ;
-                                variables =
-                                  previous : current :
-                                    _utils.try
-                                      (
-                                        seed :
-                                          let
-                                            token = builtins.hashString "sha512" ( builtins.toString seed ) ;
-                                            in
-                                              {
-                                                success =
-                                                  let
-                                                    is-not-duplicate = builtins.all ( p : p != token ) ( builtins.attrValues previous ) ;
-                                                    is-not-in-string = builtins.replaceStrings [ token ] [ "" ] string == string ;
-                                                    in is-not-duplicate && is-not-in-string ;
-                                                    value = previous // { "${ current }" = token ; } ;
-                                              }
-                                      ) ;
-                              } ;
+			      string :
+                                {
+                                  numbers =
+                                    previous : current :
+                                      _utils.try
+                                        (
+                                          seed :
+                                            let
+                                              number = builtins.toString seed ;
+                                              in
+                                                {
+                                                  success =
+                                                    let
+                                                      is-not-duplicate = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
+                                                      is-not-in-string = builtins.replaceStrings [ number ] [ "" ] string == string ;
+                                                      is-not-small = seed > 2 ;
+                                                      in is-not-duplicate && is-not-in-string && is-not-small ;
+                                                      value = previous // { "${ current }" = number ; } ;
+                                                }
+                                        ) ;
+                                  variables =
+                                    previous : current :
+                                      _utils.try
+                                        (
+                                          seed :
+                                            let
+                                              token = builtins.hashString "sha512" ( builtins.toString seed ) ;
+                                              in
+                                                {
+                                                  success =
+                                                    let
+                                                      is-not-duplicate = builtins.all ( p : p != token ) ( builtins.attrValues previous ) ;
+                                                      is-not-in-string = builtins.replaceStrings [ token ] [ "" ] string == string ;
+                                                      in is-not-duplicate && is-not-in-string ;
+                                                      value = previous // { "${ current }" = token ; } ;
+                                                }
+                                        ) ;
+                                } ;
 			    zero =
                                 let
                                    attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
