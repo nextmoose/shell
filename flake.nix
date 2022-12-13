@@ -89,7 +89,7 @@
                                           then
                                             exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                            if [ ! -z ${ utils.bash-variable variables.log ] && [ -d ${ utils.bash-variable variables.log } ]
+                                            if [ ! -z ${ utils.bash-variable variables.log } ] && [ -d ${ utils.bash-variable variables.log } ]
                                             then
                                               exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
