@@ -27,13 +27,35 @@
                             {
                               lambda = track :
                                 let
-                                  numbers = structures.variables string ;
+                                  numbers = numbers string ;
                                   variables = structures.variables string ;
                                   string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
                                   in structures.process string ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
+			numbers =
+			  string :
+			    let
+                              initial = [ "structure" "logs" "log" "stderr" "temporaries" "temporary" ] ;
+			      initial = [ "" ] ;
+			      reducer =
+			        previous : current :
+				  _utils.try
+				    (
+				      seed :
+				        let
+					  is-number-big = seed > 2 ;
+					  is-number-not-in-string = builtins.replaceString [ number ] [ "" ] string == string '
+					  is-number-unique = builtins.all ( p : p != number ) ( builtins.attrValues previous ) ;
+					  number = builtins.toString seed ;
+					  in
+					    {
+					      success = is-number-not-in-string && is-number-unique && is-number-big ;
+					      value = number ;
+					    }
+				    ) ;
+			      in builtins.foldl' reducer { } initial ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         structures =
                           let
@@ -66,7 +88,6 @@
                                       pkgs = pkgs ;
                                       variables = variables ;
                                     } ;
-                            numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
                             process =
                               string :
