@@ -22,21 +22,21 @@
                               set = track : track.reduced ;
                             } scripts ;
                         _utils = builtins.getAttr system utils.lib ;
-			derivations =
+                        derivations =
                           _utils.visit
                             {
                               lambda = track :
-			        let
-				  numbers = structures.variables string ;
-				  variables = structures.variables string ;
-				  string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
-				  in structures.process string ;
+                                let
+                                  numbers = structures.variables string ;
+                                  variables = structures.variables string ;
+                                  string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+                                  in structures.process string ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			structures =
-			  let
+                        structures =
+                          let
                             base =
                               {
                                 numbers = [ "structure" "logs" "log" "stderr" ] ;
@@ -66,15 +66,15 @@
                                       pkgs = pkgs ;
                                       variables = variables ;
                                     } ;
-	                    numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
+                            numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
-			    process =
-			      string :
-			        let
-				  n = numbers string ;
-				  v = variables string ;
-				  in
-			            ''
+                            process =
+                              string :
+                                let
+                                  n = numbers string ;
+                                  v = variables string ;
+                                  in
+                                    ''
                                       if [ ! -d ${ structure-directory } ]
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -85,7 +85,7 @@
                                   '' ;
 
                             reducers =
-			      string :
+                              string :
                                 {
                                   numbers =
                                     previous : current :
@@ -123,20 +123,21 @@
                                                 }
                                         ) ;
                                 } ;
-	                    variables = string : let r = reducers string ; in builtins.foldl' r.variables { } base.variables ;
-			    zero =
+                            variables = string : let r = reducers string ; in builtins.foldl' r.variables { } base.variables ;
+                            zero =
                                 let
                                    attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
                                    mapper = item : { name = item; value = "" ; } ;
                                    in generator ( attrs base.numbers ) ( attrs base.variables ) ;
-			    in
-			      {
-			        generator = generator ;
-				numbers = numbers ;
-				one = one ;
-				variables = variables ;
-				zero = zero ;
-			      } ;
+                            in
+                              {
+                                generator = generator ;
+                                numbers = numbers ;
+                                one = one ;
+                                process = process ;
+                                variables = variables ;
+                                zero = zero ;
+                              } ;
                         in
                           pkgs.mkShell
                             {
