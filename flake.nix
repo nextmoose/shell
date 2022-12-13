@@ -79,17 +79,18 @@
                               string : numbers : variables :
                                 let
                                   temporary =
-                                    ''
-                                      if [ ! -d ${ structure-directory }/temporary ]
-                                      then
-                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                      fi &&
-                                      exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
-                                      ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                      ${ variables.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                      exec ${ numbers.temporary }<>${ _utils.bash-variable variables.temporary }/lock &&
-                                      ${ pkgs.flock }/bin/flock -n ${ numbers.temporary }
-                                    '' ;
+				    _utils.strip
+                                      ''
+                                        if [ ! -d ${ structure-directory }/temporary ]
+                                        then
+                                          ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                        fi &&
+                                        exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
+                                        ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
+                                        ${ variables.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                        exec ${ numbers.temporary }<>${ _utils.bash-variable variables.temporary }/lock &&
+                                        ${ pkgs.flock }/bin/flock -n ${ numbers.temporary }
+                                      '' ;
                                   in
                                     ''
                                       if [ ! -d ${ structure-directory } ]
