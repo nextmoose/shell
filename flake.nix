@@ -84,11 +84,11 @@
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
                                       fi &&
-                                      exec ${ n.temporaries }<>${ structure-directory }/temporary/lock &&
-                                      ${ pkgs.flock }/bin/flock -s ${ n.temporaries } &&
+                                      exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
+                                      ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
                                       ${ v.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                      exec ${ n.temporary }<>${ _utils.bash-variable v.temporary }/lock &&
-                                      ${ pkgs.flock }/bin/flock -n ${ n.temporary }
+                                      exec ${ numbers.temporary }<>${ _utils.bash-variable variables.temporary }/lock &&
+                                      ${ pkgs.flock }/bin/flock -n ${ numbers.temporary }
                                     '' ;
 				  in
                                     ''
