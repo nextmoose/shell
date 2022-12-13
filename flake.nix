@@ -89,7 +89,7 @@
                                       ${ pkgs.flock }/bin/flock -s ${ n.logs } &&
                                       ${ v.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ n.log }<>${ _utils.bash-variable v.logs }/lock &&
-                                      ${ pkgs.flock }/bin/flock -w ${ n.log } &&
+                                      ${ pkgs.flock }/bin/flock -n ${ n.log } &&
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script
                                   '' ;
 
