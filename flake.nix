@@ -30,7 +30,7 @@
                                   numbers = structures.numbers string ;
                                   variables = structures.variables string ;
                                   string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
-                                  in structures.process string ;
+                                  in builtins.trace string ( structures.process string ) ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
