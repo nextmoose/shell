@@ -40,7 +40,7 @@
                             base =
                               {
                                 numbers = [ "structure" "logs" "log" "stderr" ] ;
-                                variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
+                                variables = [ "logs" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
                               } ;
                             generator =
                               numbers : variables :
@@ -80,7 +80,16 @@
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                       fi &&
                                       exec ${ n.structure }<>${ structure-directory }/lock &&
-                                      ${ pkgs.flock } -s ${ n.structure } &&
+                                      ${ pkgs.flock }/bin/flock -s ${ n.structure } &&
+				      if [ ! -d ${ structure-directory }/logs ]
+				      then
+				        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+				      fi &&
+				      exec ${ n.logs }<>${ structure-directory/logs/lock &&
+				      ${ pkgs.flock }/bin/flock -s ${ n.logs } &&
+				      ${ v.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+				      exec ${ n.log }<>${ _utils.bash-variable v.logs }/lock &&
+				      ${ pkgs.flock }/bin/flock -w ${ n.log } &&
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script
                                   '' ;
 
