@@ -74,13 +74,8 @@
                                             pkgs = pkgs ;
                                             variables = variables ;
                                           } ;
-                            one =
-			      string :
-                                let
-				  r = reducers string ;
-                                  numbers = builtins.foldl' r.numbers { } base.numbers ;
-                                  variables = builtins.foldl r.variables { } base.variables ;
-                                  in generator numbers variables ;
+	                    numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
+                            one = string : generator ( numbers string ) ( variables string ) ;
                             reducers =
 			      string :
                                 {
@@ -120,6 +115,7 @@
                                                 }
                                         ) ;
                                 } ;
+	                    variables = string : let r = reducers string ; in builtins.foldl' r.variables { } base.variables ;
 			    zero =
                                 let
                                    attrs = src : builtins.listToAttrs ( builtins.map mapper src ) ;
