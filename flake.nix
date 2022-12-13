@@ -30,7 +30,7 @@
 				  numbers = structures.variables string ;
 				  variables = structures.variables string ;
 				  string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
-				  in structures.process string ;
+				  in structures.	 process string ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
@@ -140,7 +140,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = [ ] ;
+                              buildInputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name value ) inputs derivations ) ;
                               shellHook = hook _scripts ;
                             }
                   ) ;
