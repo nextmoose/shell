@@ -94,7 +94,7 @@
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                       fi &&
-                                      exec ${ n.structure }<>${ structure-directory }/lock &&
+                                      exec ${ numbers.structure }<>${ structure-directory }/lock &&
                                       ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
                                       if [ ! -d ${ structure-directory }/logs ]
                                       then
