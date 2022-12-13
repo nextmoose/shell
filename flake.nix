@@ -96,10 +96,10 @@
                                               ${ pkgs.coreutils }/bin/chmod \
                                                 0400 \
                                                 ${ _utils.bash-variable variables.log }/out \
-                                                ${ _utils.bash_variable variables.err }/err \
-                                                ${ _utils.bash_variable variables.err }/din \
-                                                ${ _utils.bash_variable variables.err }/debug \
-                                                ${ _utils.bash_variable variables.err }/notes
+                                                ${ _utils.bash-variable variables.err }/err \
+                                                ${ _utils.bash-variable variables.err }/din \
+                                                ${ _utils.bash-variable variables.err }/debug \
+                                                ${ _utils.bash-variable variables.err }/notes
                                             fi &&
                                             if [ -d ${ structure-directory }/temporary ]
                                             then
@@ -149,8 +149,11 @@
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
-                                      # ${ variables.temporary }
-                                      # ${ numbers.temporary }
+				      ${ if builtins.replaceStrings [ variables.out ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true else "export ${ variables.out }=1 &&
+				      ${ if builtins.replaceStrings [ variables.err ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true else "export ${ variables.err }=1 &&
+				      ${ if builtins.replaceStrings [ variables.din ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true else "export ${ variables.din }=1 &&
+				      ${ if builtins.replaceStrings [ variables.debug ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true else "export ${ variables.debug }=1 &&
+				      ${ if builtins.replaceStrings [ variables.notes ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true else "export ${ variables.notes }=1 &&
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script \
                                         > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                         2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
