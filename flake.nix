@@ -85,7 +85,7 @@
 				      then
 				        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
 				      fi &&
-				      exec ${ n.logs }<>${ structure-directory/logs/lock &&
+				      exec ${ n.logs }<>${ structure-directory }/logs/lock &&
 				      ${ pkgs.flock }/bin/flock -s ${ n.logs } &&
 				      ${ v.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
 				      exec ${ n.log }<>${ _utils.bash-variable v.logs }/lock &&
