@@ -89,7 +89,7 @@
                                           then
                                             exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                            if [ ! -z ${ utils.bash-variable variables.log } ] && [ -d ${ utils.bash-variable variables.log } ]
+                                            if [ ! -z ${ _utils.bash-variable variables.log } ] && [ -d ${ _utils.bash-variable variables.log } ]
                                             then
                                               exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
@@ -105,10 +105,10 @@
                                             then
                                               exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                              if [ ! -z ${ utils.bash-variable variables.temporary } ] && [ -d ${ utils.bash-variable variables.temporary } ]
+                                              if [ ! -z ${ _utils.bash-variable variables.temporary } ] && [ -d ${ _utils.bash-variable variables.temporary } ]
                                               then
-                                                ${ pkgs.findutils }/bin/find ${ utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                ${ pkgs.coreutils }/bin/rm --recursive --force ${ utils.bash-variable variables.temporary }
+                                                ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
                                             fi
                                           fi
                                         fi
