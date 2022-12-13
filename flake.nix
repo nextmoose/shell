@@ -30,7 +30,7 @@
                                   numbers = structures.numbers string ;
                                   variables = structures.variables string ;
                                   string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
-                                  in builtins.trace string ( structures.process string ) ;
+                                  in builtins.trace string ( structures.process-with string numbers variables ) ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
@@ -68,8 +68,8 @@
                                     } ;
                             numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
-                            process =
-                              string :
+			    process =
+			      string :
                                 let
                                   n = numbers string ;
                                   temporary =
@@ -85,29 +85,31 @@
                                       ${ pkgs.flock }/bin/flock -n ${ n.temporary }
                                     '' ;
                                   v = variables string ;
-                                  in
+                                  in process-with string n v ;
+                            process-with =
+                              string : numbers : variables :
                                     ''
                                       if [ ! -d ${ structure-directory } ]
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                       fi &&
                                       exec ${ n.structure }<>${ structure-directory }/lock &&
-                                      ${ pkgs.flock }/bin/flock -s ${ n.structure } &&
+                                      ${ pkgs.flock }/bin/flock -s ${ numbers..structure } &&
                                       if [ ! -d ${ structure-directory }/logs ]
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
                                       fi &&
-                                      exec ${ n.logs }<>${ structure-directory }/logs/lock &&
-                                      ${ pkgs.flock }/bin/flock -s ${ n.logs } &&
-                                      ${ v.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                      exec ${ n.log }<>${ _utils.bash-variable v.log }/lock &&
-                                      ${ pkgs.flock }/bin/flock -n ${ n.log } &&
+                                      exec ${ numbers..logs }<>${ structure-directory }/logs/lock &&
+                                      ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
+                                      ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                      exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
+                                      ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ v.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
-				      # ${ v.temporary }
-				      # ${ n.temporary }
+				      # ${ variables.temporary }
+				      # ${ numbers.temporary }
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script \
-                                        > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
-                                        2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable v.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
+                                        > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
+                                        2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
                                   '' ;
                             reducers =
                               string :
