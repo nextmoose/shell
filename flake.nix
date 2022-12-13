@@ -105,7 +105,7 @@
                                       ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
-                                      ${ if builtins.replaceStrings [ v.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
+                                      ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
 				      # ${ variables.temporary }
 				      # ${ numbers.temporary }
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script \
