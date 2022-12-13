@@ -30,7 +30,7 @@
                                   numbers = structures.numbers zero ;
                                   variables = structures.variables zero ;
                                   string = track.reduced ( structures.one zero ) ;
-				  zero = track.reduced structures.zero ;
+                                  zero = track.reduced structures.zero ;
                                   in builtins.trace string ( structures.process-with string numbers variables ) ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
@@ -69,15 +69,15 @@
                                     } ;
                             numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
-			    process =
-			      string :
+                            process =
+                              string :
                                 let
                                   n = numbers string ;
                                   v = variables string ;
                                   in process-with string n v ;
                             process-with =
                               string : numbers : variables :
-			        let
+                                let
                                   temporary =
                                     ''
                                       if [ ! -d ${ structure-directory }/temporary ]
@@ -90,7 +90,7 @@
                                       exec ${ numbers.temporary }<>${ _utils.bash-variable variables.temporary }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.temporary }
                                     '' ;
-				  in
+                                  in
                                     ''
                                       if [ ! -d ${ structure-directory } ]
                                       then
@@ -108,8 +108,8 @@
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
-				      # ${ variables.temporary }
-				      # ${ numbers.temporary }
+                                      # ${ variables.temporary }
+                                      # ${ numbers.temporary }
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script \
                                         > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                         2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
@@ -165,7 +165,7 @@
                                 numbers = numbers ;
                                 one = one ;
                                 process = process ;
-				process-with = process-with ;
+                                process-with = process-with ;
                                 variables = variables ;
                                 zero = zero ;
                               } ;
