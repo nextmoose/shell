@@ -86,7 +86,7 @@
                                       fi &&
                                       exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                       ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                      ${ v.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                      ${ variables.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
                                       exec ${ numbers.temporary }<>${ _utils.bash-variable variables.temporary }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.temporary }
                                     '' ;
