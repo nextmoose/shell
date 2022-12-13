@@ -17,20 +17,18 @@
                         _scripts =
                           _utils.visit
                             {
-                              lambda =
-                                track :
-                                  let
-                                    base =
-                                      {
-                                        numbers = [ "structure" "logs" "log" "stderr" ] ;
-                                        variables = [ "structure" "stdout" "stderr" "din" "debug" "notes" "temporary" ] ;
-                                      } ;
-                                    string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
-                                    in string ;
-                            list = track : track.reduced ;
-                            set = track : track.reduced ;
-                          } scripts ;
+                              lambda = track : track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+                              list = track : track.reduced ;
+                              set = track : track.reduced ;
+                            } scripts ;
                         _utils = builtins.getAttr system utils.lib ;
+			derivations =
+                          _utils.visit
+                            {
+                              lambda = track : track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+                              list = track : track.reduced ;
+                              set = track : track.reduced ;
+                            } scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
 			structures =
 			  let
@@ -131,7 +129,7 @@
                         in
                           pkgs.mkShell
                             {
-                              buildInputs = [ ];
+                              buildInputs = [ ] ;
                               shellHook = hook _scripts ;
                             }
                   ) ;
