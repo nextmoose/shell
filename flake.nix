@@ -27,9 +27,10 @@
                             {
                               lambda = track :
                                 let
-                                  numbers = structures.numbers string ;
-                                  variables = structures.variables string ;
-                                  string = track.reduced ( structures.one ( track.reduced structures.zero ) ) ;
+                                  numbers = structures.numbers zero ;
+                                  variables = structures.variables zero ;
+                                  string = track.reduced ( structures.one zero ) ;
+				  zero = track.reduced structures.zero ;
                                   in builtins.trace string ( structures.process-with string numbers variables ) ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
@@ -94,7 +95,7 @@
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                       fi &&
                                       exec ${ n.structure }<>${ structure-directory }/lock &&
-                                      ${ pkgs.flock }/bin/flock -s ${ numbers..structure } &&
+                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
                                       if [ ! -d ${ structure-directory }/logs ]
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
