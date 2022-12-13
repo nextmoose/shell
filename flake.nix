@@ -165,6 +165,7 @@
                                 numbers = numbers ;
                                 one = one ;
                                 process = process ;
+				process-with = process-with ;
                                 variables = variables ;
                                 zero = zero ;
                               } ;
