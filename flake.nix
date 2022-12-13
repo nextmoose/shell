@@ -78,6 +78,41 @@
                             process-with =
                               string : numbers : variables :
                                 let
+				  cleanup =
+				    _utils.strip
+				      ''
+				        if [ -d ${ structure-directory } ]
+					then
+					  exec ${ numbers.structure }<>${ structure-directory }/lock &&
+					  ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
+					  if [ -d ${ structure-directory }/logs ]
+					  then
+					    exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
+					    ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
+					    if [ ! -z ${ utils.bash-variable variables.log ] && [ -d ${ utils.bash-variable variables.log } ]
+					    then
+					      exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
+					      ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
+					      ${ pkgs.coreutils }/bin/chmod \
+					        0400 \
+						${ _utils.bash-variable variables.log }/out \
+						${ _utils.bash_variable variables.err }/err \
+						${ _utils.bash_variable variables.err }/din \
+						${ _utils.bash_variable variables.err }/debug \
+						${ _utils.bash_variable variables.err }/notes
+					    fi &&
+					    if [ -d ${ structure-directory }/temporary ]
+					    then
+					      exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
+					      ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
+					      if [ ! -z ${ utils.bash-variable variables.temporary } ] && [ -d ${ utils.bash-variable variables.temporary } ]
+					      then
+					        ${ pkgs.findutils }/bin/find ${ utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+						${ pkgs.coreutils }/bin/rm --recursive --force ${ utils.bash-variable variables.temporary }
+					    fi
+					  fi
+					fi
+				      '' ;
                                   temporary =
 				    _utils.strip
                                       ''
@@ -93,6 +128,11 @@
                                       '' ;
                                   in
                                     ''
+				      cleanup ( )
+				      {
+				        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" cleanup }/bin/cleanup ${ at } now
+				      } &&
+				      trap cleanup EXIT &&
                                       if [ ! -d ${ structure-directory } ]
                                       then
                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
