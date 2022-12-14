@@ -63,12 +63,42 @@
                                   in
                                     {
                                       commands = commands ;
-				      log =
-				        {
-					  query =
-					    ''
-					    '' ;
-					} ;
+                                      logging =
+                                        {
+                                          query =
+                                            let
+                                              script =
+                                                ''
+						  exec ${ numbers.log }<>${ _utils.bash-variable "1" } &&
+						  ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
+						  cd $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "1" } ) &&
+						  ${ _utils.bash-variable "2" }
+                                                '' ;
+                                              in
+                                                ''
+                                                  if [ ! -d ${ structures-directory } ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structures-directory }
+                                                  fi &&
+                                                  exec ${ numbers.structure }<>${ structures-directory }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
+                                                  if [ ! -d ${ structures-directory }/logs ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structures-directory }/logs
+                                                  fi &&
+                                                  exec ${ numbers.logs }<>${ structures-directory }/logs/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
+                                                  ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structures-directory }/logs/XXXXXXXX ) &&
+                                                  exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
+                                                  ${ pkgs.findutils }/bin/find \
+						    ${ structures-directory }/logs \
+						    -mindepth 2 \
+						    -maxdepth 2 \
+						    -name lock \
+						    -exec ${ pkgs.writeShellScriptBin "script" script }/bin/script "{}" ${ _utils.bash-variable "@" } " \;
+                                                '' ;
+                                        } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
                                       variables = variables ;
@@ -107,7 +137,7 @@
                                                 ${ _utils.bash-variable variables.err }/debug \
                                                 ${ _utils.bash-variable variables.err }/notes
                                             fi &&
-					    ${ pkgs.coreutils }/bin/true
+                                            ${ pkgs.coreutils }/bin/true
                                           fi
                                         fi
                                       '' ;
@@ -147,11 +177,11 @@
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else temporary } &&
-				      export ${ variables.out }=/dev/stdout &&
-				      export ${ variables.err }=/dev/stderr &&
-				      ${ if builtins.replaceStrings [ variables.din ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.din }=" } &&
-				      ${ if builtins.replaceStrings [ variables.debug ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.debug }=1" } &&
-				      ${ if builtins.replaceStrings [ variables.notes ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.notes }=1" } &&
+                                      export ${ variables.out }=/dev/stdout &&
+                                      export ${ variables.err }=/dev/stderr &&
+                                      ${ if builtins.replaceStrings [ variables.din ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.din }=" } &&
+                                      ${ if builtins.replaceStrings [ variables.debug ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.debug }=1" } &&
+                                      ${ if builtins.replaceStrings [ variables.notes ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else "export ${ variables.notes }=1" } &&
                                       ${ pkgs.writeShellScriptBin "script" string }/bin/script \
                                         > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                         2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
