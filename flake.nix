@@ -52,7 +52,20 @@
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
                                         string = track : "${ pkgs.writeShellScriptBin "command" track.reduced }/bin/command" ;
-                                      } procedures ;     
+                                      } procedures ;
+				  delock =
+				    ''
+				      if [ ${ _utils.bash-variable "#" } == 1 ]
+				      then
+				        exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
+					${ pkgs.flock }/bin/flock -x ${ numbers.log } &&
+					${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
+				      else
+				        exec ${ numbers.log }<>${ _utils.bash-variable $(( ( _utils.bash-variable "#" ) - 1 )) } &&
+					${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
+					${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ utils.bash-variable "@[@]:1" }
+				      fi
+				    ''
                                   procedures =
                                     _utils.visit
                                       {
@@ -139,7 +152,8 @@
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
                                         fi
-                                      fi
+                                      fi &&
+				      ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ _utils.bash-variable log } ${ structure-dir }/logs ${ structure-dir }
                                     '' ;
                                   temporary =
                                     ''
