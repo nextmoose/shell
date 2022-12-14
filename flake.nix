@@ -51,7 +51,7 @@
                                     ${ pkgs.flock }/bin/flock -x 201 &&
                                     ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
                                   else 
-				    exec 202<>${ _utils.bash-variable "1" }/lock &&
+				    exec 202<>${ _utils.bash-variable "$(( ${ _utils.bash-variable "#" } - 1 ))" }/lock &&
                                     ${ pkgs.flock }/bin/flock -s 202 &&
 				    ${ pkgs.coreutils }/bin/true
                                   fi
