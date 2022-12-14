@@ -101,15 +101,7 @@
                                                 ${ _utils.bash-variable variables.err }/debug \
                                                 ${ _utils.bash-variable variables.err }/notes
                                             fi &&
-                                            if [ -d ${ structure-directory }/temporary ]
-                                            then
-                                              exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
-                                              ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                              if [ ! -z ${ _utils.bash-variable variables.temporary } ] && [ -d ${ _utils.bash-variable variables.temporary } ]
-                                              then
-                                                ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
-                                            fi
+					    ${ pkgs.coreutils }/bin/true
                                           fi
                                         fi
                                       '' ;
