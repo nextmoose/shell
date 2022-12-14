@@ -122,7 +122,7 @@
                                     ''
                                       cleanup ( )
                                       {
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" cleanup }/bin/cleanup ${ at } now
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" cleanup }/bin/cleanup | ${ at } now
                                       } &&
                                       trap cleanup EXIT &&
                                       if [ ! -d ${ structure-directory } ]
