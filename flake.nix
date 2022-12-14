@@ -53,7 +53,7 @@
                                   else 
 				    exec 202<>${ _utils.bash-variable "1" }/lock &&
                                     ${ pkgs.flock }/bin/flock -s 202 &&
-                                    ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ utils.bash-variable "@[@]:1" }
+				    ${ pkgs.coreutils }/bin/true
                                   fi
                                 '' ;
                            generator =
