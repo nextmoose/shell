@@ -44,20 +44,21 @@
                                 variables = [ "log" "out" "err" "din" "debug" "notes" "temporary" ] ;
                               } ;
                               delock =
-                                ''
-                                  if [ ${ _utils.bash-variable "#" } == 1 ]
-                                  then
-                                    exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
-                                    ${ pkgs.flock }/bin/flock -x ${ numbers.log } &&
-                                    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
-                                  else 
-                                    ${ pkgs.coreutils }/bin/true && # 1
-				    exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
-                                    ${ pkgs.coreutils }/bin/true && # 2
-                                    ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
-                                    ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ utils.bash-variable "@[@]:1" }
-                                  fi
-                                '' ;
+			        numbers : variables :
+                                  ''
+                                    if [ ${ _utils.bash-variable "#" } == 1 ]
+                                    then
+                                      exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
+                                      ${ pkgs.flock }/bin/flock -x ${ numbers.log } &&
+                                      ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
+                                    else 
+                                      ${ pkgs.coreutils }/bin/true && # 1
+				      exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
+                                      ${ pkgs.coreutils }/bin/true && # 2
+                                      ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
+                                      ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( delock numbers variables ) }/bin/delock ${ utils.bash-variable "@[@]:1" }
+                                    fi
+                                  '' ;
                            generator =
                               numbers : variables :
                                 let
@@ -157,7 +158,7 @@
                                       fi &&
                                       ${ pkgs.coreutils }/bin/nice \
 				        --adjustment 19 \
-					${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ _utils.bash-variable variables.log } ${ structure-directory }/logs ${ structure-directory }
+					${ pkgs.writeShellScriptBin "delock" ( delock numbers variables ) }/bin/delock ${ _utils.bash-variable variables.log } ${ structure-directory }/logs ${ structure-directory }
                                     '' ;
                                   temporary =
                                     ''
