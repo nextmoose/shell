@@ -44,7 +44,6 @@
                                 variables = [ "log" "out" "err" "din" "debug" "notes" "temporary" ] ;
                               } ;
                               delock =
-			        numbers : variables :
                                 ''
                                   if [ ${ _utils.bash-variable "#" } == 1 ]
                                   then
