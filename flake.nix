@@ -61,7 +61,7 @@
                                         ${ pkgs.flock }/bin/flock -x ${ numbers.log } &&
                                         ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
                                       else
-                                        exec ${ numbers.log }<>${ _utils.bash-variable "$(( ( _utils.bash-variable "#" ) - 1 ))" } &&
+                                        exec ${ numbers.log }<>${ _utils.bash-variable "$(( ( _utils.bash-variable "#" ) - 1 ))" }/lock &&
 					${ pkgs.coreutils }/bin/true &&
                                         ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
                                         ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ utils.bash-variable "@[@]:1" }
