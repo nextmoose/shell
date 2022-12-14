@@ -63,6 +63,12 @@
                                   in
                                     {
                                       commands = commands ;
+				      log =
+				        {
+					  query =
+					    ''
+					    '' ;
+					} ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
                                       variables = variables ;
