@@ -31,7 +31,7 @@
                                   variables = structures.variables zero ;
                                   string = track.reduced ( structures.one zero ) ;
                                   zero = track.reduced structures.zero ;
-                                  in builtins.trace string ( structures.process-with string numbers variables ) ;
+                                  in structures.process-with string numbers variables ;
                               list = track : track.reduced ;
                               set = track : track.reduced ;
                             } scripts ;
