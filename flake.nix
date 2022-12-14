@@ -51,9 +51,9 @@
                                     ${ pkgs.flock }/bin/flock -x 201 &&
                                     ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
                                   else 
-				    exec 202<>${ _utils.bash-variable "$(( ${ _utils.bash-variable "#" } - 1 ))" }/lock &&
+                                    exec 202<>${ _utils.bash-variable "$(( ${ _utils.bash-variable "#" } - 1 ))" }/lock &&
                                     ${ pkgs.flock }/bin/flock -s 202 &&
-				    ${ pkgs.coreutils }/bin/true
+                                    ${ pkgs.coreutils }/bin/true
                                   fi
                                 '' ;
                            generator =
@@ -154,8 +154,8 @@
                                         fi
                                       fi &&
                                       ${ pkgs.coreutils }/bin/nice \
-				        --adjustment 19 \
-					${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ _utils.bash-variable variables.log } ${ structure-directory }/logs ${ structure-directory }
+                                        --adjustment 19 \
+                                        ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ _utils.bash-variable variables.log } ${ structure-directory }/logs ${ structure-directory }
                                     '' ;
                                   temporary =
                                     ''
