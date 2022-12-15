@@ -48,7 +48,7 @@
                                   if [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   then
                                     exec 200<>${ _utils.bash-variable "1" }/lock &&
-                                    if ${ pkgs.flock }/bin/flock -n 200
+                                    if ${ pkgs.flock }/bin/flock -n -x 200
                                     then
                                       ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "1" }/lock &&
                                       shift &&
@@ -191,8 +191,8 @@
                                     ''
                                       cleanup ( )
                                       {
-                                        # ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
-                                        ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
+                                        # ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
                                       } &&
                                       trap cleanup EXIT &&
                                       if [ ! -d ${ structure-directory } ]
