@@ -45,16 +45,14 @@
                               } ;
                               delock =
                                 ''
-                                  if [ ${ _utils.bash-variable "#" } == 1 ]
-                                  then
-                                    exec 201<>${ _utils.bash-variable "1" }/lock &&
-                                    ${ pkgs.flock }/bin/flock -x 201 &&
-                                    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
-                                  else 
-                                    exec 202<>${ _utils.bash-variable "$(( ${ _utils.bash-variable "#" } - 1 ))" }/lock &&
-                                    ${ pkgs.flock }/bin/flock -s 202 &&
-                                    ${ pkgs.coreutils }/bin/true
-                                  fi
+				  ${ pkgs.coreutils }/bin/seq ${ _utils.bash-variable "#" } | while read I
+				  do
+				    INDEX=$(( 200 + ${I} )) &&
+				    DIRECTORY=${ _utils.bash-variable "@[${ _utils.vash-variable "I" }]" } &&
+				    exec ${ _utils.bash-variable "INDEX" }<>${ _utils.bash-variable "DIRECTORY" }/lock &&
+				    ${ pkgs.flock }/bin/flock -x -w 1 ${ _utils.bash-variable "INDEX" } &&
+				    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "DIRECTORY" }/lock
+				  done
                                 '' ;
                            generator =
                               numbers : variables :
@@ -155,7 +153,7 @@
                                       fi &&
                                       ${ pkgs.coreutils }/bin/nice \
                                         --adjustment 19 \
-                                        ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ _utils.bash-variable variables.log } ${ structure-directory }/logs ${ structure-directory }
+                                        ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable variables.log }
                                     '' ;
                                   temporary =
                                     ''
