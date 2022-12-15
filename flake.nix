@@ -147,58 +147,40 @@
                                           then
                                             exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
-					    ${ pkgs.coreutils }/bin/echo "17010ec3-5dcf-4cc2-aa96-4c59c9aac546" >> ${ structure-directory }/commands.txt &&
-					    ${ pkgs.coreutils }/bin/echo "bd57ee1c-6b37-460c-b586-3685a8c402b0" >> ${ structure-directory }/commands.txt &&
-					    ${ pkgs.coreutils }/bin/echo \
-					      "2f60bcc1-6b07-42a9-bab1-3e02a659902a" \
-					      ${ pkgs.coreutils }/bin/touch \
-                                              ${ _utils.bash-variable variables.log }/out \
-                                              ${ _utils.bash-variable variables.log }/err \
-                                              ${ _utils.bash-variable variables.log }/din \
-                                              ${ _utils.bash-variable variables.log }/debug \
-                                              ${ _utils.bash-variable variables.log }/notes \
-					      >> ${ structure-directory }/commands.txt &&
 					    ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
                                               ${ _utils.bash-variable variables.log }/err \
                                               ${ _utils.bash-variable variables.log }/din \
                                               ${ _utils.bash-variable variables.log }/debug \
                                               ${ _utils.bash-variable variables.log }/notes &&
-					    ${ pkgs.coreutils }/bin/echo "e3079585-975d-4b12-8ec4-c5147ef295a5" >> ${ structure-directory }/commands.txt &&
                                             ${ pkgs.coreutils }/bin/chmod \
                                               0400 \
                                               ${ _utils.bash-variable variables.log }/out \
                                               ${ _utils.bash-variable variables.log }/err \
                                               ${ _utils.bash-variable variables.log }/din \
                                               ${ _utils.bash-variable variables.log }/debug \
-                                              ${ _utils.bash-variable variables.log }/notes &&
-					    ${ pkgs.coreutils }/bin/echo "6cdbe856-3b56-4b0a-8ef5-777048d9de59" >> ${ structure-directory }/commands.txt
-                                          fi &&
-                                          ${ pkgs.coreutils }/bin/true
+                                              ${ _utils.bash-variable variables.log }/notes
+                                          fi
                                         fi &&
-					${ pkgs.coreutils }/bin/echo "3c01bde6-c123-40bf-9e98-264b053d50ec" >> ${ structure-directory }/commands.txt &&
                                         if [ -d ${ structure-directory }/temporary ]
                                         then
-					  ${ pkgs.coreutils }/bin/echo "c3424a94-ab76-40ec-907f-efddbdac881e" >> ${ structure-directory }/commands.txt &&
                                           exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                          ${ pkgs.coreutils }/bin/echo ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; >> ${ structure-directory }/commands.txt &&
-                                          # ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                          # ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
+                                          ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                          ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
                                           ${ pkgs.coreutils }/bin/true
                                         fi
-                                        ${ pkgs.coreutils }/bin/true
                                       fi &&
-                                      # ${ pkgs.coreutils }/bin/echo \
-                                      #   ${ pkgs.coreutils }/bin/nice \
-                                      #     --adjustment 19 \
-                                      #     ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
-                                      #       ${ structure-directory } \
-                                      #       ${ structure-directory }/logs \
-                                      #       ${ _utils.bash-variable variables.log } \
-                                      #       ${ structure-directory }/temporary \
-                                      #         | ${ at } now 2> /dev/null
-                                        ${ pkgs.coreutils }/bin/true
+                                      ${ pkgs.coreutils }/bin/echo \
+				        "112c861b-c1a2-4195-a99b-8a44b69d4ab6" \
+                                        ${ pkgs.coreutils }/bin/nice \
+                                          --adjustment 19 \
+                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
+                                            ${ structure-directory } \
+                                            ${ structure-directory }/logs \
+                                            ${ _utils.bash-variable variables.log } \
+                                            ${ structure-directory }/temporary \
+                                              PIPE ${ at } now 2> /dev/null > ${ structure-directory }/commands.txt
                                     '' ;
                                   temporary =
                                     ''
