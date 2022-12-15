@@ -48,7 +48,7 @@
                                   if [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   then
                                     exec 200<>${ _utils.bash-variable "1" }/lock &&
-                                    if ${ pkgs.flock }/bin/flock -n 200 &&
+                                    if ${ pkgs.flock }/bin/flock -n 200
                                     then
                                       ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "1" }/lock &&
                                       shift &&
