@@ -51,7 +51,7 @@
 				    FILE_DESCRIPTOR=$(( ${ _utils.bash-variable "FILE_DESCRIPTOR" } + 1 )) &&
 				    exec ${ _utils.bash-variable "FILE_DESCRIPTOR" }<>${ _utils.bash-variable "1" }/lock &&
 				    ${ pkgs.flock }/bin/flock -n ${ _utils.bash-variable "FILE_DESCRIPTOR" } &&
-				    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-bariable "1" }/lock &&
+				    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
 				    shift
 				  done
                                 '' ;
