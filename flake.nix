@@ -178,13 +178,6 @@
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
-                                              | ${ at } now 2> /dev/null &&
-                                      ${ pkgs.coreutils }/bin/echo \
-                                        ${ pkgs.coreutils }/bin/nice \
-                                          --adjustment 19 \
-                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
-                                            ${ structure-directory } \
-                                            ${ structure-directory }/temporary \
                                               | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
