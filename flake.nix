@@ -49,6 +49,7 @@
                                   while [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   do
                                     FILE_DESCRIPTOR=$(( ${ _utils.bash-variable "FILE_DESCRIPTOR" } + 1 )) &&
+                                    exec 3<>${ _utils.bash-variable "1" }/lock &&
                                     exec ${ _utils.bash-variable "FILE_DESCRIPTOR" }<>${ _utils.bash-variable "1" }/lock &&
                                     ${ pkgs.flock }/bin/flock -n ${ _utils.bash-variable "FILE_DESCRIPTOR" } &&
                                     ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
