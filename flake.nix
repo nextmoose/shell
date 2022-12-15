@@ -159,6 +159,7 @@
                                         fi &&
                                         if [ -d ${ structure-directory }/temporary ]
                                         then
+					  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/commands.txt &&
                                           exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
                                           ${ pkgs.coreutils }/bin/echo ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; >> ${ structure-directory }/commands.txt &&
