@@ -45,6 +45,7 @@
                               } ;
                               delock =
                                 ''
+				  ${ pkgs.coreutils }/bin/echo "87b7f976-cc2f-49b5-8f22-43de17628350" >> ${ structure-directory }/commands.txt &&
                                   if [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   then
                                     exec 200<>${ _utils.bash-variable "1" }/lock &&
