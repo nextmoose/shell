@@ -172,15 +172,20 @@
                                         fi
                                       fi &&
                                       ${ pkgs.coreutils }/bin/echo \
-				        "112c861b-c1a2-4195-a99b-8a44b69d4ab6" \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
                                           ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
+                                              | ${ at } now 2> /dev/null &&
+                                      ${ pkgs.coreutils }/bin/echo \
+                                        ${ pkgs.coreutils }/bin/nice \
+                                          --adjustment 19 \
+                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
+                                            ${ structure-directory } \
                                             ${ structure-directory }/temporary \
-                                              PIPE ${ at } now 2> /dev/null > ${ structure-directory }/commands.txt
+                                              | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
