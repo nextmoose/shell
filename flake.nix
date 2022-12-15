@@ -158,9 +158,15 @@
                                           ${ pkgs.coreutils }/bin/true
                                         fi
                                       fi &&
-                                      ${ pkgs.coreutils }/bin/nice \
-                                        --adjustment 19 \
-                                        ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable variables.log }
+                                      ${ pkgs.coreutils }/bin/echo \
+				        ${ pkgs.coreutils }/bin/nice \
+                                          --adjustment 19 \
+                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
+					    ${ structure-directory } \
+					    ${ structure-directory }/logs \
+					    ${ _utils.bash-variable variables.log } \
+					    ${ structure-directory }/temporary \
+					      | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
