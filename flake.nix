@@ -148,6 +148,12 @@
                                             exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
 					    ${ pkgs.coreutils }/bin/echo "17010ec3-5dcf-4cc2-aa96-4c59c9aac546" >${ structure-directory }/commands.txt &&
+					    ${ pkgs.coreutils }/bin/touch \
+                                              ${ _utils.bash-variable variables.log }/out \
+                                              ${ _utils.bash-variable variables.err }/err \
+                                              ${ _utils.bash-variable variables.err }/din \
+                                              ${ _utils.bash-variable variables.err }/debug \
+                                              ${ _utils.bash-variable variables.err }/notes &&
                                             ${ pkgs.coreutils }/bin/chmod \
                                               0400 \
                                               ${ _utils.bash-variable variables.log }/out \
@@ -162,7 +168,7 @@
 					${ pkgs.coreutils }/bin/echo "3c01bde6-c123-40bf-9e98-264b053d50ec" > ${ structure-directory }/commands.txt &&
                                         if [ -d ${ structure-directory }/temporary ]
                                         then
-					  ${ pkgs.coreutils }/bin/echo "c3424a94-ab76-40ec-907f-efddbdac881e" ${ structure-directory }/commands.txt &&
+					  ${ pkgs.coreutils }/bin/echo "c3424a94-ab76-40ec-907f-efddbdac881e" > ${ structure-directory }/commands.txt &&
                                           exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
                                           ${ pkgs.coreutils }/bin/echo ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; >> ${ structure-directory }/commands.txt &&
