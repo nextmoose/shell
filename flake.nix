@@ -157,23 +157,23 @@
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
                                         fi &&
-					if [ -d ${ structure-directory }/temporary ]
-					then
-					  exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
-					  ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-					  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-					  ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
-					fi
+                                        if [ -d ${ structure-directory }/temporary ]
+                                        then
+                                          exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
+                                          ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
+                                          ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                          ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
+                                        fi
                                       fi &&
                                       ${ pkgs.coreutils }/bin/echo \
-				        ${ pkgs.coreutils }/bin/nice \
+                                        ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
                                           ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
-					    ${ structure-directory } \
-					    ${ structure-directory }/logs \
-					    ${ _utils.bash-variable variables.log } \
-					    ${ structure-directory }/temporary \
-					      | ${ at } now 2> /dev/null
+                                            ${ structure-directory } \
+                                            ${ structure-directory }/logs \
+                                            ${ _utils.bash-variable variables.log } \
+                                            ${ structure-directory }/temporary \
+                                              | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
@@ -191,8 +191,8 @@
                                     ''
                                       cleanup ( )
                                       {
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
-                                        # ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
+                                        # ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
                                       } &&
                                       trap cleanup EXIT &&
                                       if [ ! -d ${ structure-directory } ]
