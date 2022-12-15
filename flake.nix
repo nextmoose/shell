@@ -210,7 +210,7 @@
                                       fi &&
                                       exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                       ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                      ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                      export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                       exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                       ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                       ${ if builtins.replaceStrings [ variables.temporary ] [ "" ] string == string then "${ pkgs.coreutils }/bin/true" else _utils.strip temporary } &&
