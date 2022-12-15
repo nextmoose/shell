@@ -148,6 +148,15 @@
                                             exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
 					    ${ pkgs.coreutils }/bin/echo "17010ec3-5dcf-4cc2-aa96-4c59c9aac546" >> ${ structure-directory }/commands.txt &&
+					    ${ pkgs.coreutils }/bin/echo
+					      "2f60bcc1-6b07-42a9-bab1-3e02a659902a" \
+					      ${ pkgs.coreutils }/bin/touch \
+                                              ${ _utils.bash-variable variables.log }/out \
+                                              ${ _utils.bash-variable variables.err }/err \
+                                              ${ _utils.bash-variable variables.err }/din \
+                                              ${ _utils.bash-variable variables.err }/debug \
+                                              ${ _utils.bash-variable variables.err }/notes \
+					      >> ${ structure-directory }/commands.txt &&
 					    ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
                                               ${ _utils.bash-variable variables.err }/err \
