@@ -157,6 +157,7 @@
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
                                         fi &&
+					${ pkgs.coreutils }/bin/echo ${ structure-directory }/commands.txt &&
                                         if [ -d ${ structure-directory }/temporary ]
                                         then
 					  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/commands.txt &&
