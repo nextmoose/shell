@@ -45,16 +45,21 @@
                               } ;
                               delock =
                                 ''
-				  if [ ${ _utils.bash-variable "#" } -gt 0 ]
-				  then
-				    exec 200<>${ _utils.bash-variable "1" }/lock &&
-				    ${ pkgs.flock }/bin/flock -n 200 &&
-				    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
-				    shift &&
-				    if [ ${ _utils.bash-variable "#" } -gt 0 ]
-				    then
-				      ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
-				    fi
+                                  if [ ${ _utils.bash-variable "#" } -gt 0 ]
+                                  then
+                                    exec 200<>${ _utils.bash-variable "1" }/lock &&
+                                    if ${ pkgs.flock }/bin/flock -n 200 &&
+                                    then
+                                      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "1" }/lock &&
+                                      shift &&
+                                      if [ ${ _utils.bash-variable "#" } -gt 0 ]
+                                      then
+                                        ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
+                                      fi
+                                    else
+                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
+                                    fi
+                                  fi
                                 '' ;
                            generator =
                               numbers : variables :
