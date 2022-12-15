@@ -157,23 +157,25 @@
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
                                         fi &&
-                                        if [ -d ${ structure-directory }/temporary ]
-                                        then
-                                          exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
-                                          ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                          ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/shred --force --remove {} > ${ structure-directory }/shred.txt \; &&
-                                          ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
-                                        fi
+                                        # if [ -d ${ structure-directory }/temporary ]
+                                        # then
+                                        #   exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
+                                        #   ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
+                                        #   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                        #   ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
+                                        #  fi
+					${ pkgs.coreutils }/bin/true
                                       fi &&
-                                      ${ pkgs.coreutils }/bin/echo \
-                                        ${ pkgs.coreutils }/bin/nice \
-                                          --adjustment 19 \
-                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
-                                            ${ structure-directory } \
-                                            ${ structure-directory }/logs \
-                                            ${ _utils.bash-variable variables.log } \
-                                            ${ structure-directory }/temporary \
-                                              | ${ at } now 2> /dev/null
+                                      # ${ pkgs.coreutils }/bin/echo \
+                                      #   ${ pkgs.coreutils }/bin/nice \
+                                      #     --adjustment 19 \
+                                      #     ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
+                                      #       ${ structure-directory } \
+                                      #       ${ structure-directory }/logs \
+                                      #       ${ _utils.bash-variable variables.log } \
+                                      #       ${ structure-directory }/temporary \
+                                      #         | ${ at } now 2> /dev/null
+				        ${ pkgs.coreutils }/bin/true
                                     '' ;
                                   temporary =
                                     ''
