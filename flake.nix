@@ -48,7 +48,7 @@
 				  ${ pkgs.coreutils }/bin/seq ${ _utils.bash-variable "#" } | while read I
 				  do
 				    INDEX=$(( 200 + ${ _utils.bash-variable "I" } )) &&
-				    DIRECTORY=${ _utils.bash-variable "@[${ _utils.vash-variable "I" }]" } &&
+				    DIRECTORY=${ _utils.bash-variable "@[${ _utils.bash-variable "I" }]" } &&
 				    exec ${ _utils.bash-variable "INDEX" }<>${ _utils.bash-variable "DIRECTORY" }/lock &&
 				    ${ pkgs.flock }/bin/flock -x -w 1 ${ _utils.bash-variable "INDEX" } &&
 				    ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "DIRECTORY" }/lock
