@@ -171,7 +171,8 @@
                                     ''
                                       cleanup ( )
                                       {
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
+                                        # ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
+                                        ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
                                       } &&
                                       trap cleanup EXIT &&
                                       if [ ! -d ${ structure-directory } ]
