@@ -161,7 +161,7 @@
                                         then
                                           exec ${ numbers.temporaries }<>${ structure-directory }/temporary/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.temporaries } &&
-                                          ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                          ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.temporary } -type f -exec ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/shred --force --remove {} > ${ structure-directory }/shred.txt \; &&
                                           ${ pkgs.coreutils }/bin/rm --recursive --force ${ _utils.bash-variable variables.temporary }
                                         fi
                                       fi &&
