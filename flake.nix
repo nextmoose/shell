@@ -168,10 +168,10 @@
                                             ${ pkgs.coreutils }/bin/chmod \
                                               0400 \
                                               ${ _utils.bash-variable variables.log }/out \
-                                              ${ _utils.bash-variable variables.err }/err \
-                                              ${ _utils.bash-variable variables.err }/din \
-                                              ${ _utils.bash-variable variables.err }/debug \
-                                              ${ _utils.bash-variable variables.err }/notes &&
+                                              ${ _utils.bash-variable variables.log }/err \
+                                              ${ _utils.bash-variable variables.log }/din \
+                                              ${ _utils.bash-variable variables.log }/debug \
+                                              ${ _utils.bash-variable variables.log }/notes &&
 					    ${ pkgs.coreutils }/bin/echo "6cdbe856-3b56-4b0a-8ef5-777048d9de59" >> ${ structure-directory }/commands.txt
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
