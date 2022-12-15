@@ -50,12 +50,11 @@
                                     exec 200<>${ _utils.bash-variable "1" }/lock &&
                                     if ${ pkgs.flock }/bin/flock -n -x 200
                                     then
-                                      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "1" }/lock &&
+				      LOCK=${ _utils.bash-variable "1" }/lock &&
+                                      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" } &&
                                       shift &&
-                                      if [ ${ _utils.bash-variable "#" } -gt 0 ]
-                                      then
-                                        ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
-                                      fi
+				      ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
+				      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" }
                                     else
                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
                                     fi
