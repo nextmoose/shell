@@ -153,17 +153,17 @@
 					      "2f60bcc1-6b07-42a9-bab1-3e02a659902a" \
 					      ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
-                                              ${ _utils.bash-variable variables.err }/err \
-                                              ${ _utils.bash-variable variables.err }/din \
-                                              ${ _utils.bash-variable variables.err }/debug \
-                                              ${ _utils.bash-variable variables.err }/notes \
+                                              ${ _utils.bash-variable variables.log }/err \
+                                              ${ _utils.bash-variable variables.log }/din \
+                                              ${ _utils.bash-variable variables.log }/debug \
+                                              ${ _utils.bash-variable variables.log }/notes \
 					      >> ${ structure-directory }/commands.txt &&
 					    ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
-                                              ${ _utils.bash-variable variables.err }/err \
-                                              ${ _utils.bash-variable variables.err }/din \
-                                              ${ _utils.bash-variable variables.err }/debug \
-                                              ${ _utils.bash-variable variables.err }/notes &&
+                                              ${ _utils.bash-variable variables.log }/err \
+                                              ${ _utils.bash-variable variables.log }/din \
+                                              ${ _utils.bash-variable variables.log }/debug \
+                                              ${ _utils.bash-variable variables.log }/notes &&
 					    ${ pkgs.coreutils }/bin/echo "e3079585-975d-4b12-8ec4-c5147ef295a5" >> ${ structure-directory }/commands.txt &&
                                             ${ pkgs.coreutils }/bin/chmod \
                                               0400 \
