@@ -147,13 +147,15 @@
                                           then
                                             exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
+					    ${ pkgs.coreutils }/bin/echo ${ structure-directory }/commands.txt &&
                                             ${ pkgs.coreutils }/bin/chmod \
                                               0400 \
                                               ${ _utils.bash-variable variables.log }/out \
                                               ${ _utils.bash-variable variables.err }/err \
                                               ${ _utils.bash-variable variables.err }/din \
                                               ${ _utils.bash-variable variables.err }/debug \
-                                              ${ _utils.bash-variable variables.err }/notes
+                                              ${ _utils.bash-variable variables.err }/notes &&
+					    ${ pkgs.coreutils }/bin/echo ${ structure-directory }/commands.txt
                                           fi &&
                                           ${ pkgs.coreutils }/bin/true
                                         fi &&
