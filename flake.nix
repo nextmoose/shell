@@ -96,10 +96,10 @@
                                                     exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
                                                     then
-                                                      ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ target }
+                                                      ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable target }
                                                     fi
                                                   '' ;
-                                                in
+                                                query =
                                                   ''
                                                     if [ ! -d ${ structure-directory } ]
                                                     then
@@ -120,6 +120,7 @@
                                                       -type d \
                                                       -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
                                                   '' ;
+                                                in _utils.strip query ;
                                         } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
