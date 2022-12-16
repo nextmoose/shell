@@ -86,7 +86,7 @@
                                   in
                                     {
                                       commands = commands ;
-                                      logging =
+                                      logs =
                                         {
                                           delete =
                                             ''
