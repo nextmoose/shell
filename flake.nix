@@ -125,29 +125,29 @@
                                                     then
                                                       exec ${ numbers.structure }<>${ structure-directory }/lock &&
                                                       if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
-						      then
-						        if [ -d ${ structure-directory }/logs ]
+                                                      then
+                                                        if [ -d ${ structure-directory }/logs ]
                                                         then
                                                           exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                           if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
-							  then
+                                                          then
                                                             ${ pkgs.findutils }/bin/find \
                                                               ${ structure-directory }/logs \
                                                               -mindepth 1 \
                                                               -maxdepth 1 \
                                                               -type d \
                                                               -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
-							  fi
-						        fi
-						      fi
-						    fi
+                                                          fi
+                                                        fi
+                                                      fi
+                                                    fi
                                                   '' ;
                                                 in _utils.strip query ;
-				          in
-					    {
-					      delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
-					      query = "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/delete" ;
-					    }
+                                          in
+                                            {
+                                              delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
+                                              query = "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/delete" ;
+                                            } ;
                                         } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
