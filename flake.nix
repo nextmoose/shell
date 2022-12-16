@@ -100,7 +100,7 @@
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
                                                   if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "#" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
                                                   then
-                                                    exec ${ numbers.log }<>${ _utils.structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
+                                                    exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                     ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive --delete ${ structure-directory }/logs/${ _utils.bash-variable "1" }
