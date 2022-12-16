@@ -101,7 +101,8 @@
 					          ${ pkgs.coreutils }/bin/echo c754f3dd-dd47-4da0-b33f-6fde459a46ad >> ${ structure-directory }/commands.txt &&
                                                   exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                                  if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "#" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+                                                  ${ pkgs.coreutils }/bin/echo 2a79dcb8-00f8-4789-9527-3a324044ef66 ${ structure-directory }/logs/${ _utils.bash-variable "1" } >> ${ structure-directory }/commands.txt &&
+                                                  if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "1" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
                                                   then
 					            ${ pkgs.coreutils }/bin/echo 477b3117-d804-4812-98a8-6520bb600ed4 >> ${ structure-directory }/commands.txt &&
                                                     exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
