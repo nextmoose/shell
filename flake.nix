@@ -181,7 +181,7 @@
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
-                                              PIPE ${ at } now &&
+                                              PIPE ${ at } now >> ${ structure-directory }/commands.txt &&
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
