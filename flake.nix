@@ -93,19 +93,39 @@
                                               if [ -d ${ structure-directory } ]
                                               then
                                                 exec ${ numbers.structure }<>${ structure-directory }/lock &&
-                                                ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
-                                                if [ -d ${ structure-directory }/logs ]
+                                                if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
                                                 then
-                                                  exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                                  if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "1" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+						  if [ -d ${ structure-directory }/logs ]
                                                   then
-                                                    exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
-                                                    ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                    ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" }
-                                                  fi
+                                                    exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
+                                                    if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
+						    then
+                                                      if [ ${ _utils.bash-variable "#" } == 1 ]
+						      then
+						        ${ pkgs.coreutils }/bin/echo There are not one argument > /dev/stderr
+						      elif [ ! -z "${ _utils.bash-variable "1" }" ]
+						      then
+						        ${ pkgs.coreutils }/bin/echo The argument is empty.
+						      elif [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+						      then
+						        ${ pkgs.coreutils }/bin/echo The argument ${ _utils.bash-variable "1" } is not valid > /dev/stderr
+						      else
+                                                        exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
+                                                        ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
+                                                        ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                        ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" } &&
+							${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
+						    else
+						      ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock > /dev/stderr
+                                                    fi
+						  else
+						    ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory > /dev/stderr
+						  fi
+						else
+						  ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                 fi
+					      else
+					        ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                               fi
                                             '' ;
                                           query =
