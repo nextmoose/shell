@@ -48,15 +48,18 @@
 				  ${ pkgs.coreutils }/bin/echo "87b7f976-cc2f-49b5-8f22-43de17628350" >> ${ structure-directory }/commands.txt &&
                                   if [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   then
+				    ${ pkgs.coreutils }/bin/echo "9949a238-a5ef-401d-a21c-6a81501401f2" >> ${ structure-directory }/commands.txt &&
                                     exec 200<>${ _utils.bash-variable "1" }/lock &&
                                     if ${ pkgs.flock }/bin/flock -n -x 200
                                     then
+				      ${ pkgs.coreutils }/bin/echo "91184966-a28d-48d0-99eb-2c23c8ec5a47" >> ${ structure-directory }/commands.txt &&
 				      LOCK=${ _utils.bash-variable "1" }/lock &&
                                       ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" } &&
                                       shift &&
 				      ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
 				      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" }
                                     else
+				      ${ pkgs.coreutils }/bin/echo "91184966-a28d-48d0-99eb-2c23c8ec5a47" >> ${ structure-directory }/commands.txt &&
                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
                                     fi
                                   fi
@@ -145,7 +148,7 @@
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
                                           if [ ! -z ${ _utils.bash-variable variables.log } ] && [ -d ${ _utils.bash-variable variables.log } ]
                                           then
-                                            exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/log &&
+                                            exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
 					    ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
@@ -171,6 +174,14 @@
                                           ${ pkgs.coreutils }/bin/true
                                         fi
                                       fi &&
+                                      ${ pkgs.coreutils }/bin/echo \
+                                        ${ pkgs.coreutils }/bin/nice \
+                                          --adjustment 19 \
+                                          ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
+                                            ${ structure-directory } \
+                                            ${ structure-directory }/logs \
+                                            ${ _utils.bash-variable variables.log } \
+                                              PIPE ${ at } now &&
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
