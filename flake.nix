@@ -1,4 +1,4 @@
-  {
+          {
       inputs =
         {
           flake-utils.url = "github:numtide/flake-utils" ;
@@ -88,6 +88,26 @@
                                       commands = commands ;
                                       logging =
                                         {
+                                          delete =
+                                            ''
+                                              if [ -d ${ structure-directory } ]
+                                              then
+                                                exec ${ numbers.structure }<>${ structure-directory }/lock &&
+                                                ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
+                                                if [ -d ${ structure-directory }/logs ]
+                                                then
+                                                  exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
+                                                  if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "#" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+                                                  then
+                                                    exec ${ numbers.log }<>${ _utils.structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
+                                                    ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
+                                                    ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                                    ${ pkgs.coreutils }/bin/rm --recursive --delete ${ structure-directory }/logs/${ _utils.bash-variable "1" }
+                                                  fi
+                                                fi
+                                              fi
+                                            '' ;
                                           query =
                                             target :
                                               let
