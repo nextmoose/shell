@@ -125,6 +125,7 @@
                                       numbers = numbers ;
                                       pkgs = pkgs ;
                                       variables = variables ;
+                                      utils = _utils ;
                                     } ;
                             numbers = string : let r = reducers string ; in builtins.foldl' r.numbers { } base.numbers ;
                             one = string : generator ( numbers string ) ( variables string ) ;
