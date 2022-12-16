@@ -96,7 +96,8 @@
                                                     exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log } &&
                                                     then
-                                                      ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ target } &&
+                                                      ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ target }
+                                                    fi
                                                   '' ;
                                                 in
                                                   ''
