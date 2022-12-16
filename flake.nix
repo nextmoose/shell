@@ -95,37 +95,38 @@
                                                 exec ${ numbers.structure }<>${ structure-directory }/lock &&
                                                 if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
                                                 then
-						  if [ -d ${ structure-directory }/logs ]
+                                                  if [ -d ${ structure-directory }/logs ]
                                                   then
                                                     exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                     if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
-						    then
+                                                    then
                                                       if [ ${ _utils.bash-variable "#" } == 1 ]
-						      then
-						        ${ pkgs.coreutils }/bin/echo There are not one argument > /dev/stderr
-						      elif [ ! -z "${ _utils.bash-variable "1" }" ]
-						      then
-						        ${ pkgs.coreutils }/bin/echo The argument is empty.
-						      elif [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
-						      then
-						        ${ pkgs.coreutils }/bin/echo The argument ${ _utils.bash-variable "1" } is not valid > /dev/stderr
-						      else
+                                                      then
+                                                        ${ pkgs.coreutils }/bin/echo There are not one argument > /dev/stderr
+                                                      elif [ ! -z "${ _utils.bash-variable "1" }" ]
+                                                      then
+                                                        ${ pkgs.coreutils }/bin/echo The argument is empty.
+                                                      elif [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+                                                      then
+                                                        ${ pkgs.coreutils }/bin/echo The argument ${ _utils.bash-variable "1" } is not valid > /dev/stderr
+                                                      else
                                                         exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
                                                         ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                         ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                         ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" } &&
-							${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
-						    else
-						      ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock > /dev/stderr
+                                                        ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
+                                                      fi
+                                                    else
+                                                      ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock > /dev/stderr
                                                     fi
-						  else
-						    ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory > /dev/stderr
-						  fi
-						else
-						  ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
+                                                  else
+                                                    ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory > /dev/stderr
+                                                  fi
+                                                else
+                                                  ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                 fi
-					      else
-					        ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
+                                              else
+                                                ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                               fi
                                             '' ;
                                           query =
@@ -137,7 +138,7 @@
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
                                                     then
                                                       ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
-						      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                     fi
                                                   '' ;
                                                 in
@@ -158,17 +159,17 @@
                                                               -maxdepth 1 \
                                                               -type d \
                                                               -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
-							  else
-							    ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
+                                                          else
+                                                            ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                           fi
-							else
-							  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
+                                                        else
+                                                          ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
                                                         fi
-						      else
-							${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
+                                                      else
+                                                        ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                       fi
-						    else
-						      ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
+                                                    else
+                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                                     fi
                                                   '' ;
                                           in
