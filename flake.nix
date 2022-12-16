@@ -138,7 +138,7 @@
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
                                                     then
                                                       ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } &&
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                     fi &&
                                                     ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
                                                   '' ;
