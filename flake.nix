@@ -159,7 +159,7 @@
                                                               -mindepth 1 \
                                                               -maxdepth 1 \
                                                               -type d \
-                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \; &&
+                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
                                                           else
                                                             ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                           fi
