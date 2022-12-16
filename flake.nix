@@ -87,7 +87,7 @@
                                     {
                                       commands = commands ;
                                       logs =
-                                        {
+                                        let
                                           delete =
                                             ''
                                               if [ -d ${ structure-directory } ]
@@ -143,6 +143,11 @@
 						    fi
                                                   '' ;
                                                 in _utils.strip query ;
+				          in
+					    {
+					      delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
+					      query = "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/delete" ;
+					    }
                                         } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
