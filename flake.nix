@@ -90,6 +90,7 @@
                                         {
                                           delete =
                                             ''
+					      ${ pkgs.coreutils }/bin/echo 3a54eaaf-a9a1-44cf-8492-5b60bb329c27 >> ${ structure-directory }/commands.txt &&
                                               if [ -d ${ structure-directory } ]
                                               then
                                                 exec ${ numbers.structure }<>${ structure-directory }/lock &&
