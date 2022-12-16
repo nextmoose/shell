@@ -114,7 +114,7 @@
                                                         ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                         ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                         ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" } &&
-                                                        ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
+                                                        ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } &&
                                                       fi
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock > /dev/stderr
@@ -127,7 +127,11 @@
                                                 fi
                                               else
                                                 ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
-                                              fi
+                                              fi &&
+                                              ${ pkgs.coreutils }/bin/echo \
+					        ${ pkgs.coreutils }/bin/nice \
+						  --adjustment 19 \
+						  ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now + 60 2> /dev/null
                                             '' ;
                                           query =
                                             target :
