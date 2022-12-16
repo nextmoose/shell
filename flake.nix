@@ -100,13 +100,13 @@
                                                     exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                     if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
                                                     then
-                                                      if [ ${ _utils.bash-variable "#" } == 1 ]
+                                                      if [ ${ _utils.bash-variable "#" } != 1 ]
                                                       then
                                                         ${ pkgs.coreutils }/bin/echo There are not one argument > /dev/stderr
-                                                      elif [ ! -z "${ _utils.bash-variable "1" }" ]
+                                                      elif [ -z "${ _utils.bash-variable "1" }" ]
                                                       then
                                                         ${ pkgs.coreutils }/bin/echo The argument is empty.
-                                                      elif [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
+                                                      elif [ ! -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
                                                       then
                                                         ${ pkgs.coreutils }/bin/echo The argument ${ _utils.bash-variable "1" } is not valid > /dev/stderr
                                                       else
