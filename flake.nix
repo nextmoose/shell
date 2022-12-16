@@ -90,21 +90,16 @@
                                         {
                                           delete =
                                             ''
-					      ${ pkgs.coreutils }/bin/echo 3a54eaaf-a9a1-44cf-8492-5b60bb329c27 >> ${ structure-directory }/commands.txt &&
                                               if [ -d ${ structure-directory } ]
                                               then
-					        ${ pkgs.coreutils }/bin/echo 6801130b-6bd4-4198-8ea1-7efb0258eaa0 >> ${ structure-directory }/commands.txt &&
                                                 exec ${ numbers.structure }<>${ structure-directory }/lock &&
                                                 ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
                                                 if [ -d ${ structure-directory }/logs ]
                                                 then
-					          ${ pkgs.coreutils }/bin/echo c754f3dd-dd47-4da0-b33f-6fde459a46ad >> ${ structure-directory }/commands.txt &&
                                                   exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                                  ${ pkgs.coreutils }/bin/echo 2a79dcb8-00f8-4789-9527-3a324044ef66 ${ structure-directory }/logs/${ _utils.bash-variable "1" } >> ${ structure-directory }/commands.txt &&
                                                   if [ ${ _utils.bash-variable "#" } == 1 ] && [ ! -z "${ _utils.bash-variable "1" }" ] && [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ]
                                                   then
-					            ${ pkgs.coreutils }/bin/echo 477b3117-d804-4812-98a8-6520bb600ed4 >> ${ structure-directory }/commands.txt &&
                                                     exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                     ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
@@ -126,24 +121,26 @@
                                                   '' ;
                                                 query =
                                                   ''
-                                                    if [ ! -d ${ structure-directory } ]
+                                                    if [ -d ${ structure-directory } ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                    fi &&
-                                                    exec ${ numbers.structure }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
-                                                    if [ ! -d ${ structure-directory }/logs ]
-                                                    then
-                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                                    fi &&
-                                                    exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                                    ${ pkgs.findutils }/bin/find \
-                                                      ${ structure-directory }/logs \
-                                                      -mindepth 1 \
-                                                      -maxdepth 1 \
-                                                      -type d \
-                                                      -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
+                                                      exec ${ numbers.structure }<>${ structure-directory }/lock &&
+                                                      if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
+						      then
+						        if [ -d ${ structure-directory }/logs ]
+                                                        then
+                                                          exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
+                                                          if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
+							  then
+                                                            ${ pkgs.findutils }/bin/find \
+                                                              ${ structure-directory }/logs \
+                                                              -mindepth 1 \
+                                                              -maxdepth 1 \
+                                                              -type d \
+                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
+							  fi
+						        fi
+						      fi
+						    fi
                                                   '' ;
                                                 in _utils.strip query ;
                                         } ;
