@@ -119,7 +119,7 @@
                                                       ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target }
                                                     fi
                                                   '' ;
-                                                query =
+                                                in
                                                   ''
                                                     if [ -d ${ structure-directory } ]
                                                     then
@@ -142,7 +142,6 @@
                                                       fi
                                                     fi
                                                   '' ;
-                                                in _utils.strip query ;
                                           in
                                             {
                                               delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
