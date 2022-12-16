@@ -108,7 +108,7 @@
                                                     exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                     ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                    ${ pkgs.coreutils }/bin/rm --recursive --delete ${ structure-directory }/logs/${ _utils.bash-variable "1" }
+                                                    ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" }
                                                   fi
                                                 fi
                                               fi
