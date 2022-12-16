@@ -89,20 +89,14 @@
                                       logging =
                                         {
                                           query =
-					    target :
+                                            target :
                                               let
                                                 directory =
                                                   ''
-						    if [ ${ variables.log } != ${ _utils.bash-variable "1" } ]
-						    then
-                                                      exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
-                                                      if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log } &&
-						      then
-						        ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ target } &&
-						        ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
-						      else
-						        ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } > /dev/stderr
-						    fi
+                                                    exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
+                                                    if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log } &&
+                                                    then
+                                                      ${ pkgs.coreutils }/bin/cp -recursive ${ _utils.bash-variable "1" } ${ target } &&
                                                   '' ;
                                                 in
                                                   ''
@@ -118,14 +112,11 @@
                                                     fi &&
                                                     exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                     ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
-                                                    exec ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                                    exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
                                                     ${ pkgs.findutils }/bin/find \
                                                       ${ structure-directory }/logs \
                                                       -mindepth 1 \
                                                       -maxdepth 1 \
-						      -type d \
+                                                      -type d \
                                                       -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
                                                   '' ;
                                         } ;
