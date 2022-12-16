@@ -139,7 +139,8 @@
                                                     then
                                                       ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } &&
-                                                    fi
+                                                    fi &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
                                                   '' ;
                                                 in
                                                   ''
@@ -171,7 +172,7 @@
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                                     fi &&
-						    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
                                                   '' ;
                                           in
                                             {
