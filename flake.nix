@@ -147,7 +147,6 @@
                                               delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
                                               query = target : "${ pkgs.writeShellScriptBin "query" ( _utils.strip ( query target ) ) }/bin/delete" ;
                                             } ;
-                                        } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
                                       variables = variables ;
