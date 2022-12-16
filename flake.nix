@@ -61,7 +61,7 @@
                                         shift &&
                                         ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
                                       else
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now + 60 2> /dev/null
                                       fi
                                     fi
                                   fi
@@ -138,7 +138,7 @@
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
                                                     then
                                                       ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } &&
                                                     fi
                                                   '' ;
                                                 in
@@ -158,7 +158,7 @@
                                                               -mindepth 1 \
                                                               -maxdepth 1 \
                                                               -type d \
-                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
+                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \; &&
                                                           else
                                                             ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                           fi
@@ -170,7 +170,8 @@
                                                       fi
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
-                                                    fi
+                                                    fi &&
+						    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
                                                   '' ;
                                           in
                                             {
@@ -238,14 +239,14 @@
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
-                                              | ${ at } now 2> /dev/null &&
+                                              | ${ at } now + 60 2> /dev/null &&
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
                                           ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
                                             ${ structure-directory } \
                                             ${ structure-directory }/temporary \
-                                               | ${ at } now 2> /dev/null
+                                               | ${ at } now + 90 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
