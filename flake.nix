@@ -58,7 +58,6 @@
                                         ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } &&
                                         ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock
                                       else
-                                        ${ pkgs.coreutils }/bin/echo "ae3ff9ab-5ebe-43cd-b2c9-374aa70775d0" >> ${ structure-directory }/commands.txt &&
                                         ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
                                       fi
                                     fi
@@ -181,15 +180,14 @@
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
-                                              PIPE ${ at } now >> ${ structure-directory }/commands.txt &&
+                                              | ${ at } now 2> /dev/null &&
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
                                           ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
                                             ${ structure-directory } \
-                                            ${ structure-directory }/logs \
-                                            ${ _utils.bash-variable variables.log } \
-                                              | ${ at } now 2> /dev/null
+                                            ${ structure-directory }/temporary \
+                                               | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
