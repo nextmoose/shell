@@ -45,22 +45,22 @@
                               } ;
                               delock =
                                 ''
-				  ${ pkgs.coreutils }/bin/echo "87b7f976-cc2f-49b5-8f22-43de17628350" >> ${ structure-directory }/commands.txt &&
                                   if [ ${ _utils.bash-variable "#" } -gt 0 ]
                                   then
-				    ${ pkgs.coreutils }/bin/echo "9949a238-a5ef-401d-a21c-6a81501401f2" >> ${ structure-directory }/commands.txt &&
-                                    exec 200<>${ _utils.bash-variable "1" }/lock &&
-                                    if ${ pkgs.flock }/bin/flock -n -x 200
+                                    DIRECTORY=${ _utils.bash-variable "1" } &&
+                                    if [ -d ${ _utils.bash-variable "DIRECTORY" } ]
                                     then
-				      ${ pkgs.coreutils }/bin/echo "91184966-a28d-48d0-99eb-2c23c8ec5a47" >> ${ structure-directory }/commands.txt &&
-				      LOCK=${ _utils.bash-variable "1" }/lock &&
-                                      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" } &&
-                                      shift &&
-				      ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
-				      ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "LOCK" }
-                                    else
-				      ${ pkgs.coreutils }/bin/echo "91184966-a28d-48d0-99eb-2c23c8ec5a47" >> ${ structure-directory }/commands.txt &&
-                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
+                                      exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
+                                      if ${ pkgs.flock }/bin/flock -n -x 200
+                                      then
+                                        ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock &&
+                                        shift &&
+                                        ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } &&
+                                        ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock
+                                      else
+                                        ${ pkgs.coreutils }/bin/echo "ae3ff9ab-5ebe-43cd-b2c9-374aa70775d0" >> ${ structure-directory }/commands.txt &&
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
+                                      fi
                                     fi
                                   fi
                                 '' ;
@@ -150,7 +150,7 @@
                                           then
                                             exec ${ numbers.log }<>${ _utils.bash-variable variables.log }/lock &&
                                             ${ pkgs.flock }/bin/flock -s ${ numbers.log } &&
-					    ${ pkgs.coreutils }/bin/touch \
+                                            ${ pkgs.coreutils }/bin/touch \
                                               ${ _utils.bash-variable variables.log }/out \
                                               ${ _utils.bash-variable variables.log }/err \
                                               ${ _utils.bash-variable variables.log }/din \
