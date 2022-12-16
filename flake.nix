@@ -116,7 +116,8 @@
                                                     exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
                                                     if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
                                                     then
-                                                      ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target }
+                                                      ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
+						      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                     fi
                                                   '' ;
                                                 in
@@ -137,9 +138,17 @@
                                                               -maxdepth 1 \
                                                               -type d \
                                                               -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
+							  else
+							    ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                           fi
+							else
+							  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
                                                         fi
+						      else
+							${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                       fi
+						    else
+						      ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                                     fi
                                                   '' ;
                                           in
