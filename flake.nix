@@ -129,9 +129,9 @@
                                                 ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                               fi &&
                                               ${ pkgs.coreutils }/bin/echo \
-					        ${ pkgs.coreutils }/bin/nice \
-						  --adjustment 19 \
-						  ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now + 60 2> /dev/null
+                                                ${ pkgs.coreutils }/bin/nice \
+                                                  --adjustment 19 \
+                                                  ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now + 60 2> /dev/null
                                             '' ;
                                           query =
                                             target :
