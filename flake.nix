@@ -51,7 +51,7 @@
                                     if [ -d ${ _utils.bash-variable "DIRECTORY" } ]
                                     then
                                       exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
-                                      if ${ pkgs.flock }/bin/flock -n -s 200
+                                      if ${ pkgs.flock }/bin/flock -s 200
                                       then
                                         ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock &&
                                         if [ -z "$( ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "DIRECTORY" } -mindepth 1 )" ]
@@ -61,7 +61,7 @@
                                         shift &&
                                         ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
                                       else
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now + 60 2> /dev/null
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
                                       fi
                                     fi
                                   fi
@@ -132,7 +132,7 @@
                                               ${ pkgs.coreutils }/bin/echo \
                                                 ${ pkgs.coreutils }/bin/nice \
                                                   --adjustment 19 \
-                                                  ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now + 60 2> /dev/null
+                                                  ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now 2> /dev/null
                                             '' ;
                                           query =
                                             let
@@ -144,7 +144,7 @@
                                                     ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
                                                     ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                   fi &&
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
+                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now  2> /dev/null
                                                 '' ;
                                               in
                                                 ''
@@ -254,14 +254,14 @@
                                             ${ structure-directory } \
                                             ${ structure-directory }/logs \
                                             ${ _utils.bash-variable variables.log } \
-                                              | ${ at } now + 60 2> /dev/null &&
+                                              | ${ at } now 2> /dev/null &&
                                       ${ pkgs.coreutils }/bin/echo \
                                         ${ pkgs.coreutils }/bin/nice \
                                           --adjustment 19 \
                                           ${ pkgs.writeShellScriptBin "delock" delock }/bin/delock \
                                             ${ structure-directory } \
                                             ${ structure-directory }/temporary \
-                                               | ${ at } now + 90 2> /dev/null
+                                               | ${ at } now 2> /dev/null
                                     '' ;
                                   temporary =
                                     ''
@@ -279,7 +279,6 @@
                                     ''
                                       cleanup ( )
                                       {
-                                        # ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup
                                         ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
                                       } &&
                                       trap cleanup EXIT &&
