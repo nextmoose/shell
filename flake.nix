@@ -158,12 +158,23 @@
                                                         exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                         if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
                                                         then
-                                                          ${ pkgs.findutils }/bin/find \
-                                                            ${ structure-directory }/logs \
-                                                            -mindepth 1 \
-                                                            -maxdepth 1 \
-                                                            -type d \
-                                                            -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
+							  if [ ${ _utils.bash-variable "#" } != 1 ]
+							  then
+							    ${ pkgs.coreutils }/bin/echo There is not exactly one argument > /dev/stderr
+							  elif [ -z "${ _utils.bash-variable "1" }" ]
+							  then
+							    ${ pkgs.coreutils }/bin/echo The argument is empty > /dev/stderr
+							  elif [ ! -d ${ _utils.bash-variable "1" } ]
+							  then
+							    ${ pkgs.coreutils }/bin/echo The argument is not a directory > /dev/stderr
+							  else
+                                                            ${ pkgs.findutils }/bin/find \
+                                                              ${ structure-directory }/logs \
+                                                              -mindepth 1 \
+                                                              -maxdepth 1 \
+                                                              -type d \
+                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
+							  fi
                                                         else
                                                           ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                         fi
