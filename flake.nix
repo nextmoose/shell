@@ -51,7 +51,7 @@
                                     if [ -d ${ _utils.bash-variable "DIRECTORY" } ]
                                     then
                                       exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
-                                      if ${ pkgs.flock }/bin/flock -nx 200
+                                      if ${ pkgs.flock }/bin/flock -n 200
                                       then
                                         ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock &&
                                         if [ -z "$( ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "DIRECTORY" } -mindepth 1 )" ]
