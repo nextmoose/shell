@@ -61,7 +61,7 @@
                                         shift &&
                                         ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
                                       else
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now + 1min 2> /dev/null
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
                                       fi
                                     fi
                                   fi
