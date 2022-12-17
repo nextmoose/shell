@@ -136,7 +136,7 @@
                                             '' ;
                                           query =
                                             let
-					      directory =
+                                              directory =
                                                 ''
                                                   exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
                                                   if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
