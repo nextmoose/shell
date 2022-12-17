@@ -219,7 +219,7 @@
                                             lambda = track : _utils.strip ( track.reduced commands ) ;
                                             list = track : track.reduced ;
                                             set = track : track.reduced ;
-                                          } resources resource ;
+                                          } ( resources resource ) ;
                                       variables = variables ;
                                       utils = _utils ;
                                     } ;
