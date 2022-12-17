@@ -51,7 +51,7 @@
                                     if [ -d ${ _utils.bash-variable "DIRECTORY" } ]
                                     then
                                       exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
-                                      if ${ pkgs.flock }/bin/flock -s 200
+                                      if ${ pkgs.flock }/bin/flock -nx 200
                                       then
                                         ${ pkgs.coreutils }/bin/rm --force ${ _utils.bash-variable "DIRECTORY" }/lock &&
                                         if [ -z "$( ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "DIRECTORY" } -mindepth 1 )" ]
@@ -61,7 +61,7 @@
                                         shift &&
                                         ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" }
                                       else
-                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now 2> /dev/null
+                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.bash-variable "0" } ${ _utils.bash-variable "@" } | ${ at } now + 1min 2> /dev/null
                                       fi
                                     fi
                                   fi
