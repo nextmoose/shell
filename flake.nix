@@ -144,7 +144,7 @@
                                                     ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
                                                     ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                   fi &&
-  					          ${ pkgs.coreutils }/bin/echo \
+                                                  ${ pkgs.coreutils }/bin/echo \
                                                     ${ pkgs.coreutils }/bin/nice \
                                                       --adjustment 19 \
                                                       ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable "1" } | ${ at } now 2> /dev/null
@@ -161,27 +161,27 @@
                                                         exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
                                                         if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
                                                         then
-							  if [ ${ _utils.bash-variable "#" } != 1 ]
-							  then
-							    ${ pkgs.coreutils }/bin/echo There is not exactly one argument > /dev/stderr
-							  elif [ -z "${ _utils.bash-variable "1" }" ]
-							  then
-							    ${ pkgs.coreutils }/bin/echo The argument is empty > /dev/stderr
-							  elif [ ! -d ${ _utils.bash-variable "1" } ]
-							  then
-							    ${ pkgs.coreutils }/bin/echo The argument is not a directory > /dev/stderr
-							  else
+                                                          if [ ${ _utils.bash-variable "#" } != 1 ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/echo There is not exactly one argument > /dev/stderr
+                                                          elif [ -z "${ _utils.bash-variable "1" }" ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/echo The argument is empty > /dev/stderr
+                                                          elif [ ! -d ${ _utils.bash-variable "1" } ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/echo The argument is not a directory > /dev/stderr
+                                                          else
                                                             ${ pkgs.findutils }/bin/find \
                                                               ${ structure-directory }/logs \
                                                               -mindepth 1 \
                                                               -maxdepth 1 \
                                                               -type d \
                                                               -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
-							  fi
+                                                          fi
                                                         else
                                                           ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                         fi &&
-  					                ${ pkgs.coreutils }/bin/echo \
+                                                        ${ pkgs.coreutils }/bin/echo \
                                                           ${ pkgs.coreutils }/bin/nice \
                                                             --adjustment 19 \
                                                             ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now 2> /dev/null
@@ -191,7 +191,7 @@
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                     fi &&
-					            ${ pkgs.coreutils }/bin/echo \
+                                                    ${ pkgs.coreutils }/bin/echo \
                                                       ${ pkgs.coreutils }/bin/nice \
                                                         --adjustment 19 \
                                                         ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } | ${ at } now 2> /dev/null
