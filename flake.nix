@@ -12,7 +12,7 @@
               {
                 lib =
                   (
-                    nixpkgs : at : urandom : structure-directory : scripts : hook : inputs :
+                    nixpkgs : at : urandom : structure-directory : scripts : resources : hook : inputs :
                       let
                         _scripts =
                           _utils.visit
@@ -36,6 +36,14 @@
                               set = track : track.reduced ;
                             } scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+                        resource =
+                          start : finish : is-directory : seconds :
+                            let
+                              resource =
+                                ''
+                                '' ;
+                                in
+                                "$( ${ pkgs.writeShellScriptBin "resource" resource }/bin/resource )" ;
                         structures =
                           let
                             base =
@@ -205,6 +213,13 @@
                                             } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
+                                      resources =
+				        _utils.visit
+					  {
+					    lambda = track : _utils.strip ( track.reduced commands ) ;
+					    list = track : track.reduced ;
+					    set = track : track.reduced ;
+					  } resources resource ;
                                       variables = variables ;
                                       utils = _utils ;
                                     } ;
