@@ -90,7 +90,6 @@
                                         let
                                           delete =
                                             ''
-                                              ${ pkgs.coreutils }/bin/echo 47803ee8-de37-496b-852b-0e077d4bd6fb &&
                                               if [ -d ${ structure-directory } ]
                                               then
                                                 exec ${ numbers.structure }<>${ structure-directory }/lock &&
