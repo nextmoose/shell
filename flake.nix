@@ -214,12 +214,12 @@
                                       numbers = numbers ;
                                       pkgs = pkgs ;
                                       resources =
-				        _utils.visit
-					  {
-					    lambda = track : _utils.strip ( track.reduced commands ) ;
-					    list = track : track.reduced ;
-					    set = track : track.reduced ;
-					  } resources resource ;
+                                        _utils.visit
+                                          {
+                                            lambda = track : _utils.strip ( track.reduced commands ) ;
+                                            list = track : track.reduced ;
+                                            set = track : track.reduced ;
+                                          } resources resource ;
                                       variables = variables ;
                                       utils = _utils ;
                                     } ;
