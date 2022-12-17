@@ -135,53 +135,52 @@
                                                   ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ structure-directory }/logs/${ _utils.bash-variable "1" } | ${ at } now + 60 2> /dev/null
                                             '' ;
                                           query =
-                                            target :
-                                              let
-                                                directory =
-                                                  ''
-                                                    exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
-                                                    if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
+                                            let
+					      directory =
+                                                ''
+                                                  exec ${ numbers.log }<>${ _utils.bash-variable "1" }/lock &&
+                                                  if ${ pkgs.flock }/bin/flock -s -n ${ numbers.log }
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
+                                                    ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
+                                                  fi &&
+                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
+                                                '' ;
+                                              in
+                                                ''
+                                                  if [ -d ${ structure-directory } ]
+                                                  then
+                                                    exec ${ numbers.structure }<>${ structure-directory }/lock &&
+                                                    if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
                                                     then
-                                                      ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ target } &&
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
-                                                    fi &&
-                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now + 60 2> /dev/null
-                                                  '' ;
-                                                in
-                                                  ''
-                                                    if [ -d ${ structure-directory } ]
-                                                    then
-                                                      exec ${ numbers.structure }<>${ structure-directory }/lock &&
-                                                      if ${ pkgs.flock }/bin/flock -s ${ numbers.structure }
+                                                      if [ -d ${ structure-directory }/logs ]
                                                       then
-                                                        if [ -d ${ structure-directory }/logs ]
+                                                        exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
+                                                        if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
                                                         then
-                                                          exec ${ numbers.logs }<>${ structure-directory }/logs/lock &&
-                                                          if ${ pkgs.flock }/bin/flock -s ${ numbers.logs }
-                                                          then
-                                                            ${ pkgs.findutils }/bin/find \
-                                                              ${ structure-directory }/logs \
-                                                              -mindepth 1 \
-                                                              -maxdepth 1 \
-                                                              -type d \
-                                                              -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} \;
-                                                          else
-                                                            ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
-                                                          fi
+                                                          ${ pkgs.findutils }/bin/find \
+                                                            ${ structure-directory }/logs \
+                                                            -mindepth 1 \
+                                                            -maxdepth 1 \
+                                                            -type d \
+                                                            -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
                                                         else
-                                                          ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
+                                                          ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
                                                         fi
                                                       else
-                                                        ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
+                                                        ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
                                                       fi
                                                     else
-                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
                                                     fi
-                                                  '' ;
+                                                  else
+                                                    ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
+                                                  fi
+                                                '' ;
                                           in
                                             {
                                               delete = "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
-                                              query = target : "${ pkgs.writeShellScriptBin "query" ( _utils.strip ( query target ) ) }/bin/query" ;
+                                              query = "${ pkgs.writeShellScriptBin "query" ( _utils.strip ( query target ) ) }/bin/query" ;
                                             } ;
                                       numbers = numbers ;
                                       pkgs = pkgs ;
