@@ -144,7 +144,10 @@
                                                     ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
                                                     ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                   fi &&
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now  2> /dev/null
+  					          ${ pkgs.coreutils }/bin/echo \
+                                                    ${ pkgs.coreutils }/bin/nice \
+                                                      --adjustment 19 \
+                                                      ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable "1" } | ${ at } now 2> /dev/null
                                                 '' ;
                                               in
                                                 ''
@@ -177,13 +180,21 @@
 							  fi
                                                         else
                                                           ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock  > /dev/stdeverr
-                                                        fi
+                                                        fi &&
+  					                ${ pkgs.coreutils }/bin/echo \
+                                                          ${ pkgs.coreutils }/bin/nice \
+                                                            --adjustment 19 \
+                                                            ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } ${ structure-directory }/logs | ${ at } now 2> /dev/null
                                                       else
                                                         ${ pkgs.coreutils }/bin/echo ${ structure-directory }/logs is not a directory. > /dev/stderr
                                                       fi
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/lock > /dev/stderr
-                                                    fi
+                                                    fi &&
+					            ${ pkgs.coreutils }/bin/echo \
+                                                      ${ pkgs.coreutils }/bin/nice \
+                                                        --adjustment 19 \
+                                                        ${ pkgs.writeShellScriptBin "delock" ( _utils.strip delock ) }/bin/delock ${ structure-directory } | ${ at } now 2> /dev/null
                                                   else
                                                     ${ pkgs.coreutils }/bin/echo ${ structure-directory } is not a directory > /dev/stderr
                                                   fi
