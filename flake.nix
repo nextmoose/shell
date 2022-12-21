@@ -37,10 +37,40 @@
                             } scripts ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         resource =
-                          start : finish : is-directory : seconds :
+                          // starter : finisher : salter : is-expression : is-directory : seconds : dependencies :
+                          starter : finisher : salter : dependencies :
                             let
+                              link = "$( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "SALT" } )/resource" ;
+                              permanent-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "-" ( builtins.map builtins.toString [ starter finisher is-directory ] ) ) ;
                               resource =
                                 ''
+                                  if [ ! -d ${ structure-directory } ]
+                                  then
+                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                  fi &&
+                                  exec 201<>${ structure-directory }/lock &&
+                                  if ${ pkgs.flock }/bin/flock -s 201
+                                  then
+                                    if [ ! -d ${ structure-directory }/links ]
+                                    then
+                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
+                                    fi &&
+                                    exec 202<>${ structure-directory }/links/lock &&
+                                    if ${ pkgs.flock }/bin/flock -s 202
+                                    then
+                                      SALT=$( \
+                                        ${ pkgs.coreutils }/bin/echo ${ permanent-salt } $( ${ pkgs.writeShellScriptBin "salter" salter }/bin/salter $( ${ pkgs.coreutils }/bin/date +%s ) ) |
+                                        ${ pkgs.coreutils }/bin/sha512sum |
+                                        ${ pkgs.coreutils }/bin/cut --bytes 1-128
+                                      ) &&
+                                      if [ -L ${ structure-directory }/links/${ _utils.bash-variable "SALT" } ]
+                                      then
+                                        ${ if is-directory then "${ link }" else if is-expression then "$( ${ pkgs.coreutils }/bin/cat ${ link } )" else "${ link }"
+                                      else
+				        ${ pkgs.coreutils }/bin/echo PLACEHOLDER
+                                      fi
+                                    fi
+                                  fi
                                 '' ;
                                 in
                                 "$( ${ pkgs.writeShellScriptBin "resource" resource }/bin/resource )" ;
@@ -49,7 +79,7 @@
                             base =
                               {
                                 numbers = [ "structure" "logs" "log" "stderr" "temporaries" "temporary" ] ;
-                                variables = [ "log" "out" "err" "din" "debug" "notes" "temporary" ] ;
+                                variables = [ "log" "out" "err" "din" "debug" "notes" "temporary" "security" "time" ] ;
                               } ;
                               delock =
                                 ''
@@ -119,10 +149,14 @@
                                                         ${ pkgs.coreutils }/bin/echo The argument ${ _utils.bash-variable "1" } is not valid > /dev/stderr
                                                       else
                                                         exec ${ numbers.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
-                                                        ${ pkgs.flock }/bin/flock -n ${ numbers.log } &&
-                                                        ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                        ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" } &&
-                                                        ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
+                                                        if ${ pkgs.flock }/bin/flock -n ${ numbers.log }
+							then
+                                                          ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                          ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/logs/${ _utils.bash-variable "1" } &&
+                                                          ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" }
+							else
+							  ${ pkgs.coreutils }/bin/echo There was a problem lock ${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock > /dev/stderr
+							fi
                                                       fi
                                                     else
                                                       ${ pkgs.coreutils }/bin/echo There was a problem locking ${ structure-directory }/logs/lock > /dev/stderr
@@ -236,6 +270,7 @@
                                 let
                                   cleanup =
                                     ''
+				      export ${ variables.time }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
                                       if [ -d ${ structure-directory } ]
                                       then
                                         exec ${ numbers.structure }<>${ structure-directory }/lock &&
