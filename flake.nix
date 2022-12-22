@@ -16,6 +16,7 @@
                       let
                         _ =
                           let
+                            _utils = builtins.getAttr system utils.lib ;
 			    fun =
 			      numbers : variables :
 			        let
@@ -25,7 +26,6 @@
                                       set = track : track.reduced ;
                                       string = track : track.reduced ;
                                     } ( scripts structure ) ;
-                                  _utils = builtins.getAttr system utils.lib ;
                                   structure =
                                     {
                                       pkgs = pkgs ;
