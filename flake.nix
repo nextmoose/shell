@@ -24,7 +24,7 @@
                                     {
                                       list = track : track.reduced ;
                                       set = track : track.reduced ;
-                                      string = track : track.reduced ;
+                                      string = track : _utils.strip track.reduced ;
                                     } ( scripts structure ) ;
                                   structure =
                                     {
@@ -40,6 +40,24 @@
 				  in
 				    {
 				      hook = hook _scripts ;
+				      inputs =
+				        let
+					  scripts =
+				            _utils.visit
+					      {
+					        list = track : track.reduced ;
+					        set = track : track.reduced ;
+					        string =
+					          track :
+					            ''
+						      if [ ! -d ${ structure-directory } ]
+						      then
+						        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+						      fi &&
+						      ${ _utils.strip track.reduced }
+						    '' ;
+					      } _scripts ;
+					  in builtins.attrValues ( builtins.mapAttrs ( name : value : pckgs.writeShellScriptBin name ( _utils.strip value ) ) ( input scripts ) ) ;
 				    } ;
 		            zero =
 			      let
@@ -68,6 +86,7 @@
                         in
                           pkgs.mkShell
                             {
+			      buildInputs = _.inputs ;
                               shellHook = _.hook ;
                             }
                   ) ;
