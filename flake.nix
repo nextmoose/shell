@@ -14,9 +14,7 @@
                   (
                     nixpkgs : at : urandom : structure-directory : scripts : resources : hook : inputs :
                       let
-                        _utils = builtins.getAttr system utils.lib ;
-                        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                        structure =
+                        _ =
                           let
                             _scripts = _utils.visit
                               {
@@ -24,21 +22,27 @@
                                 set = track : track.reduced ;
                                 string = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER _SCRIPTS" ;
                               } ( scripts structure ) ;
-                            in
-                          {
-                            pkgs = pkgs ;
-                            resources = _utils.visit
+                            structure =
                               {
-                                lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
-                                list = track : track.reduced ;
-                                set = track : track.reduced ;
-                              } ( resources _scripts ) ;
-                            scripts = _scripts ;
-                          } ;
+                                pkgs = pkgs ;
+                                resources = _utils.visit
+                                  {
+                                    lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
+                                    list = track : track.reduced ;
+                                    set = track : track.reduced ;
+                                  } ( resources _scripts ) ;
+                                scripts = _scripts ;
+                              } ;
+                            _utils = builtins.getAttr system utils.lib ;
+                            in
+                              {
+                                hook = hook _scripts ;
+                              } ;
+                        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
                           pkgs.mkShell
                             {
-                              shellHook = hook structure.scripts ;
+                              shellHook = _.hook ;
                             }
                   ) ;
               }
