@@ -93,7 +93,7 @@
                                           string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
                                         } raw ;
 				    in fun processed.numbers processed.variables ;
-				in zero ;
+				in fun processed.numbers processed.variables ; ;
                             in zero ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
