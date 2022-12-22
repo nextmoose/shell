@@ -24,7 +24,7 @@
                                 list = track : track.reduced ;
                                 set = track : track.reduced ;
                                 string = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER" ;
-                              } scripts structure ;
+                              } ( scripts structure ) ;
                           } ;
                         in
                           pkgs.mkShell
