@@ -19,6 +19,7 @@
                         structure =
                           {
                             pkgs = pkgs ;
+			    resources = { } ;
                             scripts = _utils.visit
                               {
                                 list = track : track.reduced ;
