@@ -110,7 +110,7 @@
 								  list = track : builtins.all ( x : x ) track.reduced ;
 								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
 								  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
-								} raw.variables ;
+								} zero.scripts ;
 							    is-unique = builtins.all ( p : p != token ) previous ;
 							    in is-not-in-zero && is-unique ;
 							value = token ;
