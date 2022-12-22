@@ -14,6 +14,7 @@
                   (
                     nixpkgs : at : urandom : structure-directory : scripts : resources : hook : inputs :
                       let
+		        _utils = builtins.getAttr system utils.lib ;
                         structure =
                           {
                             scripts = _utils.visit
