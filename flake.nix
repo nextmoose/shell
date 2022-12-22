@@ -72,7 +72,7 @@
                                     variables =
                                       {
                                         script = [ "log" ] ;
-                                        shared = [ "din" "debug" "notes" ] ;
+                                        shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
                                 processed =
