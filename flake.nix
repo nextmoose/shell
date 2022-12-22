@@ -29,6 +29,7 @@
                                   structure =
                                     {
                                       pkgs = pkgs ;
+				      numbers = numbers ;
                                       resources = _utils.visit
                                         {
                                           lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
@@ -36,6 +37,7 @@
                                           set = track : track.reduced ;
                                         } ( resources _scripts ) ;
                                       scripts = _scripts ;
+				      variables = variables ;
                                     } ;
 				  in
 				    {
