@@ -104,7 +104,13 @@
 						      {
 						        success =
 							  let
-							    is-not-in-zero = true ;
+							    is-not-in-zero =
+							      _utils.visit
+							        {
+								  list = track : builtins.all ( x : x ) track.reduced ;
+								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+								  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
+								} raw.variables ;
 							    is-unique = builtins.all ( p : p != token ) previous ;
 							    in is-not-in-zero && is-unique ;
 							value = token ;
