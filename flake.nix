@@ -82,6 +82,49 @@
                                       set = track : track.reduced ;
                                       string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
                                     } raw ;
+				variables =
+				  let
+				    indexed =
+				      _utils.visit
+				        {
+					  list = track : builtins.concatLists track.reduced ;
+					  set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+					  string = track : [ "" ] ;
+					} raw.numbers ;
+				    seeded =
+				      let
+				        reducer =
+					  previous : current :
+					    _utils.try
+					      (
+					        seed :
+						  let
+						    token = builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" seed ) ] ;
+						    in
+						      {
+						        success =
+						          let
+						            is-not-in-zero =
+							      _utils.visit
+							        {
+								  list = track : builtins.all track.reduced ;
+								  set = track : builtins.all ( builtins.attrValues track.reduced ) ;
+								  string = track : builtins.replaceStrings [ token ] [ ] track.reduced == track.reduced ;
+								} zero.scripts ;
+						            is-unique = builtins.all ( p : p != token ) previous ;
+						            in is-not-in-zero && is-unique ;
+						        value = token ;
+						      }
+					      ) ;
+				        in builtins.foldl' reducer [ ] indexed ;
+			            transformed =
+				      _utils.visit
+				        {
+					  list = track : track.reduced ;
+					  set = track : track.reduced ;
+					  string = track : builtins.elemAt seeded ( track.index )
+					} raw.variables ;
+				    in transformed ;
                                 zero = fun processed.numbers processed.variables ;
 				in zero ;
                             in zero ;
