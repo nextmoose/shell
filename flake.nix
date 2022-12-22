@@ -62,7 +62,7 @@
 				    set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
 				    string = track : [ "" ] ;
 				  } raw ;
-				in fun processed.numbers processed.variables
+				in fun processed.numbers processed.variables ;
                             in zero ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
