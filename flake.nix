@@ -122,7 +122,7 @@
 				        {
 					  list = track : track.reduced ;
 					  set = track : track.reduced ;
-					  string = track : builtins.elemAt seeded ( track.index )
+					  string = track : builtins.elemAt seeded ( track.index ) ;
 					} raw.variables ;
 				    in transformed ;
                                 zero = fun processed.numbers processed.variables ;
