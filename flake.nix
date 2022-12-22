@@ -23,7 +23,7 @@
                               {
                                 list = track : track.reduced ;
                                 set = track : track.reduced ;
-                                string = "${ pkgs.coreutils }/bin/echo PLACE HOLDER" ;
+                                string = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER" ;
                               } scripts structure ;
                           } ;
                         in
