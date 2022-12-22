@@ -14,13 +14,15 @@
                   (
                     nixpkgs : at : urandom : structure-directory : scripts : resources : hook : inputs :
                       let
-		        structure =
-			  _utils.visit
-			    {
-			      lambda = track :
-			      list = track : track.reduced ;
-			      set = track : track.reduced ;
-			    } scripts ;
+                        structure =
+                          {
+                            scripts = _utils.visit
+                              {
+                                list = track : track.reduced ;
+                                set = track : track.reduced ;
+                                string = "${ pkgs.coreutils }/bin/echo PLACE HOLDER" ;
+                              } scripts structure ;
+                          } ;
                         in
                           pkgs.mkShell
                             {
