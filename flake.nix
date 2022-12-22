@@ -75,14 +75,13 @@
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
-                                  processed =
-                                    _utils.visit
-                                      {
-                                        list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                        set = track : track.reduced ;
-                                        string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
-                                      } raw ;
-				  in fun processed.numbers processed.variables ;
+                                processed =
+                                  _utils.visit
+                                    {
+                                      list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                      set = track : track.reduced ;
+                                      string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
+                                    } raw ;
                                 zero =
 				  let
                                     processed =
