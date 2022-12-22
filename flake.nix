@@ -78,9 +78,9 @@
                                 processed =
                                   _utils.visit
                                   {
-                                    list = track : builtins.concatLists track.reduced ;
-                                    set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                    string = track : [ "" ] ;
+                                    list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                    set = track : track.reduced ;
+                                    string = track : { "${ _utils.strip track.reduced }" = track.reduced ; } ;
                                   } raw ;
                                 in fun processed.numbers processed.variables ;
                             in zero ;
