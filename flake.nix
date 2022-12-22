@@ -77,11 +77,11 @@
                                   } ;
                                 processed =
                                   _utils.visit
-                                  {
-                                    list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                    set = track : track.reduced ;
-                                    string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
-                                  } raw ;
+                                    {
+                                      list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                      set = track : track.reduced ;
+                                      string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
+                                    } raw ;
                                 in fun processed.numbers processed.variables ;
                             in zero ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
