@@ -65,7 +65,7 @@
                               let
                                 raw =
                                   {
-                                    number =
+                                    numbers =
                                       {
                                         script = [ "structure" ] ;
                                       } ;
