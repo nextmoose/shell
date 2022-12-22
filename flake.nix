@@ -17,6 +17,7 @@
 		        _utils = builtins.getAttr system utils.lib ;
                         structure =
                           {
+			    pkgs = builtins.getAttr system nixpkgs.defaultPackages ;
                             scripts = _utils.visit
                               {
                                 list = track : track.reduced ;
