@@ -26,7 +26,7 @@
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
                                         string = track : _utils.strip track.reduced ;
-					undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
+                                        undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
                                   structure =
                                     {
@@ -36,7 +36,7 @@
                                             list = track : track.reduced ;
                                             set = track : track.reduced ;
                                             string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
-					    undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
+                                            undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } _scripts ;
                                       pkgs = pkgs ;
                                       numbers = numbers.shared ;
@@ -45,7 +45,7 @@
                                           lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
-					  undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
+                                          undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
                                         } ( resources _scripts ) ;
                                       urandom = urandom ;
                                       utils = _utils ;
@@ -56,10 +56,10 @@
                                       if
                                         builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
                                         else
-					  _utils.strip
-					    ''
-					      export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
-					    '' ;
+                                          _utils.strip
+                                            ''
+                                              export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
+                                            '' ;
                                   programs =
                                     _utils.visit
                                       {
@@ -88,7 +88,7 @@
                                               ${ output "notes" variables.shared.notes track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
-				        undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
+                                        undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
                                   in
                                     {
@@ -106,7 +106,7 @@
                                           list = track : builtins.concatLists track.reduced ;
                                           set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                           string = track : [ ( track.reduced ) ] ;
-					  undefined = track : builtins.throw "fd3b0b59-3496-4e11-871a-676c5ce2d59c" ;
+                                          undefined = track : builtins.throw "fd3b0b59-3496-4e11-871a-676c5ce2d59c" ;
                                         } raw.numbers ;
                                     seeded =
                                       let
@@ -128,7 +128,7 @@
                                                                   list = track : builtins.all ( x : x ) track.reduced ;
                                                                   set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                                                   string = track : builtins.replaceStrings [ number ] [ "" ] track.reduced == track.reduced ;
-								  undefined = track : builtins.throw "6bcee02a-7b11-49c3-84c9-94dcede4c27e" ;
+                                                                  undefined = track : builtins.throw "6bcee02a-7b11-49c3-84c9-94dcede4c27e" ;
                                                                 } zero.scripts ;
                                                             is-unique = builtins.all ( p : p != seed ) previous ;
                                                             in is-big && is-not-in-zero && is-unique ;
@@ -142,7 +142,7 @@
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
                                           string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-					  undefined = track : builtins.throw "17080e4a-4ff0-4de2-a3aa-688569801eee" ;
+                                          undefined = track : builtins.throw "17080e4a-4ff0-4de2-a3aa-688569801eee" ;
                                         } raw.numbers ;
                                 raw =
                                   {
@@ -164,7 +164,7 @@
                                           list = track : builtins.concatLists track.reduced ;
                                           set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                           string = track : [ ( track.reduced ) ] ;
-					  undefined = track : builtins.throw "bc11109e-0657-4a91-8ae5-655cbcf14dbd" ;
+                                          undefined = track : builtins.throw "bc11109e-0657-4a91-8ae5-655cbcf14dbd" ;
                                         } raw.variables ;
                                     seeded =
                                       let
@@ -185,7 +185,7 @@
                                                                   list = track : builtins.all ( x : x ) track.reduced ;
                                                                   set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
                                                                   string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
-								  undefined = track : builtins.throw "cbff9956-79af-46be-b16d-54d46dece78c" ;
+                                                                  undefined = track : builtins.throw "cbff9956-79af-46be-b16d-54d46dece78c" ;
                                                                 } zero.scripts ;
                                                             is-unique = builtins.all ( p : p != seed ) previous ;
                                                             in is-not-in-zero && is-unique ;
@@ -197,9 +197,9 @@
                                       _utils.visit
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                          set = track : track.reduced ;	 
+                                          set = track : track.reduced ;  
                                           string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-					  undefined = track : builtins.throw "060de9e8-be75-4be5-aed5-4fe41fda9e11" ;
+                                          undefined = track : builtins.throw "060de9e8-be75-4be5-aed5-4fe41fda9e11" ;
                                         } raw.variables ;
                                 zero =
                                   let
@@ -209,7 +209,7 @@
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
                                           string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
-					  undefined = track : builtins.throw "7a282524-34ba-4ae7-b026-6fbd78716180" ;
+                                          undefined = track : builtins.throw "7a282524-34ba-4ae7-b026-6fbd78716180" ;
                                         } raw ;
                                     in fun processed.numbers processed.variables ;
                                 in fun numbers variables ;
