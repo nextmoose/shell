@@ -53,8 +53,9 @@
                                       if
                                         builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
                                         else
+					  _utils.strip
 					  ''
-					    export ${ variable }="${ pkgs.moreutils }/bin/tee"
+					    export ${ variable }="${ pkgs.moreutils }/bin/tee \""
 					  '' ;
                                   programs =
                                     _utils.visit
