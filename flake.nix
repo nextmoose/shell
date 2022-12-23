@@ -36,7 +36,7 @@
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
                                         } ( resources _scripts ) ;
-                                      scripts = _scripts ;
+				      utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
                                   in
