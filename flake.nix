@@ -102,7 +102,10 @@
                                                     token = builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
                                                     in
                                                       {
-                                                        success = true ;
+                                                        success =
+							  let
+							    is-unique = builtins.all ( p : p != seed ) previous ;
+							    in is-unique ;
                                                         value = builtins.concatLists [ previous [ token ] ] ;
                                                       }
                                               ) ;
