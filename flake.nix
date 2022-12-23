@@ -116,7 +116,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.typeOf seeded ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.typeOf indexed ; } ;
                                         } raw.variables ;
                                 zero =
                                   let
