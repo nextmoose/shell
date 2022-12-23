@@ -60,6 +60,7 @@
                                                     '' ;
                                               } _scripts ;
                                           in builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _utils.strip value ) ) ( inputs scripts ) ) ;
+			              scripts = _scripts ;
                                     } ;
                             zero =
                               let
