@@ -112,7 +112,7 @@
 								  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
 								} zero.scripts ;
 							    is-unique = builtins.all ( p : p != seed ) previous ;
-							    in is-unique ;
+							    in is-not-in-zero && is-unique ;
                                                         value = builtins.concatLists [ previous [ token ] ] ;
                                                       }
                                               ) ;
