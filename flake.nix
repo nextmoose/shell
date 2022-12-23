@@ -80,6 +80,9 @@
                                               export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                              ${ output "din" variables.shared.din track.reduced } &&
+                                              ${ output "debug" variables.shared.debug track.reduced } &&
+                                              ${ output "notes" variables.shared.notes track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
@@ -185,8 +188,8 @@
                                       _utils.visit
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                          set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
+                                          set = track : track.reduced ;	 
+                                          string = track : { "${ track.reduced }" = "YES" ; } ;
                                         } raw.variables ;
                                 zero =
                                   let
