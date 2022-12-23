@@ -2,7 +2,7 @@
       inputs =
         {
           flake-utils.url = "github:numtide/flake-utils" ;
-          utils.url = "github:nextmoose/utils" ;
+  	          utils.url = "github:nextmoose/utils" ;
         } ;
       outputs =
         { self , flake-utils , utils } :
@@ -52,7 +52,7 @@
                                     name : variable : string :
                                       if
                                         builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
-                                        else "# ${ name } 2" ;
+                                        else "export ${ variable }=A" ;
                                   programs =
                                     _utils.visit
                                       {
@@ -77,6 +77,8 @@
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                               ${ output "din" variables.shared.din track.reduced } &&
+                                              ${ output "debug" variables.shared.debug track.reduced } &&
+                                              ${ output "notes" variables.shared.notes track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
