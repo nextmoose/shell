@@ -104,6 +104,13 @@
                                                       {
                                                         success =
 							  let
+							    is-not-in-zero =
+							      _utils.visit
+							        {
+								  list = track : builtins.all ( x : x ) track.reduced ;
+								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+								  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
+								} zero.scripts ;
 							    is-unique = builtins.all ( p : p != seed ) previous ;
 							    in is-unique ;
                                                         value = builtins.concatLists [ previous [ token ] ] ;
