@@ -65,6 +65,49 @@
                                     } ;
                             zero =
                               let
+                                numbers =
+                                  let
+                                    indexed =
+                                      _utils.visit
+                                        {
+                                          list = track : builtins.concatLists track.reduced ;
+                                          set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+                                          string = track : [ ( track.reduced ) ] ;
+                                        } raw.numbers ;
+                                    seeded =
+                                      let
+                                        reducer =
+                                          previous : current :
+                                            _utils.try
+                                              (
+                                                seed :
+                                                  let
+                                                    number = builtins.toString seed ;
+                                                    in
+                                                      {
+                                                        success =
+							  let
+							    is-big = seed > 2 ;
+							    is-not-in-zero =
+							      _utils.visit
+							        {
+								  list = track : builtins.all ( x : x ) track.reduced ;
+								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+								  string = track : builtins.replaceStrings [ number ] [ "" ] track.reduced == track.reduced ;
+								} zero.scripts ;
+							    is-unique = builtins.all ( p : p != seed ) previous ;
+							    in is-big && is-not-in-zero && is-unique ;
+                                                        value = builtins.concatLists [ previous [ number ] ] ;
+                                                      }
+                                              ) ;
+                                        in builtins.foldl' reducer [ ] indexed ;
+                                    in
+                                      _utils.visit
+                                        {
+                                          list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                          set = track : track.reduced ;
+                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
+                                        } raw.variables ;
                                 raw =
                                   {
                                     numbers =
@@ -77,13 +120,6 @@
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
-                                processed =
-                                  _utils.visit
-                                    {
-                                      list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                      set = track : track.reduced ;
-                                      string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
-                                    } raw ;
                                 variables =
                                   let
                                     indexed =
@@ -136,7 +172,7 @@
                                           string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
                                         } raw ;
                                     in fun processed.numbers processed.variables ;
-                                in fun processed.numbers variables ;
+                                in fun numbers variables ;
                             in zero ;
                         pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                         in
