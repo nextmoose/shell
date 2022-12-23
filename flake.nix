@@ -1,5 +1,5 @@
     {
-               inputs =
+      inputs =
         {
           flake-utils.url = "github:numtide/flake-utils" ;
           utils.url = "github:nextmoose/utils" ;
@@ -21,7 +21,7 @@
                               numbers : variables :
                                 let
                                   _scripts =
-				    _utils.visit
+                                    _utils.visit
                                       {
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
@@ -29,13 +29,13 @@
                                       } ( scripts structure ) ;
                                   structure =
                                     {
-				      command =
-				        _utils.visit
-					  {
-					    list = track : track.reduced ;
-					    set = track : track.reduced ;
-					    string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
-					  } _scripts ;
+                                      command =
+                                        _utils.visit
+                                          {
+                                            list = track : track.reduced ;
+                                            set = track : track.reduced ;
+                                            string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
+                                          } _scripts ;
                                       pkgs = pkgs ;
                                       numbers = numbers.shared ;
                                       resources = _utils.visit
@@ -48,31 +48,31 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-				  programs =
-				    _utils.visit
-				      {
-				        list = track : track.reduced ;
-					set = track : track.reduced ;
-					string =
-					  track :
-					    ''
-					      if [ -d ${ structure-directory } ]
-					      then
-					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-					      fi &&
-					      exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-					      ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-					      if [ -d ${ structure-directory }/logs ]
-					      then
-					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-					      fi &&
-					      exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
-					      ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-					      export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-					      
-					      ${ track.reduced }
-					    '' ;
-				      } _scripts ;
+                                  programs =
+                                    _utils.visit
+                                      {
+                                        list = track : track.reduced ;
+                                        set = track : track.reduced ;
+                                        string =
+                                          track :
+                                            ''
+                                              if [ -d ${ structure-directory } ]
+                                              then
+                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                              fi &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                              if [ -d ${ structure-directory }/logs ]
+                                              then
+                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+                                              fi &&
+                                              exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                              export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                              
+                                              ${ track.reduced }
+                                            '' ;
+                                      } _scripts ;
                                   in
                                     {
                                       hook = hook _scripts ;
