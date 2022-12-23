@@ -68,7 +68,7 @@
                                               fi &&
                                               exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                              export ${ variables.script.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                              export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
 					      ${ if builtins.replaceStrings [ variables.shared.din ] [ "" ] track.reduced == track.reduced then "# din 1" else "# din 2" }
@@ -134,7 +134,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "logs" ] ;
+                                        script = [ "log" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
