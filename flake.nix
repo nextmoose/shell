@@ -52,7 +52,10 @@
                                     name : variable : string :
                                       if
                                         builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
-                                        else "export ${ variable }=A" ;
+                                        else
+					  ''
+					    export ${ variable }="${ pkgs.moreutils }/bin/tee"
+					  '' ;
                                   programs =
                                     _utils.visit
                                       {
