@@ -54,7 +54,7 @@
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
                                         string =
-                                          track : builtins.trace ( builtins.concatStringsSep " , " ( builtins.attrNames numbers.script ) )
+                                          track :
                                             ''
                                               if [ -d ${ structure-directory } ]
                                               then
@@ -134,7 +134,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "log" ] ;
+                                        script = [ "logs" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
