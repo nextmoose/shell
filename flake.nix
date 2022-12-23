@@ -68,8 +68,9 @@
                                               fi &&
                                               exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                              export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                              
+                                              export ${ variables.logs }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                              exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
@@ -128,11 +129,11 @@
                                   {
                                     numbers =
                                       {
-                                        script = [ "structure" "logs" ] ;
+                                        script = [ "structure" "logs" "log" ] ;
                                       } ;
                                     variables =
                                       {
-                                        script = [ "log" "crazy" ] ;
+                                        script = [ "log" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
