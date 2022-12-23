@@ -71,7 +71,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "xlog" "log" ] ;
+                                        script = [ "log" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
