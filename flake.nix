@@ -54,9 +54,9 @@
                                         builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
                                         else
 					  _utils.strip
-					  ''
-					    export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
-					  '' ;
+					    ''
+					      export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
+					    '' ;
                                   programs =
                                     _utils.visit
                                       {
