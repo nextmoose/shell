@@ -47,6 +47,26 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
+				  programs =
+				    _utils.visit
+				      {
+				        list = track : track.reduced ;
+					set = track : track.reduced ;
+					string =
+					  track :
+					    ''
+					      if [ -d ${ structure-directory } ]
+					      then
+					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+					      fi &&
+					      if [ -d ${ structure-directory }/logs ]
+					      then
+					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+					      fi &&
+					      export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+					      ${ track.reduced }
+					    '' ;
+				      } _scripts ;
                                   in
                                     {
                                       hook = hook _scripts ;
