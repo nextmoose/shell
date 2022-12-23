@@ -113,7 +113,7 @@
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
                                           string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-                                        } indexed ;
+                                        } raw.variables ;
                                 zero =
                                   let
                                     processed =
