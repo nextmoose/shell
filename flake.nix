@@ -112,7 +112,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.concatStringsSep " , " ( builtins.map ( x : "" ) indexed ) ; } ;
                                         } raw.variables ;
                                 zero =
                                   let
