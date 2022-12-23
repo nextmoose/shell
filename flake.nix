@@ -28,6 +28,13 @@
                                     } ( scripts structure ) ;
                                   structure =
                                     {
+				      command =
+				        _utils.visit
+					  {
+					    list = track : track.reduced ;
+					    set = track : track.reduced ;
+					    string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
+					  } _scripts ;
                                       pkgs = pkgs ;
                                       numbers = numbers.shared ;
                                       resources = _utils.visit
@@ -36,8 +43,8 @@
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
                                         } ( resources _scripts ) ;
-				      urandom = urandom ;
-				      utils = _utils ;
+                                      urandom = urandom ;
+                                      utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
                                   in
@@ -61,7 +68,7 @@
                                                     '' ;
                                               } _scripts ;
                                           in builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _utils.strip value ) ) ( inputs scripts ) ) ;
-			              scripts = _scripts ;
+                                      scripts = _scripts ;
                                     } ;
                             zero =
                               let
@@ -86,17 +93,17 @@
                                                     in
                                                       {
                                                         success =
-							  let
-							    is-big = seed > 2 ;
-							    is-not-in-zero =
-							      _utils.visit
-							        {
-								  list = track : builtins.all ( x : x ) track.reduced ;
-								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-								  string = track : builtins.replaceStrings [ number ] [ "" ] track.reduced == track.reduced ;
-								} zero.scripts ;
-							    is-unique = builtins.all ( p : p != seed ) previous ;
-							    in is-big && is-not-in-zero && is-unique ;
+                                                          let
+                                                            is-big = seed > 2 ;
+                                                            is-not-in-zero =
+                                                              _utils.visit
+                                                                {
+                                                                  list = track : builtins.all ( x : x ) track.reduced ;
+                                                                  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+                                                                  string = track : builtins.replaceStrings [ number ] [ "" ] track.reduced == track.reduced ;
+                                                                } zero.scripts ;
+                                                            is-unique = builtins.all ( p : p != seed ) previous ;
+                                                            in is-big && is-not-in-zero && is-unique ;
                                                         value = builtins.concatLists [ previous [ number ] ] ;
                                                       }
                                               ) ;
@@ -141,16 +148,16 @@
                                                     in
                                                       {
                                                         success =
-							  let
-							    is-not-in-zero =
-							      _utils.visit
-							        {
-								  list = track : builtins.all ( x : x ) track.reduced ;
-								  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
-								  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
-								} zero.scripts ;
-							    is-unique = builtins.all ( p : p != seed ) previous ;
-							    in is-not-in-zero && is-unique ;
+                                                          let
+                                                            is-not-in-zero =
+                                                              _utils.visit
+                                                                {
+                                                                  list = track : builtins.all ( x : x ) track.reduced ;
+                                                                  set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
+                                                                  string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
+                                                                } zero.scripts ;
+                                                            is-unique = builtins.all ( p : p != seed ) previous ;
+                                                            in is-not-in-zero && is-unique ;
                                                         value = builtins.concatLists [ previous [ token ] ] ;
                                                       }
                                               ) ;
