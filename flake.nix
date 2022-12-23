@@ -1,4 +1,4 @@
-    {
+  {
       inputs =
         {
           flake-utils.url = "github:numtide/flake-utils" ;
@@ -48,11 +48,11 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-				  output =
-				    name : variable : string :
-				      if
-				        builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
-				        else "# ${ name } 2" ;
+                                  output =
+                                    name : variable : string :
+                                      if
+                                        builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
+                                        else "# ${ name } 2" ;
                                   programs =
                                     _utils.visit
                                       {
@@ -76,7 +76,7 @@
                                               export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-					      ${ output "din" variables.shared.din track.reduced } &&
+                                              ${ output "din" variables.shared.din track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
