@@ -54,7 +54,7 @@
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
                                         string =
-                                          track : builtins.trace ( builtins.typeOf numbers.script )
+                                          track : builtins.trace ( builtins.concatStringsSep " , " ( builtins.attrNames numbers.script ) )
                                             ''
                                               if [ -d ${ structure-directory } ]
                                               then
