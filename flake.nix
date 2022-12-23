@@ -102,12 +102,8 @@
                                                     token = builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
                                                     in
                                                       {
-                                                        success =
-                                                          let
-                                                            is-not-in-zero = true ;
-                                                            is-unique = builtins.all ( p : p != token ) previous ;
-                                                            in is-not-in-zero && is-unique ;
-                                                        value = builtins.concatLists [ previous [ token ] ];
+                                                        success = true ;
+                                                        value = builtins.concatLists [ previous [ token ] ] ;
                                                       }
                                               ) ;
                                         in builtins.foldl' reducer [ ] indexed ;
@@ -116,7 +112,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.toString ( builtins.length seeded ) ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
                                         } raw.variables ;
                                 zero =
                                   let
