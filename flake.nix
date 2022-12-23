@@ -107,7 +107,7 @@
                                                             is-not-in-zero = true ;
                                                             is-unique = builtins.all ( p : p != token ) previous ;
                                                             in is-not-in-zero && is-unique ;
-                                                        value = token ;
+                                                        value = builtins.concatLists [ previous [ token ] ];
                                                       }
                                               ) ;
                                         in builtins.foldl' reducer [ ] indexed ;
@@ -116,7 +116,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.typeOf seeded ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
                                         } raw.variables ;
                                 zero =
                                   let
