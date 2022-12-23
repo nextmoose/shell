@@ -20,12 +20,13 @@
                             fun =
                               numbers : variables :
                                 let
-                                  _scripts = _utils.visit
-                                    {
-                                      list = track : track.reduced ;
-                                      set = track : track.reduced ;
-                                      string = track : _utils.strip track.reduced ;
-                                    } ( scripts structure ) ;
+                                  _scripts =
+				    _utils.visit
+                                      {
+                                        list = track : track.reduced ;
+                                        set = track : track.reduced ;
+                                        string = track : _utils.strip track.reduced ;
+                                      } ( scripts structure ) ;
                                   structure =
                                     {
 				      command =
@@ -75,24 +76,7 @@
                                   in
                                     {
                                       hook = hook _scripts ;
-                                      inputs =
-                                        let
-                                          scripts =
-                                            _utils.visit
-                                              {
-                                                list = track : track.reduced ;
-                                                set = track : track.reduced ;
-                                                string =
-                                                  track :
-                                                    ''
-                                                      if [ ! -d ${ structure-directory } ]
-                                                      then
-                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                      fi &&
-                                                      ${ _utils.strip track.reduced }
-                                                    '' ;
-                                              } _scripts ;
-                                          in builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _utils.strip value ) ) ( inputs scripts ) ) ;
+                                      inputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _utils.strip value ) ) ( inputs programs ) ) ;
                                       scripts = _scripts ;
                                     } ;
                             zero =
