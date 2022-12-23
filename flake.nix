@@ -141,7 +141,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.toString track.index ; } ;
                                           undefined = track : builtins.throw "17080e4a-4ff0-4de2-a3aa-688569801eee" ;
                                         } raw.numbers ;
                                 raw =
