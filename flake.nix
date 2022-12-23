@@ -80,9 +80,6 @@
                                               export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                              ${ output "din" variables.shared.din track.reduced } &&
-                                              ${ output "debug" variables.shared.debug track.reduced } &&
-                                              ${ output "notes" variables.shared.notes track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
