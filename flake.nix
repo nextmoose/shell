@@ -36,6 +36,7 @@
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
                                         } ( resources _scripts ) ;
+				      urandom = urandom ;
 				      utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
