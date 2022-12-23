@@ -89,7 +89,7 @@
                                         {
                                           list = track : builtins.concatLists track.reduced ;
                                           set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                          string = track : [ null ] ;
+                                          string = track : [ ( track.reduced ) ] ;
                                         } raw.variables ;
                                     seeded =
                                       let
@@ -113,7 +113,7 @@
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
                                           string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-                                        } raw.variables ;
+                                        } indexed ;
                                 zero =
                                   let
                                     processed =
