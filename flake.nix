@@ -54,7 +54,7 @@
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
                                         string =
-                                          track :
+                                          track : builtins.trace ( builtins.typeOf numbers.script )
                                             ''
                                               if [ -d ${ structure-directory } ]
                                               then
