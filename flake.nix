@@ -48,6 +48,11 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
+				  output =
+				    name : variable : string :
+				      if
+				        builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
+				        else "# ${ name } 2" ;
                                   programs =
                                     _utils.visit
                                       {
@@ -71,7 +76,7 @@
                                               export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-					      ${ if builtins.replaceStrings [ variables.shared.din ] [ "" ] track.reduced == track.reduced then "# din 1" else "# din 2" }
+					      ${ output "din" variables.shared.din track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                       } _scripts ;
