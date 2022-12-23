@@ -59,11 +59,16 @@
 					      then
 					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
 					      fi &&
+					      exec ${ numbers.structure }<>${ structure-directory }/lock &&
+					      ${ pkgs.flock }/bin/flock -s ${ numbers.structure } &&
 					      if [ -d ${ structure-directory }/logs ]
 					      then
 					        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
 					      fi &&
+					      exec ${ numbers.logs }<>${structure-directory }/logs/lock &&
+					      ${ pkgs.flock }/bin/flock -s ${ numbers.logs } &&
 					      export ${ variables.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+					      
 					      ${ track.reduced }
 					    '' ;
 				      } _scripts ;
