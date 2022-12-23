@@ -132,7 +132,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "log" ] ;
+                                        script = [ "log" "crazy" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
