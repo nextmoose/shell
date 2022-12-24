@@ -55,13 +55,27 @@
                                                   [ -d ${ _utils.bash-variable variables.script.log } ] &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
+						  ${ pkgs.coreutils }/bin/touch \
+                                                    ${ _utils.bash-variable variables.script.log }/out \
+                                                    ${ _utils.bash-variable variables.script.log }/err \
+                                                    ${ _utils.bash-variable variables.script.log }/din \
+                                                    ${ _utils.bash-variable variables.script.log }/debug \
+                                                    ${ _utils.bash-variable variables.script.log }/notes
                                                   ${ pkgs.coreutils }/bin/chmod \
                                                     0400 \
                                                     ${ _utils.bash-variable variables.script.log }/out \
                                                     ${ _utils.bash-variable variables.script.log }/err \
                                                     ${ _utils.bash-variable variables.script.log }/din \
                                                     ${ _utils.bash-variable variables.script.log }/debug \
-                                                    ${ _utils.bash-variable variables.script.log }/notes
+                                                    ${ _utils.bash-variable variables.script.log }/notes &&
+						  [ -d ${ structure-directory }/temporary ] &&
+						  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+						  [ -d ${ _utils.bash-variable variables.script.temporary } ]
+						  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.script.temporary }/lock &&
+						  ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
+						  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.script.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+						  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.script.temporary }
                                                 '' ;
                                               script =
                                                 ''
