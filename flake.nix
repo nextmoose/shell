@@ -46,15 +46,15 @@
                                             let
                                               cleanup =
                                                 ''
-						  [ -d ${ structure-directory } ] &&
-						  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-						  [ -d ${ structure-directory }/logs ] &&
-						  exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
-						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-						  [ -d ${ _utils.bash-variable variables.script.log } ] &&
-						  exec ${ numbers.script.log }<>${ _utils.bash-variable variable.script.log }/lock &&
-						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log }
+                                                  [ -d ${ structure-directory } ] &&
+                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                                  [ -d ${ structure-directory }/logs ] &&
+                                                  exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                                  [ -d ${ _utils.bash-variable variables.script.log } ] &&
+                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log }
                                                 '' ;
                                               script =
                                                 ''
