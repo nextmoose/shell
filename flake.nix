@@ -53,13 +53,12 @@
                                     } ;
                                   output =
                                     name : variable : string :
-                                      if
-                                        builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
-                                        else
-                                          _utils.strip
-                                            ''
-                                              export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
-                                            '' ;
+                                      if builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
+                                      else
+                                        _utils.strip
+                                          ''
+                                            export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
+                                          '' ;
                                   programs =
                                     _utils.visit
                                       {
@@ -198,7 +197,7 @@
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;  
-                                          string = track : { "${ track.reduced }" = builtins.toString track.index ; } ;
+                                          string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
                                           undefined = track : builtins.throw "060de9e8-be75-4be5-aed5-4fe41fda9e11" ;
                                         } raw.variables ;
                                 zero =
