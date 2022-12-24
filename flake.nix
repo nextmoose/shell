@@ -165,7 +165,7 @@
                                                   trap ${ variables.script.cleanup } EXIT &&
                                                   SOURCE=${ _utils.bash-variable "1" } &&
                                                   TARGET=${ _utils.bash-variable "2" } &&
-                                                  if [ ${ _utils.bash-variable "SOURCE" } != ${ utils.bash-variable variables.script.log } ]
+                                                  if [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                   then
                                                     [ -d ${ _utils.bash-variable "SOURCE" } ] &&
                                                     exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
