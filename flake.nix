@@ -82,7 +82,7 @@
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
                                                 '' ;
-                                              script =
+                                              program =
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
@@ -107,9 +107,9 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                                  ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                                 '' ;
-                                              in _utils.strip script ;
+                                              in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
                                   process =
