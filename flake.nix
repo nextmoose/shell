@@ -55,7 +55,7 @@
                                                   [ -d ${ _utils.bash-variable variables.script.log } ] &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
-						  ${ pkgs.coreutils }/bin/touch \
+                                                  ${ pkgs.coreutils }/bin/touch \
                                                     ${ _utils.bash-variable variables.script.log }/out \
                                                     ${ _utils.bash-variable variables.script.log }/err \
                                                     ${ _utils.bash-variable variables.script.log }/din \
@@ -68,14 +68,14 @@
                                                     ${ _utils.bash-variable variables.script.log }/din \
                                                     ${ _utils.bash-variable variables.script.log }/debug \
                                                     ${ _utils.bash-variable variables.script.log }/notes &&
-						  [ -d ${ structure-directory }/temporary ] &&
-						  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-						  [ -d ${ _utils.bash-variable variables.shared.temporary } ]
-						  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-						  ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-						  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-						  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
+                                                  [ -d ${ structure-directory }/temporary ] &&
+                                                  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                                  [ -d ${ _utils.bash-variable variables.shared.temporary } ]
+                                                  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                                  ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
+                                                  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
                                                 '' ;
                                               script =
                                                 ''
@@ -107,7 +107,7 @@
                                                   ${ output "notes" variables.shared.notes track.reduced } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced } > ${ pkgs.moreutils }/bin/tee "${ _utils.bash-variable variables.script.out }" "${ pkgs.coreutils }/bin/tee | /dev/stdout"
+                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ _utils.bash-variable variables.script.out }" "${ pkgs.coreutils }/bin/tee | /dev/stdout" )
                                                 '' ;
                                               in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
