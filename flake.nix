@@ -100,12 +100,14 @@
                                                   export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                                  ${ output "out" variables.script.out track.reduced } &&
+                                                  ${ output "err" variables.script.err track.reduced } &&
                                                   ${ output "din" variables.shared.din track.reduced } &&
                                                   ${ output "debug" variables.shared.debug track.reduced } &&
                                                   ${ output "notes" variables.shared.notes track.reduced } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced }
+                                                  ${ track.reduced } > ${ pkgs.moreutils }/bin/tee "${ _utils.bash-variables variables.script.out }" "${ pkgs.coreutils }/bin/tee | /dev/stdout"
                                                 '' ;
                                               in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
@@ -217,7 +219,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "cleanup" "log" "process" ] ;
+                                        script = [ "cleanup" "log" "process" "out" "err" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
