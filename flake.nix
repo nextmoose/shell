@@ -69,6 +69,10 @@
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
                                                 '' ;
+                                              process =
+                                                ''
+                                                  export ${ variables.script.process }=${ _utils.bash-variable "!" }
+                                                '' ;
                                               program =
                                                 ''
                                                   ${ variables.script.cleanup } ( )
@@ -92,7 +96,7 @@
                                                   export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                                  ${ process track.reduced } &&
+                                                  ${ _utils.strip process } &&
                                                   ${ temporary track.reduced } &&
                                                   ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script \
                                                     > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
@@ -105,12 +109,6 @@
                                               in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
-                                  process =
-                                    string :
-                                      _utils.strip
-                                        ''
-                                          export ${ variables.script.process }=${ _utils.bash-variable "!" }
-                                        '' ;
                                   structure =
                                     {
                                       commands =
@@ -225,8 +223,8 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "cleanup" "log" "process" "out" "err" ] ;
-                                        shared = [ "temporary" "din" "debug" "notes" ] ;
+                                        script = [ "cleanup" "log" "process" "time" ] ;
+                                        shared = [ "temporary" ] ;
                                       } ;
                                   } ;
                                 variables =
