@@ -91,10 +91,11 @@
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
                                   process =
-                                    _utils.strip
-                                      ''
-                                        export ${ variables.script.process }=${ _utils.bash-variable "!" }
-                                      '' ;
+                                    string :
+                                      _utils.strip
+                                        ''
+                                          export ${ variables.script.process }=${ _utils.bash-variable "!" }
+                                        '' ;
                                   structure =
                                     {
                                       command =
