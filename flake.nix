@@ -156,9 +156,9 @@
                                                   {
                                                     if [ ${ _utils.bash-variable "?" } == 0 ]
                                                     then
-                                                      ${ pkgs.coreutils }/basename ${ _utils.bash-variable "1" }
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
                                                     else
-                                                      ${ pkgs.coreutils }/basename ${ _utils.bash-variable "1" } > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
