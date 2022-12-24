@@ -99,7 +99,7 @@
                                                     2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
                                                   if [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
                                                   then
-                                                    exit ${ numbers.err }
+                                                    exit ${ numbers.script.err }
                                                   fi
                                                 '' ;
                                               in _utils.strip program ;
