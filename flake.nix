@@ -154,11 +154,10 @@
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
-                                                    if [ ${ _utils.bash-variable "?" } == 0 ]
+                                                    if [ ${ _utils.bash-variable "?" } == 0 ] && [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
-                                                    elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
-                                                    then
+                                                    else
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
                                                   } &&
