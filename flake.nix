@@ -184,9 +184,10 @@
                                                   {
                                                     if [ ${ _utils.bash-variable "?" } == 0 ] && [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
-						      ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } &&
+                                                      ${ pkgs.coreutils }/bin/echo 1 ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } &&
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
                                                     else
+                                                      ${ pkgs.coreutils }/bin/echo 2 ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } &&
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
                                                   } &&
