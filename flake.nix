@@ -92,7 +92,7 @@
                                     } ;
                                   temporary =
                                     string :
-                                      if builtins.replaceStrings [ variable ] [ "" ] string == string then "# temporary directory"
+                                      if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] string == string then "# temporary directory"
                                       else
                                         _utils.strip
                                           ''
