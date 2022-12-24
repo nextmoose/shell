@@ -62,6 +62,7 @@
                                               ${ output "din" variables.shared.din track.reduced } &&
                                               ${ output "debug" variables.shared.debug track.reduced } &&
                                               ${ output "notes" variables.shared.notes track.reduced } &&
+					      ${ temporary track.reduced } &&
                                               ${ track.reduced }
                                             '' ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
@@ -89,6 +90,22 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
+                                  temporary =
+                                    string :
+                                      if builtins.replaceStrings [ variable ] [ "" ] string == string then "# temporary directory"
+                                      else
+                                        _utils.strip
+                                          ''
+					    if [ ! -d ${ structure-directory }/temporary ]
+					    then
+					      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+					    fi &&
+					    exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+					    ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                            export ${ variables.shared.temporary }="$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX &&
+					    exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+					    ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
+                                          '' ;
                                   in
                                     {
                                       hook = hook _scripts ;
