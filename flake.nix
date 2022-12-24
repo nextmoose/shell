@@ -157,7 +157,7 @@
                                                     if [ ${ _utils.bash-variable "?" } == 0 ]
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
-                                                    elif [ ${ _utils.bash-variable "SOURCE" } != ${ utils.bash-variable variables.script.log } ]
+                                                    elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
