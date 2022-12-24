@@ -54,15 +54,22 @@
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
                                                   [ -d ${ _utils.bash-variable variables.script.log } ] &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log }
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
+                                                  ${ pkgs.coreutils }/bin/chmod \
+                                                    0400 \
+                                                    ${ _utils.bash-variable variables.script.log }/out \
+                                                    ${ _utils.bash-variable variables.script.log }/err \
+                                                    ${ _utils.bash-variable variables.script.log }/din \
+                                                    ${ _utils.bash-variable variables.script.log }/debug \
+                                                    ${ _utils.bash-variable variables.script.log }/notes
                                                 '' ;
                                               script =
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
                                                     ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup |
-                                                      ${ at } now
-                                                      2> /dev/null
+                                                      ${ at } now 2>
+                                                      /dev/null
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
                                                   if [ ! -d ${ structure-directory } ]
