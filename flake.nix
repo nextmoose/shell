@@ -156,16 +156,18 @@
                                                   {
                                                     if [ ${ _utils.bash-variable "?" } == 0 ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" }
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
                                                     else
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "1" } > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
-                                                  [ -d ${ _utils.bash-variable "1" } ] &&
-                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "1" }/lock &&
+						  SOURCE=${ _utils.bash-variable "1" } &&
+						  TARGET=${ _utils.bash-variable "2" } &&
+                                                  [ -d ${ _utils.bash-variable "SOURCE" } ] &&
+                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
                                                   ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
-                                                  ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" }
+                                                  ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" }
                                                 '' ;
                                               query =
                                                 ''
