@@ -34,7 +34,7 @@
                                       else
                                         _utils.strip
                                           ''
-                                            export ${ variable }=>( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )
+                                            export ${ variable }=>( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ variables.script.log }/${ name } 2> /dev/null )
                                           '' ;
                                   programs =
                                     _utils.visit
