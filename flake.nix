@@ -146,6 +146,39 @@
                                                     '' ;
                                               } ;
                                           in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
+                                      logging =
+                                        {
+                                          query =
+                                            let
+                                              directory =
+                                                ''
+                                                  ${ variables.script.cleanup } ( )
+                                                  {
+                                                    if [ ${ _utils.bash-variable "?" } == 0 ]
+                                                    then
+                                                      ${ pkgs.coreutils }/basename ${ _utils.bash-variable "1" }
+                                                    else
+                                                      ${ pkgs.coreutils }/basename ${ _utils.bash-variable "1" } > /dev/stderr
+                                                    fi
+                                                  } &&
+                                                  trap ${ variables.script.cleanup } EXIT &&
+                                                  [ -d ${ _utils.bash-variable "1" } ] &&
+                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "1" }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
+                                                  ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" }
+                                                '' ;
+                                              query =
+                                                ''
+                                                  [ -d ${ structure-directory } ] &&
+                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                                  [ -d ${ structure-directory }/logs ] &&
+                                                  exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "2" } \;
+                                                '' ;
+                                              in "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/query" ;
+                                        } ;
                                       numbers = numbers.shared ;
                                       pkgs = pkgs ;
                                       resources = _utils.visit
