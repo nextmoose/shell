@@ -164,7 +164,7 @@
                                   {
                                     numbers =
                                       {
-                                        script = [ "structure" "logs" "log" ] ;
+                                        script = [ "structure" "logs" "log" "temporaries" ] ;
                                       } ;
                                     variables =
                                       {
