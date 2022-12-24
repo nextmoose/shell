@@ -71,11 +71,11 @@
 						  [ -d ${ structure-directory }/temporary ] &&
 						  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
 						  ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-						  [ -d ${ _utils.bash-variable variables.script.temporary } ]
-						  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.script.temporary }/lock &&
+						  [ -d ${ _utils.bash-variable variables.shared.temporary } ]
+						  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
 						  ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-						  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.script.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-						  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.script.temporary }
+						  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+						  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
                                                 '' ;
                                               script =
                                                 ''
