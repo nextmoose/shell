@@ -107,7 +107,7 @@
                                                   ${ output "notes" variables.shared.notes track.reduced } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ _utils.bash-variable variables.script.out }" "${ pkgs.coreutils }/bin/tee | /dev/stdout" )
+                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ _utils.bash-variable variables.script.out }" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                                 '' ;
                                               in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
