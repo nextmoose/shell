@@ -129,7 +129,7 @@
                                                                   string = track : builtins.replaceStrings [ number ] [ "" ] track.reduced == track.reduced ;
                                                                   undefined = track : builtins.throw "6bcee02a-7b11-49c3-84c9-94dcede4c27e" ;
                                                                 } zero.scripts ;
-                                                            is-unique = builtins.all ( p : p != seed ) previous ;
+                                                            is-unique = builtins.all ( p : p != number ) previous ;
                                                             in is-big && is-not-in-zero && is-unique ;
                                                         value = builtins.concatLists [ previous [ number ] ] ;
                                                       }
@@ -186,7 +186,7 @@
                                                                   string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
                                                                   undefined = track : builtins.throw "cbff9956-79af-46be-b16d-54d46dece78c" ;
                                                                 } zero.scripts ;
-                                                            is-unique = builtins.all ( p : p != seed ) previous ;
+                                                            is-unique = builtins.all ( p : p != token ) previous ;
                                                             in is-not-in-zero && is-unique ;
                                                         value = builtins.concatLists [ previous [ token ] ] ;
                                                       }
