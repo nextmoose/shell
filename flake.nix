@@ -28,14 +28,19 @@
                                         string = track : _utils.strip track.reduced ;
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
-                                  output =
-                                    name : variable : string :
-                                      if builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
-                                      else
-                                        _utils.strip
-                                          ''
-                                            export ${ variable }=">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )"
-                                          '' ;
+                                  loggers =
+                                    let
+                                      mapper =
+                                        name :
+                                          {
+                                            name = name ;
+                                            value =
+                                              _utils.strip
+                                                ''
+                                                  >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
+                                                '' ;
+                                          } ;
+                                      in builtins.listToAttrs ( builtins.map mapper [ "out" "err" "din" "debug" "notes" ] ) ;
                                   programs =
                                     _utils.visit
                                       {
@@ -100,14 +105,9 @@
                                                   export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                                  ${ output "out" variables.script.out track.reduced } &&
-                                                  ${ output "err" variables.script.err track.reduced } &&
-                                                  ${ output "din" variables.shared.din track.reduced } &&
-                                                  ${ output "debug" variables.shared.debug track.reduced } &&
-                                                  ${ output "notes" variables.shared.notes track.reduced } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ _utils.bash-variable variables.script.out }" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ loggers.out }" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                                 '' ;
                                               in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
@@ -128,21 +128,9 @@
                                             string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } _scripts ;
-                                      pkgs = pkgs ;
-                                      loggers =
-                                        let
-                                          mapper =
-                                            name :
-                                              {
-                                                name = name ;
-                                                value =
-                                                  _utils.strip
-                                                    ''
-                                                      >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
-                                                    '' ;
-                                              } ;
-                                          in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
+				      loggers = { din = loggers.din ; debug = loggers.debug ; notes = loggers.notes ; } ;
                                       numbers = numbers.shared ;
+                                      pkgs = pkgs ;
                                       resources = _utils.visit
                                         {
                                           lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
