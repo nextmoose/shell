@@ -162,12 +162,15 @@
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
-						  SOURCE=${ _utils.bash-variable "1" } &&
-						  TARGET=${ _utils.bash-variable "2" } &&
-                                                  [ -d ${ _utils.bash-variable "SOURCE" } ] &&
-                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
-                                                  ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" }
+                                                  SOURCE=${ _utils.bash-variable "1" } &&
+                                                  TARGET=${ _utils.bash-variable "2" } &&
+                                                  if [ ${ _utils.bash-variable "SOURCE" } != $( ${ pkgs.coreutils }/bin/basename ${ variables.script.log } ) ]
+                                                  then
+                                                    [ -d ${ _utils.bash-variable "SOURCE" } ] &&
+                                                    exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
+                                                    ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
+                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" }
+                                                  fi
                                                 '' ;
                                               query =
                                                 ''
