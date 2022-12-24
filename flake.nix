@@ -113,14 +113,14 @@
                                         '' ;
                                   structure =
                                     {
-                                      command =
+                                      commands =
                                         _utils.visit
                                           {
                                             list = track : track.reduced ;
                                             set = track : track.reduced ;
-                                            string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
+                                            string = track : "${ pkgs.writeShellScriptBin "command" ( _utils.strip track.reduced ) }/bin/command" ;
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
-                                          } _scripts ;
+                                          } programs ;
                                       loggers =
                                         let
                                           mapper =
