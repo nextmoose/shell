@@ -139,10 +139,10 @@
                                     in
                                       _utils.visit
                                         {
-                                          list = track : builtins.trace "LIST ${ builtins.toString track.index } ${ builtins.toString track.size }" builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                          set = track : builtins.trace "SET ${ builtins.toString track.index } ${ builtins.toString track.size }" track.reduced ;
-                                          string = track : builtins.trace "STRING ${ builtins.toString track.index } ${ builtins.toString track.size } \"${ track.reduced }\"" { "${ track.reduced }" = builtins.trace ( "YES ${ builtins.toString track.index }" ) ( builtins.toString track.index ) ; } ;
-                                          undefined = track : builtins.trace "UNDEFINED ${ builtins.toString track.index } ${ builtins.toString track.size }" ( builtins.throw "17080e4a-4ff0-4de2-a3aa-688569801eee" ) ;
+                                          list = track : builtins.trace "XXXX LIST ${ builtins.toString track.index } ${ builtins.toString track.size }" builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                          set = track : builtins.trace "XXXX SET ${ builtins.toString track.index } ${ builtins.toString track.size }" track.reduced ;
+                                          string = track : builtins.trace "XXXX STRING ${ builtins.toString track.index } ${ builtins.toString track.size } \"${ track.reduced }\"" { "${ track.reduced }" = builtins.trace ( "YES ${ builtins.toString track.index }" ) ( builtins.toString track.index ) ; } ;
+                                          undefined = track : builtins.trace "XXXX UNDEFINED ${ builtins.toString track.index } ${ builtins.toString track.size } ${ builtins.typeOf track.reduced }" ( builtins.throw "17080e4a-4ff0-4de2-a3aa-688569801eee" ) ;
                                         } raw.numbers ;
                                 raw =
                                   {
