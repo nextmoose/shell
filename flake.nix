@@ -28,36 +28,13 @@
                                         string = track : _utils.strip track.reduced ;
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
-                                  structure =
-                                    {
-                                      command =
-                                        _utils.visit
-                                          {
-                                            list = track : track.reduced ;
-                                            set = track : track.reduced ;
-                                            string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
-                                            undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
-                                          } _scripts ;
-                                      pkgs = pkgs ;
-                                      numbers = numbers.shared ;
-                                      resources = _utils.visit
-                                        {
-                                          lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
-                                          list = track : track.reduced ;
-                                          set = track : track.reduced ;
-                                          undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
-                                        } ( resources _scripts ) ;
-                                      urandom = urandom ;
-                                      utils = _utils ;
-                                      variables = variables.shared ;
-                                    } ;
                                   output =
                                     name : variable : string :
                                       if builtins.replaceStrings [ variable ] [ "" ] string == string then "# ${ name } 1"
                                       else
                                         _utils.strip
                                           ''
-                                            export ${ variable }="${ pkgs.moreutils }/bin/tee \">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null )\" \"${ pkgs.coreutils }/bin/tee > /dev/stdout\""
+                                            export ${ variable }=">( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S 2> /dev/null ) &&
                                           '' ;
                                   programs =
                                     _utils.visit
@@ -89,6 +66,29 @@
                                             '' ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
+                                  structure =
+                                    {
+                                      command =
+                                        _utils.visit
+                                          {
+                                            list = track : track.reduced ;
+                                            set = track : track.reduced ;
+                                            string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
+                                            undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
+                                          } _scripts ;
+                                      pkgs = pkgs ;
+                                      numbers = numbers.shared ;
+                                      resources = _utils.visit
+                                        {
+                                          lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
+                                          list = track : track.reduced ;
+                                          set = track : track.reduced ;
+                                          undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
+                                        } ( resources _scripts ) ;
+                                      urandom = urandom ;
+                                      utils = _utils ;
+                                      variables = variables.shared ;
+                                    } ;
                                   in
                                     {
                                       hook = hook _scripts ;
