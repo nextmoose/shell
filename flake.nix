@@ -132,7 +132,7 @@
                                       loggers =
                                         let
                                           mapper =
-                                            name : value :
+                                            name :
                                               {
                                                 name = name ;
                                                 value =
