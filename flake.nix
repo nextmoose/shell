@@ -194,6 +194,7 @@
                                                   trap ${ variables.script.cleanup } EXIT &&
                                                   SOURCE=${ _utils.bash-variable "1" } &&
                                                   TARGET=${ _utils.bash-variable "2" } &&
+						  ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } ${ _utils.bash-variable variables.script.log } &&
                                                   if [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                   then
                                                     [ -d ${ _utils.bash-variable "SOURCE" } ] &&
