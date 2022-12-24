@@ -148,6 +148,23 @@
                                           in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
                                       logging =
                                         {
+                                          delete =
+                                            let
+                                              delete =
+                                                ''
+                                                  [ -d ${ structure-directory } ] &&
+                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                                  [ -d ${ structure-directory }/logs ] &&
+                                                  exec ${ numbers.script.logs }<>${ structure-directory }/logs/log &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
+                                                  [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ] &&
+                                                  exec ${ numbers.script.log }<>${ structure-directory }/logs/${ _utils.bash-variable "1" }/lock &&
+                                                  ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "1" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/log/${ _utils.bash-variable "1" }
+                                                ''
+                                              in "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
                                           query =
                                             let
                                               directory =
