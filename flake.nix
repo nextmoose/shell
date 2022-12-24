@@ -97,7 +97,7 @@
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ _utils.strip process } &&
-                                                  ${ temporary track.reduced } &&
+                                                  ${ _utils.strip temporary } &&
                                                   ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script \
                                                     > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                                     2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
@@ -106,6 +106,20 @@
                                                     exit ${ numbers.script.err }
                                                   fi
                                                 '' ;
+                                              temporary =
+                                                if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] track.reduced == track.reduced then "# temporary directory"
+                                                else
+                                                  ''
+                                                    if [ ! -d ${ structure-directory }/temporary ]
+                                                    then
+                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                    fi &&
+                                                    exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                                   export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                   exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
+                                                 '' ;
                                               in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
@@ -145,22 +159,6 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-                                  temporary =
-                                    string :
-                                      if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] string == string then "# temporary directory"
-                                      else
-                                        _utils.strip
-                                          ''
-                                            if [ ! -d ${ structure-directory }/temporary ]
-                                            then
-                                              ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                            fi &&
-                                            exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                            ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                            export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                            exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-                                            ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
-                                          '' ;
                                   in
                                     {
                                       hook = hook _scripts ;
