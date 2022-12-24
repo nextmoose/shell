@@ -107,7 +107,7 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ loggers.out }" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                                  ${ track.reduced } > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
                                                 '' ;
                                               in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
