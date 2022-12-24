@@ -158,7 +158,7 @@
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
                                                     else if [ ${ _utils.bash-variable "SOURCE" } != ${ variables.script.log } ]
-						    then
+                                                    then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
                                                   } &&
