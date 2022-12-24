@@ -116,9 +116,9 @@
                                                     fi &&
                                                     exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                     ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                   export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                                   exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
+                                                    export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                    exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                                    ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
                                                  '' ;
                                               in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
