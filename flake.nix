@@ -44,6 +44,10 @@
                                         string =
                                           track :
                                             ''
+					      ${ variables.script.cleanup } ( )
+					      {
+					      } &&
+					      trap ${ variables.script.cleanup } EXIT &&
                                               if [ -d ${ structure-directory } ]
                                               then
                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
