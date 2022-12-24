@@ -128,7 +128,7 @@
                                             string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } _scripts ;
-				      loggers = { din = loggers.din ; debug = loggers.debug ; notes = loggers.notes ; } ;
+                                      loggers = { din = loggers.din ; debug = loggers.debug ; notes = loggers.notes ; } ;
                                       numbers = numbers.shared ;
                                       pkgs = pkgs ;
                                       resources = _utils.visit
