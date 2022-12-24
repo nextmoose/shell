@@ -28,19 +28,6 @@
                                         string = track : _utils.strip track.reduced ;
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
-                                  loggers =
-                                    let
-                                      mapper =
-                                        name :
-                                          {
-                                            name = name ;
-                                            value =
-                                              _utils.strip
-                                                ''
-                                                  >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
-                                                '' ;
-                                          } ;
-                                      in builtins.listToAttrs ( builtins.map mapper [ "out" "err" "din" "debug" "notes" ] ) ;
                                   programs =
                                     _utils.visit
                                       {
@@ -107,7 +94,13 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ process track.reduced } &&
                                                   ${ temporary track.reduced } &&
-                                                  ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                                  ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script \
+                                                    > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" )
+                                                    2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
+                                                  if [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
+                                                  then
+                                                    exit ${ numbers.err }
+                                                  fi
                                                 '' ;
                                               in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
@@ -128,7 +121,19 @@
                                             string = track : "${ pkgs.writeShellScriptBin "command" }/bin/command" ;
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } _scripts ;
-                                      loggers = { din = loggers.din ; debug = loggers.debug ; notes = loggers.notes ; } ;
+                                      loggers =
+                                        let
+                                          mapper =
+                                            name :
+                                              {
+                                                name = name ;
+                                                value =
+                                                  _utils.strip
+                                                    ''
+                                                      >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
+                                                    '' ;
+                                              } ;
+                                          in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
                                       numbers = numbers.shared ;
                                       pkgs = pkgs ;
                                       resources = _utils.visit
@@ -216,7 +221,7 @@
                                   {
                                     numbers =
                                       {
-                                        script = [ "structure" "logs" "log" "temporaries" "temporary" ] ;
+                                        script = [ "structure" "logs" "log" "temporaries" "temporary" "err" ] ;
                                       } ;
                                     variables =
                                       {
