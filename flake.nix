@@ -43,34 +43,49 @@
                                         set = track : track.reduced ;
                                         string =
                                           track :
-                                            ''
-					      ${ variables.script.cleanup } ( )
-					      {
-					      } &&
-					      trap ${ variables.script.cleanup } EXIT &&
-                                              if [ -d ${ structure-directory } ]
-                                              then
-                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                              fi &&
-                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                              if [ -d ${ structure-directory }/logs ]
-                                              then
-                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                              fi &&
-                                              exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
-                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                              export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                              exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
-                                              ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                              ${ output "din" variables.shared.din track.reduced } &&
-                                              ${ output "debug" variables.shared.debug track.reduced } &&
-                                              ${ output "notes" variables.shared.notes track.reduced } &&
-                                              ${ temporary track.reduced } &&
-                                              ${ track.reduced }
-                                            '' ;
+                                            let
+                                              cleanup =
+                                                ''
+                                                '' ;
+                                              script =
+                                                ''
+                                                  ${ variables.script.cleanup } ( )
+                                                  {
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup |
+                                                      ${ at } now
+                                                      2> /dev/null
+                                                  } &&
+                                                  trap ${ variables.script.cleanup } EXIT &&
+                                                  if [ -d ${ structure-directory } ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                  fi &&
+                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                                  if [ -d ${ structure-directory }/logs ]
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+                                                  fi &&
+                                                  exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
+                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                                  export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                                  ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                                  ${ output "din" variables.shared.din track.reduced } &&
+                                                  ${ output "debug" variables.shared.debug track.reduced } &&
+                                                  ${ output "notes" variables.shared.notes track.reduced } &&
+                                                  ${ process track.reduced } &&
+                                                  ${ temporary track.reduced } &&
+                                                  ${ track.reduced }
+                                                '' ;
+                                              in _utils.strip script ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
+                                  process =
+                                    _utils.strip
+                                      ''
+                                        export ${ variables.script.process }=${ _utils.bash-variable "!" }
+                                      '' ;
                                   structure =
                                     {
                                       command =
@@ -172,7 +187,7 @@
                                       } ;
                                     variables =
                                       {
-                                        script = [ "log" ] ;
+                                        script = [ "log" "process" ] ;
                                         shared = [ "temporary" "din" "debug" "notes" ] ;
                                       } ;
                                   } ;
