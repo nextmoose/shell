@@ -129,6 +129,19 @@
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } _scripts ;
                                       pkgs = pkgs ;
+				      loggers =
+				        let
+					  mapper =
+					    name : value :
+					      {
+					        name = name ;
+						value =
+						  _utils.strip
+					            ''
+						      >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
+						    '' ;
+					      } ;
+					  in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
                                       numbers = numbers.shared ;
                                       resources = _utils.visit
                                         {
