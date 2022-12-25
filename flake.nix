@@ -209,7 +209,7 @@
                                                   [ -d ${ structure-directory }/logs ] &&
                                                   exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \; &&
+                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
                                                 '' ;
                                               in "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/query" ;
                                         } ;
