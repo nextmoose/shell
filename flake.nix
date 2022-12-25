@@ -228,14 +228,34 @@
                                     } ;
 				  unlock =
 				    let
+				      command = _utils.strip program ;
+				      program =
+				        ''
+					  ${ pkgs.writeShellScriptBin "unlock" ( _utils.strip unlock ) }/bin/unlock "${ _utils.bash-variables "@" }"
+					'' ;
 				      script =
 				        ''
+					  if [ ${ _utils.bash-variable "#" } -gt 0 ]
+					  then
+					    [ -d ${ _utils.bash-variable "1" } ] &&
+					    exec ${ numbers.script.structure }<>${ _utils.bash-variable "1" }/lock &&
+					    if [ ${ _utils.bash-variable "#" } -gt 1 ]
+					    then
+					      ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+					      shift &&
+					      ${ command } "${ _utils.bash-variable "@" }"
+					    elif [ ${ _utils.bash-variable "#" } == 1 ]
+					    then
+					      ${ pkgs.flock }/bin/flock ${ numbers.script.structure } &&
+					      ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
+					    fi
+					  fi
 					'' ;
 				      unlock =
 				        ''
 					  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" script }/bin/script | ${ at } now
 					'' ;
-				      in "${ pkgs.writeShellScriptBin "unlock" ( _utils.strip unlock ) }/bin/unlock" ;
+				      in command ;
                                   in
                                     {
                                       hook = hook _scripts ;
