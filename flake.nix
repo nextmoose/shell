@@ -64,8 +64,8 @@
                                                     ${ _utils.bash-variable "LOG" }/notes &&
                                                   [ -d ${ structure-directory }/temporary ] &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA1 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA1 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   if [ -d "${ _utils.bash-variable "TEMP" }" ]
                                                   then
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
@@ -73,6 +73,7 @@
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
                                                   fi &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA2 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
