@@ -237,7 +237,11 @@
 					     let
 					       derivation =
 					         ''
-						   ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" | ${ at } now
+						   ${ pkgs.coreutils }/bin/echo \
+						     ${ pkgs.coreutils }/bin/nice \
+						       --adjustment 19 \
+						       ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" |
+						       ${ at } now
 						 '' ;
 					       in "${ pkgs.writeShellScriptBin "derivation" ( _utils.string derivation ) }/bin/derivation" ;
 					 in builtins.mapAttrs mapper scripts ;
