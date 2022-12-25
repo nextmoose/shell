@@ -72,7 +72,7 @@
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
                                                     ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-                                                    ${ pkgs.coreutils }/bin/echo AAA12 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } #=${ _utils.bash-variable "#" } >> ${ structure-directory }/debug &&
+                                                    ${ pkgs.coreutils }/bin/echo AAA12 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } NUM=${ _utils.bash-variable "#" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                     ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" } &&
