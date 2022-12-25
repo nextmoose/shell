@@ -230,7 +230,40 @@
                                     } ;
                                   unlock =
                                     let
-                                      in "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
+                                      asynch =
+                                        let
+                                          command =
+                                            ''
+                                              ${ derivation }/bin/async "${ _utils.bash-variable "@" }"
+                                            '' ;
+                                          derivation = pkgs.writeShellScriptBin "async" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ synch } | ${ at } now" ;
+                                          in _utils.strip command ;
+                                      script =
+                                        ''
+                                          if [ ${ _utils.bash-variable "#" } -gt 0 ]
+                                          then
+                                            DIRECTORY=${ _utils.bash-variable "1" } &&
+                                            [ -d ${ _utils.bash-variable "DIRECTORY" } ] &&
+                                            exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
+                                            if ${ pkgs.flock }/bin/flock -n 200
+                                            then
+                                              shift &&
+                                              ${ sync } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "DIRECTORY" }/lock
+                                            else
+                                              ${ async }
+                                            fi
+                                          fi
+                                        '' ;
+                                      synch =
+                                        let
+                                          command =
+                                            ''
+                                              ${ derivation }/bin/sync "${ _utils.bash-variable "@" }"
+                                            '' ;
+                                          derivation = pkgs.writeShellScriptBin "sync" ( _utils.strip script ) ;
+                                          in _utils.strip command ;
+                                      in asynch ;
                                   in
                                     {
                                       hook = hook _scripts ;
