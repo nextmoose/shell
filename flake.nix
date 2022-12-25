@@ -189,7 +189,7 @@
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     else
-                                                      ${ pkgs.coreutils }/bin/echo WTF
+                                                      ${ pkgs.coreutils }/bin/echo WTF ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
