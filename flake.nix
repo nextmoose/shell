@@ -68,17 +68,11 @@
                                                   ${ pkgs.coreutils }/bin/echo AAA1 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   if [ -d ${ _utils.bash-variable "TEMP" } ]
                                                   then
-                                                    ${ pkgs.coreutils }/bin/echo AAA10 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
-                                                    ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-                                                    ${ pkgs.coreutils }/bin/echo AAA12 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } NUM=${ _utils.bash-variable "#" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-                                                    ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
-                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" } &&
-                                                    ${ pkgs.coreutils }/bin/echo AAA14 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug
+                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
                                                   fi &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA2 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
@@ -123,7 +117,7 @@
                                                   fi
                                                 '' ;
                                               temporary =
-                                                if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] track.reduced == track.reduced then "# temporary directory"
+                                                if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] track.reduced == track.reduced then "export ${ variables.shared.temporary }"
                                                 else
                                                   ''
                                                     if [ ! -d ${ structure-directory }/temporary ]
@@ -135,7 +129,7 @@
                                                     export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
-                                                 '' ;
+                                                  '' ;
                                               in _utils.strip program ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
