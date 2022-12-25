@@ -232,10 +232,10 @@
                                             track :
                                               let
                                                 resource =
-						  starter : finisher : salter :
-						    let
-						      create = seconds : is-resource : "PLACE_HOLDER" ;
-						      in create ;
+                                                  starter : finisher : salter :
+                                                    let
+                                                      create = seconds : is-resource : "PLACE_HOLDER" ;
+                                                      in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
