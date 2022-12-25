@@ -175,7 +175,8 @@
                                                   exec ${ numbers.script.log }<>${ structure-directory }/logs/${ _utils.bash-variable "LOG" }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _utils.bash-variable "LOG" }
+                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } &&
+                                                  ${ unlock.log } ${ _utils.bash-variable "LOG" } 2> /dev/null
                                                 '' ;
                                               in "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
                                           query =
@@ -200,7 +201,8 @@
                                                     [ -d ${ _utils.bash-variable "SOURCE" } ] &&
                                                     exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
-                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" }
+                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } &&
+                                                    ${ logging.log } ${ _utils.bash-variable "SOURCE" } 2> /dev/null
                                                   fi
                                                 '' ;
                                               query =
