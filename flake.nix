@@ -65,6 +65,7 @@
                                                     ${ _utils.bash-variable "LOG" }/debug \
                                                     ${ _utils.bash-variable "LOG" }/notes &&
                                                   [ -d ${ structure-directory }/temporary ] &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA03 >> ${ structure-directory }/debug &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                   ${ pkgs.coreutils }/bin/echo AAA09 >> ${ structure-directory }/debug &&
