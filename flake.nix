@@ -202,7 +202,7 @@
                                                     exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
                                                     ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } &&
-                                                    ${ logging.log } ${ _utils.bash-variable "SOURCE" } 2> /dev/null
+                                                    ${ unlock.log } ${ _utils.bash-variable "SOURCE" } 2> /dev/null
                                                   fi
                                                 '' ;
                                               query =
