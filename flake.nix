@@ -234,6 +234,7 @@
                                         {
                                           log =
                                             ''
+					      ${ pkgs.coreutils }/bin/echo A > ${ structure-directory }/commands.txt &&
                                               [ -d ${ structure-directory } ] &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
