@@ -253,10 +253,10 @@
                                               [ -d ${ structure-directory }/temporary ] &&
                                               exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.temporaries }/lock
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock
                                            '' ;
                                         } ;
-                                      in builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip value }" ) scripts ;
+                                      in builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip value } | ${ at } now" ) scripts ;
                                   in
                                     {
                                       hook = hook _scripts ;
