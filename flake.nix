@@ -68,6 +68,8 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
+						  ${ unlock } ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable numbers.script.log } &&
+						  ${ unlock } ${ structure-directory } ${ structure-directory }/temporar &&
                                                 '' ;
                                               process =
                                                 ''
@@ -226,42 +228,7 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-                                  unlock =
-                                    let
-                                      asynch =
-                                        ''
-                                          ${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch } | ${ at } now" }/bin/asynch "${ _utils.bash-variable "@" }"
-                                        '' ;
-                                      script =
-                                        ''
-                                          if [ ${ _utils.bash-variable "#" } -gt 0 ]
-                                          then
-                                            [ -d ${ _utils.bash-variable "1" } ] &&
-                                            exec 200<>${ _utils.bash-variable "1" }/lock &&
-                                            if [ ${ _utils.bash-variable "#" } == 1 ]
-                                            then
-                                              if ${ pkgs.flock }/bin/flock 200
-                                              then
-                                                ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
-                                              else
-                                                ${ _utils.strip asynch } "${ _utils.bash-variable "@" }"
-                                              fi
-                                            else
-                                              if ${ pkgs.flock }/bin/flock -s 200
-                                              then
-                                                shift &&
-                                                ${ _utils.strip synch } "${ _utils.bash-variable "@" }"
-                                              else
-                                                ${ _utils.strip asynch } "${ _utils.bash-variable "@" }"
-                                              fi
-                                            fi
-                                          fi
-                                        '' ;
-                                        synch =
-                                          ''
-                                            ${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }"
-                                          '' ;
-                                      in _utils.strip asynch ;
+				  unlock = "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
                                   in
                                     {
                                       hook = hook _scripts ;
