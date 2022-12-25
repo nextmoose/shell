@@ -232,7 +232,7 @@
                                     } ;
                                   unlock =
                                     let
-                                      asynch = "${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ synch }" "${ _utils.bash-variable "@" }" }/bin/asynch" ;
+                                      asynch = "${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch }" "${ _utils.bash-variable "@" }" }/bin/asynch" ;
                                       script =
                                         ''
                                           if [ ${ _utils.bash-variable "#" } -gt 0 ]
@@ -251,14 +251,17 @@
                                               if ${ pkgs.flock }/bin/flock -s 200
                                               then
                                                 shift &&
-                                                ${ synch } "${ _utils.bash-variable "@" }"
+                                                ${ _utils.strip synch } "${ _utils.bash-variable "@" }"
                                               else
                                                 ${ asynch } "${ _utils.bash-variable "@" }"
                                               fi
                                             fi
                                           fi
                                         '' ;
-                                        synch = "${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }" ;
+                                        synch =
+                                          ''
+                                            ${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }"
+                                          '' ;
                                       in asynch ;
                                   in
                                     {
