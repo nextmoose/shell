@@ -68,7 +68,7 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock.log } ${ _utils.bash-variable variable.script.log } &&
+                                                  ${ unlock.log } ${ _utils.bash-variable variables.script.log } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
                                               process =
