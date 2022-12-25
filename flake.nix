@@ -232,34 +232,34 @@
                                     } ;
 				  unlock =
 				    let
-				      command = _utils.strip program ;
-				      program =
-				        ''
-					  ${ pkgs.writeShellScriptBin "unlock" ( _utils.strip unlock ) }/bin/unlock "${ _utils.bash-variables "@" }"
-					'' ;
+				      asynch = "${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ synch }" "${ _utils.bash-variable "@" }" }/bin/asynch" ;
 				      script =
 				        ''
 					  if [ ${ _utils.bash-variable "#" } -gt 0 ]
 					  then
 					    [ -d ${ _utils.bash-variable "1" } ] &&
-					    exec ${ numbers.script.structure }<>${ _utils.bash-variable "1" }/lock &&
-					    if [ ${ _utils.bash-variable "#" } -gt 1 ]
+					    exec 200<>${ _utils.bash-variable "1" }/lock &&
+					    if [ ${ _utils.bash-variable "#" } == 1 ]
 					    then
-					      ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-					      shift &&
-					      ${ command } "${ _utils.bash-variable "@" }"
-					    elif [ ${ _utils.bash-variable "#" } == 1 ]
-					    then
-					      ${ pkgs.flock }/bin/flock ${ numbers.script.structure } &&
-					      ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
+					      if ${ pkgs.flock }/bin/flock 200
+					      then
+					        ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock
+					      else
+					        ${ asynch } "${ _utils.bash-variable "@" }"
+					      fi
+					    else
+					      if ${ pkgs.flock }/bin/flock -s 200
+					      then
+					        shift &&
+					        ${ synch } "${ _utils.bash-variable "@" }"
+					      else
+					        ${ asynch } "${ _utils.bash-variable "@" }"
+					      fi
 					    fi
 					  fi
 					'' ;
-				      unlock =
-				        ''
-					  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" script }/bin/script | ${ at } now
-					'' ;
-				      in command ;
+					synch = "${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }"
+				      in asynch ;
                                   in
                                     {
                                       hook = hook _scripts ;
