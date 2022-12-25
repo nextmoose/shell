@@ -267,7 +267,7 @@
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock
                                            '' ;
                                         } ;
-                                      in builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip value } | ${ at } now" ) scripts ;
+                                      in builtins.mapAttrs ( name : value : "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script | ${ at } now" ) scripts ;
                                   in
                                     {
                                       hook = hook _scripts ;
