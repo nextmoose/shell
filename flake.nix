@@ -63,10 +63,10 @@
                                                     ${ _utils.bash-variable "LOG" }/debug \
                                                     ${ _utils.bash-variable "LOG" }/notes &&
                                                   [ -d ${ structure-directory }/temporary ] &&
-                                                  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                                   ${ pkgs.coreutils }/bin/echo AAA1 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
-                                                  if [ -d ${ _utils.bash-variable "TEMP" } ]
+                                                  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                                  if [ -d "${ _utils.bash-variable "TEMP" }" ]
                                                   then
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
