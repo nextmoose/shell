@@ -50,6 +50,7 @@
                                                   [ -d ${ _utils.bash-variable "LOG" } ] &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA01 >> ${ structure-directory }/debug &&
                                                   ${ pkgs.coreutils }/bin/touch \
                                                     ${ _utils.bash-variable "LOG" }/out \
                                                     ${ _utils.bash-variable "LOG" }/err \
@@ -66,7 +67,7 @@
                                                   [ -d ${ structure-directory }/temporary ] &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA01 >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA09 >> ${ structure-directory }/debug &&
                                                   ${ pkgs.coreutils }/bin/echo AAA10 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   if [ -d "${ _utils.bash-variable "TEMP" }" ]
                                                   then
