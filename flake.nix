@@ -38,8 +38,8 @@
                                             let
                                               cleanup =
                                                 ''
-						  LOG=${ _utils.bash-variable "1" } &&
-						  TEMP=${ _utils.bash-variable "2" } &&
+                                                  LOG=${ _utils.bash-variable "1" } &&
+                                                  TEMP=${ _utils.bash-variable "2" } &&
                                                   [ -d ${ structure-directory } ] &&
                                                   exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
@@ -65,20 +65,20 @@
                                                   [ -d ${ structure-directory }/temporary ] &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-						  ${ pkgs.coreutils }/bin/echo AAA1 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA1 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   if [ -d ${ _utils.bash-variable "TEMP" } ]
-						  then
-						    ${ pkgs.coreutils }/bin/echo AAA10 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                  then
+                                                    ${ pkgs.coreutils }/bin/echo AAA10 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
-						    ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                    ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-						    ${ pkgs.coreutils }/bin/echo AAA12 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                    ${ pkgs.coreutils }/bin/echo AAA12 ${ _utils.bash-variable "LOG" } ${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-						    ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                    ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" } &&
-						    ${ pkgs.coreutils }/bin/echo AAA14 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug
-						  fi &&
-						  ${ pkgs.coreutils }/bin/echo AAA2 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
+                                                    ${ pkgs.coreutils }/bin/echo AAA14 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug
+                                                  fi &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA2 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
@@ -91,9 +91,9 @@
                                                   ${ variables.script.cleanup } ( )
                                                   {
                                                     ${ pkgs.coreutils }/bin/echo \
-						      ${ pkgs.coreutils }/bin/nice \
-						        --adjustment 19 \
-							${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
+                                                      ${ pkgs.coreutils }/bin/nice \
+                                                        --adjustment 19 \
+                                                        ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
                                                       ${ at } now 2> /dev/null
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
@@ -265,7 +265,7 @@
                                         {
                                           log =
                                             ''
-					      ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } >> ${ structure-directory }/debug &&
+                                              ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } >> ${ structure-directory }/debug &&
                                               [ -d ${ structure-directory } ] &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
