@@ -184,17 +184,16 @@
                                                   {
                                                     if [ ${ _utils.bash-variable "?" } == 0 ] && [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/echo 1 ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } &&
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
-                                                    else
-                                                      ${ pkgs.coreutils }/bin/echo 2 ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } > /dev/stderr &&
+                                                    elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
+                                                    then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
                                                   SOURCE=${ _utils.bash-variable "1" } &&
                                                   TARGET=${ _utils.bash-variable "2" } &&
-						  ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } ${ _utils.bash-variable variables.script.log } &&
+                                                  ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } ${ _utils.bash-variable variables.script.log } &&
                                                   if [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                   then
                                                     [ -d ${ _utils.bash-variable "SOURCE" } ] &&
