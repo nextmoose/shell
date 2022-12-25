@@ -230,11 +230,22 @@
                                     } ;
                                   unlock =
                                     let
-                                      commands = builtins.mapAttrs ( name : value : "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script | ${ at } now" ) scripts ;
+                                      commands =
+				       let
+				         mapper =
+					   name : value :
+					     let
+					       derivation =
+					         ''
+						   ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" | ${ at } now
+						 '' ;
+					       in pkgs.writeShellScriptBin "derivation"
+					 in builtins.mapAttrs mapper scripts ;
                                       scripts =
                                         {
                                           log =
                                             ''
+					      ${ pkgs.coreutils }/bin/echo log >> ${ structure-directory }/commands &&
                                               [ -d ${ structure-directory } ] &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
@@ -249,6 +260,7 @@
                                            '' ;
                                           logs =
                                             ''
+					      ${ pkgs.coreutils }/bin/echo logs >> ${ structure-directory }/commands &&
                                               [ -d ${ structure-directory } ] &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
