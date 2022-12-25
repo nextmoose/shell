@@ -234,17 +234,27 @@
                                         {
                                           log =
                                             ''
-					      ${ pkgs.coreutils }/bin/echo A > ${ structure-directory }/commands.txt &&
+					      ${ pkgs.coreutils }/bin/echo A 001 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ structure-directory } ] &&
+					      ${ pkgs.coreutils }/bin/echo A 002 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+					      ${ pkgs.coreutils }/bin/echo A 003 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+					      ${ pkgs.coreutils }/bin/echo A 004 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ structure-directory }/logs ] &&
+					      ${ pkgs.coreutils }/bin/echo A 005 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+					      ${ pkgs.coreutils }/bin/echo A 006 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+					      ${ pkgs.coreutils }/bin/echo A 007 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ _utils.bash-variable variables.script.log } ] &&
+					      ${ pkgs.coreutils }/bin/echo A 008 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+					      ${ pkgs.coreutils }/bin/echo A 009 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock
+					      ${ pkgs.coreutils }/bin/echo A 010 >> ${ structure-directory }/commands.txt &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock &&
+					      ${ pkgs.coreutils }/bin/echo A 011 >> ${ structure-directory }/commands.txt
                                            '' ;
                                           temporaries =
                                             ''
