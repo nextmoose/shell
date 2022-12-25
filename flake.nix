@@ -228,7 +228,9 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-                                  unlock = "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
+                                  unlock =
+                                    let
+                                      in "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
                                   in
                                     {
                                       hook = hook _scripts ;
