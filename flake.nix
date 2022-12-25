@@ -226,6 +226,16 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
+				  unlock =
+				    let
+				      script =
+				        ''
+					'' ;
+				      unlock =
+				        ''
+					  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" script }/bin/script | ${ at } now
+					'' ;
+				      in "${ pkgs.writeShellScriptBin "unlock" ( _utils.strip unlock ) }/bin/unlock" ;
                                   in
                                     {
                                       hook = hook _scripts ;
