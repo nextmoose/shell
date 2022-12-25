@@ -38,37 +38,41 @@
                                             let
                                               cleanup =
                                                 ''
+						  LOG=${ _utils.bash-variable "1" } &&
+						  TEMP=${ _utils.bash-variable "2" } &&
                                                   [ -d ${ structure-directory } ] &&
                                                   exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
                                                   [ -d ${ structure-directory }/logs ] &&
                                                   exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                                  [ -d ${ _utils.bash-variable variables.script.log } ] &&
-                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                                  [ -d ${ _utils.bash-variable "LOG" } ] &&
+                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
                                                   ${ pkgs.coreutils }/bin/touch \
-                                                    ${ _utils.bash-variable variables.script.log }/out \
-                                                    ${ _utils.bash-variable variables.script.log }/err \
-                                                    ${ _utils.bash-variable variables.script.log }/din \
-                                                    ${ _utils.bash-variable variables.script.log }/debug \
-                                                    ${ _utils.bash-variable variables.script.log }/notes
+                                                    ${ _utils.bash-variable "LOG" }/out \
+                                                    ${ _utils.bash-variable "LOG" }/err \
+                                                    ${ _utils.bash-variable "LOG" }/din \
+                                                    ${ _utils.bash-variable "LOG" }/debug \
+                                                    ${ _utils.bash-variable "LOG" }/notes
                                                   ${ pkgs.coreutils }/bin/chmod \
                                                     0400 \
-                                                    ${ _utils.bash-variable variables.script.log }/out \
-                                                    ${ _utils.bash-variable variables.script.log }/err \
-                                                    ${ _utils.bash-variable variables.script.log }/din \
-                                                    ${ _utils.bash-variable variables.script.log }/debug \
-                                                    ${ _utils.bash-variable variables.script.log }/notes &&
+                                                    ${ _utils.bash-variable "LOG" }/out \
+                                                    ${ _utils.bash-variable "LOG" }/err \
+                                                    ${ _utils.bash-variable "LOG" }/din \
+                                                    ${ _utils.bash-variable "LOG" }/debug \
+                                                    ${ _utils.bash-variable "LOG" }/notes &&
                                                   [ -d ${ structure-directory }/temporary ] &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                  [ -d ${ _utils.bash-variable variables.shared.temporary } ]
-                                                  exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-                                                  ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-                                                  ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock.log } ${ _utils.bash-variable variables.script.log } &&
+                                                  if [ -d ${ _utils.bash-variable "TEMP" } ]
+						  then
+                                                    exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
+                                                    ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
+                                                    ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
+						  fi &&
+                                                  ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
                                               process =
@@ -79,7 +83,10 @@
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
-                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup |
+                                                    ${ pkgs.coreutils }/bin/echo \
+						      ${ pkgs.coreutils }/bin/nice \
+						        --adjustment 19 \
+							${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
                                                       ${ at } now 2> /dev/null
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
