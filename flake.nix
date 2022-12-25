@@ -38,6 +38,7 @@
                                             let
                                               cleanup =
                                                 ''
+                                                  ${ pkgs.coreutils }/bin/echo AAA0 >> ${ structure-directory }/debug &&
                                                   LOG=${ _utils.bash-variable "1" } &&
                                                   TEMP=${ _utils.bash-variable "2" } &&
                                                   [ -d ${ structure-directory } ] &&
