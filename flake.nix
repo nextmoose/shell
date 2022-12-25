@@ -68,8 +68,7 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock } ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable numbers.script.log } &&
-                                                  ${ unlock } ${ structure-directory } ${ structure-directory }/temporary
+                                                  ${ unlock.logs }
                                                 '' ;
                                               process =
                                                 ''
@@ -230,40 +229,23 @@
                                     } ;
                                   unlock =
                                     let
-                                      async =
-                                        let
-                                          command =
+                                      scripts =
+                                        {
+                                          log =
                                             ''
-                                              ${ derivation }/bin/async "${ _utils.bash-variable "@" }"
-                                            '' ;
-                                          derivation = pkgs.writeShellScriptBin "async" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ sync } | ${ at } now" ;
-                                          in _utils.strip command ;
-                                      script =
-                                        ''
-                                          if [ ${ _utils.bash-variable "#" } -gt 0 ]
-                                          then
-                                            DIRECTORY=${ _utils.bash-variable "1" } &&
-                                            [ -d ${ _utils.bash-variable "DIRECTORY" } ] &&
-                                            exec 200<>${ _utils.bash-variable "DIRECTORY" }/lock &&
-                                            if ${ pkgs.flock }/bin/flock -n 200
-                                            then
-                                              shift &&
-                                              ${ sync } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "DIRECTORY" }/lock
-                                            else
-                                              ${ async }
-                                            fi
-                                          fi
-                                        '' ;
-                                      sync =
-                                        let
-                                          command =
-                                            ''
-                                              ${ derivation }/bin/sync "${ _utils.bash-variable "@" }"
-                                            '' ;
-                                          derivation = pkgs.writeShellScriptBin "sync" ( _utils.strip script ) ;
-                                          in _utils.strip command ;
-                                      in async ;
+                                              [ -d ${ structures-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structures-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                              [ -d ${ structures-directory }/logs ] &&
+                                              exec ${ numbers.script.logs }<>${ structures-directory }/logs/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                              [ -d ${ _utils.bash-variable variables.script.log } ] &&
+                                              exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock
+                                           '' ;
+                                        }
+                                      in builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip value }" ) scripts ;
                                   in
                                     {
                                       hook = hook _scripts ;
