@@ -68,10 +68,15 @@
 						  ${ pkgs.coreutils }/bin/echo AAA1 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   if [ -d ${ _utils.bash-variable "TEMP" } ]
 						  then
+						    ${ pkgs.coreutils }/bin/echo AAA10 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
+						    ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
+						    ${ pkgs.coreutils }/bin/echo AAA12 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+						    ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary }
+						    ${ pkgs.coreutils }/bin/echo AAA14 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
 						  fi &&
 						  ${ pkgs.coreutils }/bin/echo AAA2 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
