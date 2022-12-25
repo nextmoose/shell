@@ -176,7 +176,6 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                                   ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } &&
-                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _utils.bash-variable "LOG" }
                                                 '' ;
                                               in "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
                                           query =
