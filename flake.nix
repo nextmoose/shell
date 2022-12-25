@@ -38,7 +38,7 @@
                                             let
                                               cleanup =
                                                 ''
-                                                  ${ pkgs.coreutils }/bin/echo AAA0 >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA00 >> ${ structure-directory }/debug &&
                                                   LOG=${ _utils.bash-variable "1" } &&
                                                   TEMP=${ _utils.bash-variable "2" } &&
                                                   [ -d ${ structure-directory } ] &&
@@ -66,7 +66,8 @@
                                                   [ -d ${ structure-directory }/temporary ] &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA1 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA01 >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA10 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   if [ -d "${ _utils.bash-variable "TEMP" }" ]
                                                   then
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
@@ -74,7 +75,7 @@
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
                                                   fi &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA2 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
+                                                  ${ pkgs.coreutils }/bin/echo AAA20 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
