@@ -68,8 +68,8 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-						  ${ unlock } ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable numbers.script.log } &&
-						  ${ unlock } ${ structure-directory } ${ structure-directory }/temporary
+                                                  ${ unlock } ${ structure-directory } ${ structure-directory }/logs ${ _utils.bash-variable numbers.script.log } &&
+                                                  ${ unlock } ${ structure-directory } ${ structure-directory }/temporary
                                                 '' ;
                                               process =
                                                 ''
@@ -228,7 +228,7 @@
                                       utils = _utils ;
                                       variables = variables.shared ;
                                     } ;
-				  unlock = "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
+                                  unlock = "${ pkgs.writeShellScriptBin "unlock" "" }/bin/unlock" ;
                                   in
                                     {
                                       hook = hook _scripts ;
