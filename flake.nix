@@ -258,7 +258,7 @@
 					    fi
 					  fi
 					'' ;
-					synch = "${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }"
+					synch = "${ pkgs.writeShellScriptBin "synch" ( _utils.strip script ) }/bin/synch "${ _utils.bash-variable "@" }" ;
 				      in asynch ;
                                   in
                                     {
