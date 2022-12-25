@@ -230,13 +230,13 @@
                                     } ;
                                   unlock =
                                     let
-                                      asynch =
+                                      async =
                                         let
                                           command =
                                             ''
                                               ${ derivation }/bin/async "${ _utils.bash-variable "@" }"
                                             '' ;
-                                          derivation = pkgs.writeShellScriptBin "async" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ synch } | ${ at } now" ;
+                                          derivation = pkgs.writeShellScriptBin "async" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ sync } | ${ at } now" ;
                                           in _utils.strip command ;
                                       script =
                                         ''
@@ -255,7 +255,7 @@
                                             fi
                                           fi
                                         '' ;
-                                      synch =
+                                      sync =
                                         let
                                           command =
                                             ''
@@ -263,7 +263,7 @@
                                             '' ;
                                           derivation = pkgs.writeShellScriptBin "sync" ( _utils.strip script ) ;
                                           in _utils.strip command ;
-                                      in asynch ;
+                                      in async ;
                                   in
                                     {
                                       hook = hook _scripts ;
