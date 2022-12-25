@@ -231,7 +231,7 @@
                                           lambda =
                                             track :
                                               let
-                                                resource = starter : finisher : salter : security : is-expression : second : "$PLACEHOLDER RESOURCE" ;
+                                                resource = starter : finisher : salter : security : is-expression : second : "PLACEHOLDER RESOURCE" ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
