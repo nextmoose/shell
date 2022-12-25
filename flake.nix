@@ -68,10 +68,8 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock } ${ structure-dir } ${ structure-dir }/logs ${ _utils.bash-variable variables.script.log } &&
-                                                  ${ unlock } ${ structure-dir } ${ structure-dir }/logs &&
-                                                  ${ unlock } ${ structure-dir } &&
-                                                  ${ unlock } ${ structure-dir } ${ structure-dir }/temporary
+                                                  ${ unlock } ${ structure-directory } ${ structure-dir }/logs ${ _utils.bash-variable variables.script.log } &&
+                                                  ${ unlock } ${ structure-directory } ${ structure-dir }/temporary
                                                 '' ;
                                               process =
                                                 ''
