@@ -230,31 +230,33 @@
                                     } ;
                                   unlock =
                                     let
+                                      commands = builtins.mapAttrs ( name : value : "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script | ${ at } now" ) scripts ;
                                       scripts =
                                         {
                                           log =
                                             ''
-					      ${ pkgs.coreutils }/bin/echo A 001 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ structure-directory } ] &&
-					      ${ pkgs.coreutils }/bin/echo A 002 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-					      ${ pkgs.coreutils }/bin/echo A 003 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-					      ${ pkgs.coreutils }/bin/echo A 004 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ structure-directory }/logs ] &&
-					      ${ pkgs.coreutils }/bin/echo A 005 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
-					      ${ pkgs.coreutils }/bin/echo A 006 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-					      ${ pkgs.coreutils }/bin/echo A 007 >> ${ structure-directory }/commands.txt &&
                                               [ -d ${ _utils.bash-variable variables.script.log } ] &&
-					      ${ pkgs.coreutils }/bin/echo A 008 >> ${ structure-directory }/commands.txt &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
-					      ${ pkgs.coreutils }/bin/echo A 009 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-					      ${ pkgs.coreutils }/bin/echo A 010 >> ${ structure-directory }/commands.txt &&
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock &&
-					      ${ pkgs.coreutils }/bin/echo A 011 >> ${ structure-directory }/commands.txt
+					      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 &&
+					      ${ commands.logs }
+                                           '' ;
+                                          logs =
+                                            ''
+                                              [ -d ${ structure-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                              [ -d ${ structure-directory }/logs ] &&
+                                              exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.logs } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock
                                            '' ;
                                           temporaries =
                                             ''
@@ -263,11 +265,11 @@
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
                                               [ -d ${ structure-directory }/temporary ] &&
                                               exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.temporaries } &&
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock
                                            '' ;
                                         } ;
-                                      in builtins.mapAttrs ( name : value : "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script | ${ at } now" ) scripts ;
+				      in commands ;
                                   in
                                     {
                                       hook = hook _scripts ;
