@@ -256,7 +256,15 @@
                                               [ -d ${ structure-directory }/logs ] &&
                                               exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.logs } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock &&
+					      ${ commands.structure }
+                                           '' ;
+                                          structure =
+                                            ''
+                                              [ -d ${ structure-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.structure } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock
                                            '' ;
                                           temporaries =
                                             ''
@@ -266,7 +274,8 @@
                                               [ -d ${ structure-directory }/temporary ] &&
                                               exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.temporaries } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
+					      ${ commands.structure }
                                            '' ;
                                         } ;
 				      in commands ;
