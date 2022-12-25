@@ -232,7 +232,7 @@
                                     let
                                       asynch =
                                         ''
-                                          ${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch }" "${ _utils.bash-variable "@" }" }/bin/asynch"
+                                          ${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch } | ${ at } now" }/bin/asynch "${ _utils.bash-variable "@" }"
                                         '' ;
                                       script =
                                         ''
