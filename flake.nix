@@ -184,13 +184,10 @@
                                                   {
                                                     if [ ${ _utils.bash-variable "?" } == 0 ] && [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
-						      ${ pkgs.coreutils }/bin/echo WTF2 ${ _utils.bash-variable "SOURCE" } &&
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
                                                     elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
-                                                    else
-                                                      ${ pkgs.coreutils }/bin/echo WTF ${ _utils.bash-variable "SOURCE" } - ${ _utils.bash-variable variables.script.log } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
