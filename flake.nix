@@ -230,7 +230,9 @@
                                     } ;
                                   unlock =
                                     let
-                                      asynch = "${ pkgs.writeShellScriptBin "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch }" "${ _utils.bash-variable "@" }" }/bin/asynch" ;
+                                      asynch = "${
+				        pkgs.writeShellScriptBin
+					  "asynch" "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip synch }" "${ _utils.bash-variable "@" }" }/bin/asynch" ;
                                       script =
                                         ''
                                           if [ ${ _utils.bash-variable "#" } -gt 0 ]
