@@ -193,7 +193,6 @@
                                                   trap ${ variables.script.cleanup } EXIT &&
                                                   SOURCE=${ _utils.bash-variable "1" } &&
                                                   TARGET=${ _utils.bash-variable "2" } &&
-                                                  ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } ${ _utils.bash-variable variables.script.log } &&
                                                   if [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                   then
                                                     [ -d ${ _utils.bash-variable "SOURCE" } ] &&
@@ -210,9 +209,9 @@
                                                   [ -d ${ structure-directory }/logs ] &&
                                                   exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-						  ${ pkgs.coreutils }/bin/echo BEFORE &&
+                                                  ${ pkgs.coreutils }/bin/echo BEFORE &&
                                                   ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \; &&
-						  ${ pkgs.coreutils }/bin/echo AFTER
+                                                  ${ pkgs.coreutils }/bin/echo AFTER
                                                 '' ;
                                               in "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/query" ;
                                         } ;
