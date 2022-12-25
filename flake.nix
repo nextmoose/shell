@@ -228,7 +228,11 @@
                                       pkgs = pkgs ;
                                       resources = _utils.visit
                                         {
-                                          lambda = track : "${ pkgs.coreutils }/bin/echo PLACE HOLDER RESOURCES" ;
+                                          lambda =
+                                            track :
+                                              let
+                                                resource = starter : finisher : salter : security : is-expression : second : "$PLACEHOLDER RESOURCE" ;
+                                                in track.reduced resource ;
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
                                           undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
