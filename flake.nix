@@ -73,9 +73,9 @@
 						    ${ pkgs.coreutils }/bin/echo AAA11 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
                                                     ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
 						    ${ pkgs.coreutils }/bin/echo AAA12 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
-                                                    ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                                    ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
 						    ${ pkgs.coreutils }/bin/echo AAA13 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
-                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
+                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" } &&
 						    ${ pkgs.coreutils }/bin/echo AAA14 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug
 						  fi &&
 						  ${ pkgs.coreutils }/bin/echo AAA2 ${ _utils.bash-variable "LOG" } >> ${ structure-directory }/debug &&
