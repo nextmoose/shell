@@ -245,8 +245,7 @@
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock &&
-					      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 &&
-					      ${ commands.logs }
+					      ${ commands.logs } | ${ at }
                                            '' ;
                                           logs =
                                             ''
