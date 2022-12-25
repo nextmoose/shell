@@ -68,7 +68,7 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock.logs }
+                                                  ${ unlock.log }
                                                 '' ;
                                               process =
                                                 ''
@@ -244,7 +244,17 @@
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock
                                            '' ;
-                                        }
+                                          temporaries =
+                                            ''
+                                              [ -d ${ structures-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structures-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                              [ -d ${ structures-directory }/temporary ] &&
+                                              exec ${ numbers.script.temporaries }<>${ structures-directory }/temporary/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.tempoaries }/lock
+                                           '' ;
+                                        } ;
                                       in builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ _utils.strip value }" ) scripts ;
                                   in
                                     {
