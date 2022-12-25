@@ -259,7 +259,6 @@
                                         {
                                           log =
                                             ''
-                                              ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } >> ${ structure-directory }/debug &&
                                               [ -d ${ structure-directory } ] &&
                                               exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
