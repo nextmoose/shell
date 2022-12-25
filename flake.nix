@@ -38,7 +38,6 @@
                                             let
                                               cleanup =
                                                 ''
-                                                  ${ pkgs.coreutils }/bin/echo AAA00 >> ${ structure-directory }/debug &&
                                                   LOG=${ _utils.bash-variable "1" } &&
                                                   TEMP=${ _utils.bash-variable "2" } &&
                                                   [ -d ${ structure-directory } ] &&
@@ -50,7 +49,6 @@
                                                   [ -d ${ _utils.bash-variable "LOG" } ] &&
                                                   exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA01 >> ${ structure-directory }/debug &&
                                                   ${ pkgs.coreutils }/bin/touch \
                                                     ${ _utils.bash-variable "LOG" }/out \
                                                     ${ _utils.bash-variable "LOG" }/err \
@@ -65,12 +63,8 @@
                                                     ${ _utils.bash-variable "LOG" }/debug \
                                                     ${ _utils.bash-variable "LOG" }/notes &&
                                                   [ -d ${ structure-directory }/temporary ] &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA03 >> ${ structure-directory }/debug &&
                                                   exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA04 >> ${ structure-directory }/debug &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA09 >> ${ structure-directory }/debug &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA10 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   if [ -d "${ _utils.bash-variable "TEMP" }" ]
                                                   then
                                                     exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
@@ -78,7 +72,6 @@
                                                     ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                     ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
                                                   fi &&
-                                                  ${ pkgs.coreutils }/bin/echo AAA20 log=${ _utils.bash-variable "LOG" } temp=${ _utils.bash-variable "TEMP" } >> ${ structure-directory }/debug &&
                                                   ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
                                                   ${ unlock.temporaries }
                                                 '' ;
