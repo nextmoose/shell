@@ -68,7 +68,8 @@
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
                                                   ${ pkgs.findutils }/bin/find ${ _utils.bash-variable variables.shared.temporary } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                                   ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable variables.shared.temporary } &&
-                                                  ${ unlock.log }
+                                                  ${ unlock.log } &&
+                                                  ${ unlock.temporaries }
                                                 '' ;
                                               process =
                                                 ''
@@ -233,11 +234,11 @@
                                         {
                                           log =
                                             ''
-                                              [ -d ${ structures-directory } ] &&
-                                              exec ${ numbers.script.structure }<>${ structures-directory }/lock &&
+                                              [ -d ${ structure-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                              [ -d ${ structures-directory }/logs ] &&
-                                              exec ${ numbers.script.logs }<>${ structures-directory }/logs/lock &&
+                                              [ -d ${ structure-directory }/logs ] &&
+                                              exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
                                               [ -d ${ _utils.bash-variable variables.script.log } ] &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
@@ -246,11 +247,11 @@
                                            '' ;
                                           temporaries =
                                             ''
-                                              [ -d ${ structures-directory } ] &&
-                                              exec ${ numbers.script.structure }<>${ structures-directory }/lock &&
+                                              [ -d ${ structure-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                              [ -d ${ structures-directory }/temporary ] &&
-                                              exec ${ numbers.script.temporaries }<>${ structures-directory }/temporary/lock &&
+                                              [ -d ${ structure-directory }/temporary ] &&
+                                              exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.tempoaries }/lock
                                            '' ;
