@@ -232,11 +232,10 @@
                                             track :
                                               let
                                                 resource =
-						  starter : finisher : salter : security :
+						  starter : finisher : salter :
 						    let
-						      expression = is-expression : second : "PLACEHOLDER RESOURCE EXPRESSION - ${ permanent-token }" ;
-						      permanent-token = builtins.hashString "sha512" ( builtins.concatStringsSep "-" [ starter finisher salter ] ) ;
-						      in expression ;
+						      create = seconds : is-resource : "PLACE_HOLDER" ;
+						      in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
                                           set = track : track.reduced ;
