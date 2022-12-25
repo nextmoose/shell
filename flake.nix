@@ -259,6 +259,7 @@
                                               [ -d ${ _utils.bash-variable variables.script.log } ] &&
                                               exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock >> ${ structure-directory }/commands &&
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable variables.script.log }/lock &&
                                               ${ commands.logs }
                                            '' ;
