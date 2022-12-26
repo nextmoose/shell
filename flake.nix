@@ -270,6 +270,7 @@
                                                             ''
 							      cleanup ( )
 							      {
+							        ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca > /dev/stderr
 							        ${ pkgs.coreutils }/bin/echo \
 								  ${ pkgs.coreutils }/bin/nice \
 								    --adjustment 19 \
