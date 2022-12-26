@@ -247,7 +247,7 @@
 							      ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure } &&
 							      ${ pkgs.coreutils }/bin/echo PLACE_HOLDER 3
 							    '' ;
-							  in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } ) else item ;
+							  in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
