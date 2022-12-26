@@ -253,13 +253,15 @@
                                                               exec 202<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
                                                               ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ variables.script.time } ) ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes 128 ) &&
-                                                              if [ ! -d ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
+                                                              if [ -d ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
                                                               then
-                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }
+							        ${ pkgs.coreutils }/bin/true
+							      else
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } &&
+							        exec 203<>${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } &&
+							        ${ pkgs.flock }/bin/flock 203 &&
+							        ${ pkgs.coreutils }/bin/echo PLACEHOLDER > ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }/link &&
                                                               fi &&
-							      exec 203<>${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } &&
-							      ${ pkgs.flock }/bin/flock 203 &&
-							      ${ pkgs.coreutils }/bin/echo PLACEHOLDER > ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }/link &&
                                                               ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }/link
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
