@@ -380,7 +380,8 @@
                                               exec 139<>${ structure-directory }/link/${ _utils.bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock 139 &&
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
-                                              ${ commands.links }
+                                              ${ commands.links } &&
+                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca c92da3a7-1966-4023-8313-c6896fa33fc8 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                            '' ;
                                           links =
                                             ''
