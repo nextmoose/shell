@@ -106,6 +106,7 @@
                                           ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
                                           ${ _utils.strip process } &&
                                           ${ _utils.strip temporary } &&
+					  ${ pkgs.coreutils }/bin/echo ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) } > ${ _utils.bash-variable variables.script.log } command &&
                                           ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) }/bin/script "${ _utils.bash-variable "@" }" \
                                             > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                             2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
@@ -337,7 +338,7 @@
                                                      ${ pkgs.coreutils }/bin/nice \
                                                        --adjustment 19 \
                                                        ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" |
-                                                       ${ at } now > /dev/stderr
+                                                       ${ at } now 2> /dev/stderr
                                                  '' ;
                                                in "${ pkgs.writeShellScriptBin "derivation" ( _utils.strip derivation ) }/bin/derivation" ;
                                          in builtins.mapAttrs mapper scripts ;
