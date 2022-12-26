@@ -251,7 +251,7 @@
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
                                                               fi &&
                                                               exec ${ numbers.resource.link }<>${ structure-directory }/links/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s ${ nubers.resource.link } &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ numbers.resource.link } &&
                                                               ${ variables.structure.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( programs salter ) ) }/bin/salter ${ variables.script.time } ) &&
 							      if [ -f ${ structure-directory }/links/${ _utils.bash-variable variables.structure.link } ]
 							      then
