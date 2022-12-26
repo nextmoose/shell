@@ -337,7 +337,7 @@
                                                      ${ pkgs.coreutils }/bin/nice \
                                                        --adjustment 19 \
                                                        ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" |
-                                                       ${ at } now
+                                                       ${ at } now > /dev/stderr
                                                  '' ;
                                                in "${ pkgs.writeShellScriptBin "derivation" ( _utils.strip derivation ) }/bin/derivation" ;
                                          in builtins.mapAttrs mapper scripts ;
