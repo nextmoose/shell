@@ -275,7 +275,7 @@
                                                                 ${ pkgs.flock }/bin/flock 206 &&
                                                                 ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
                                                                 ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                                ${ pkgs.coreutils }/echo ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                                ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
                                                               fi
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
