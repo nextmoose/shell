@@ -259,7 +259,7 @@
                                                               ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-                                                                ${ pkgs.coreutils }/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                                ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
                                                               else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
                                                                 exec 204<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
@@ -268,7 +268,7 @@
                                                                 then
                                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
                                                                 fi &&
-                                                                exec 205<>${ structure-directory }/resources &&
+                                                                exec 205<>${ structure-directory }/resources/lock &&
                                                                 ${ pkgs.flock }/bin/flock -s 205 &&
                                                                 RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
                                                                 exec 206<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
