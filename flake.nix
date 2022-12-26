@@ -370,7 +370,6 @@
                                           link =
                                             ''
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 9320a0ac-7570-4890-a50b-8c4d44076531 BEGIN ${ _utils.bash-variable "1" } END >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                              [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "1" } ) == ${ structure-directory }/link ] &&
                                               [ -d ${ structure-directory } ] &&
                                               exec 150<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s 150 &&
@@ -378,9 +377,9 @@
                                               exec 140<>${ structure-directory }/links/lock &&
                                               ${ pkgs.flock }/bin/flock -s 140 &&
                                               [ -d ${ _utils.bash-variable "1" } ] &&
-                                              exec 139<>${ _utils.bash-variable "1" }/lock &&
+                                              exec 139<>${ structure-directory }/link/${ _utils.bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock 139 &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
                                               ${ commands.links }
                                            '' ;
                                           links =
