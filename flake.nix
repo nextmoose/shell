@@ -275,6 +275,11 @@
                                                                 ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+								${ pkgs.coreutils }/bin/echo ${ at } >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+                                                                ${ pkgs.coreutils }/bin/echo \
+                                                                  ${ pkgs.coreutils }/bin/nice \
+                                                                    --adjustment 19 \
                                                                     ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } 2> /dev/null
                                                               } &&
                                                               trap cleanup EXIT &&
