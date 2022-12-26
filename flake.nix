@@ -398,6 +398,32 @@
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/lock &&
                                               ${ commands.structure }
                                            '' ;
+                                          resource =
+                                            ''
+					      [ ${ structure-directory }/resources/$( ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } | ${ pkgs.gnused }/bin/sed -e "s#^${ structure-directory }/resources/\(.*\)#\3#"  ) == ${ _utils.bash-variable "1" } ] &&
+                                              [ -d ${ structure-directory } ] &&
+                                              exec 194<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 194 &&
+                                              [ -d ${ structure-directory }/logs ] &&
+                                              exec 116<>${ structure-directory }/resources/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 116 &&
+                                              [ -d ${ _utils.bash-variable "1" } ] &&
+                                              exec 113<>${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.flock }/bin/flock 113 &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
+                                              ${ commands.resources }
+                                           '' ;
+                                          resources =
+                                            ''
+                                              [ -d ${ structure-directory } ] &&
+                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                              [ -d ${ structure-directory }/logs ] &&
+                                              exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.logs } &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock &&
+                                              ${ commands.structure }
+                                           '' ;
                                           structure =
                                             ''
                                               [ -d ${ structure-directory } ] &&
