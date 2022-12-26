@@ -365,11 +365,37 @@
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock &&
                                               ${ commands.structure }
                                            '' ;
+                                          link =
+                                            ''
+					      [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "1" } ) == ${ structure-directory }/link ] &&
+                                              [ -d ${ structure-directory } ] &&
+                                              exec 150<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 150 &&
+                                              [ -d ${ structure-directory }/links ] &&
+                                              exec 140<>${ structure-directory }/links/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 140 &&
+                                              [ -d ${ _utils.bash-variable "1" } ] &&
+                                              exec 139<>${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.flock }/bin/flock 139 &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
+                                              ${ commands.links }
+                                           '' ;
+                                          logs =
+                                            ''
+                                              [ -d ${ structure-directory } ] &&
+                                              exec 121<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 121 &&
+                                              [ -d ${ structure-directory }/links ] &&
+                                              exec 186<>${ structure-directory }/links/lock &&
+                                              ${ pkgs.flock }/bin/flock 186 &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/lock &&
+                                              ${ commands.structure }
+                                           '' ;
                                           structure =
                                             ''
                                               [ -d ${ structure-directory } ] &&
-                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock }/bin/flock ${ numbers.script.structure } &&
+                                              exec 198<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock 198 &&
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock
                                            '' ;
                                           temporaries =
