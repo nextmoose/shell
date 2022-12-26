@@ -401,8 +401,6 @@
                                            '' ;
                                           resource =
                                             ''
-					      ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 4a12f52c-8621-4177-acc7-f41de505232f >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-					      ${ pkgs.gnused }/bin/sed -e "s#^${ structure-directory }/resources/\(.*\)#\3#"  )  >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
 					      [ ${ structure-directory }/resources/$( ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } | ${ pkgs.gnused }/bin/sed -e "s#^${ structure-directory }/resources/\(.*\)#\1#"  ) == ${ _utils.bash-variable "1" } ] &&
                                               [ -d ${ structure-directory } ] &&
                                               exec 194<>${ structure-directory }/lock &&
