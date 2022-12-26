@@ -28,108 +28,109 @@
                                         string = track : _utils.strip track.reduced ;
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
+                                  program =
+                                    let
+                                      cleanup =
+                                        ''
+                                          LOG=${ _utils.bash-variable "1" } &&
+                                          TEMP=${ _utils.bash-variable "2" } &&
+                                          [ -d ${ structure-directory } ] &&
+                                          exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                          ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                          [ -d ${ structure-directory }/logs ] &&
+                                          exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
+                                          ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                          [ -d ${ _utils.bash-variable "LOG" } ] &&
+                                          exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
+                                          ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
+                                          ${ pkgs.coreutils }/bin/touch \
+                                          ${ _utils.bash-variable "LOG" }/out \
+                                          ${ _utils.bash-variable "LOG" }/err \
+                                          ${ _utils.bash-variable "LOG" }/din \
+                                          ${ _utils.bash-variable "LOG" }/debug \
+                                          ${ _utils.bash-variable "LOG" }/notes
+                                          ${ pkgs.coreutils }/bin/chmod \
+                                            0400 \
+                                            ${ _utils.bash-variable "LOG" }/out \
+                                            ${ _utils.bash-variable "LOG" }/err \
+                                            ${ _utils.bash-variable "LOG" }/din \
+                                            ${ _utils.bash-variable "LOG" }/debug \
+                                            ${ _utils.bash-variable "LOG" }/notes &&
+                                          [ -d ${ structure-directory }/temporary ] &&
+                                          exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                          ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                          if [ -d "${ _utils.bash-variable "TEMP" }" ]
+                                          then
+                                            exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
+                                            ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
+                                            ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                            ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
+                                          fi &&
+                                          ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
+                                          ${ unlock.temporaries }
+                                        '' ;
+                                      process =
+                                        ''
+                                          export ${ variables.script.process }=${ _utils.bash-variable "!" }
+                                        '' ;
+                                      program =
+                                        string :
+                                          ''
+                                            ${ variables.script.cleanup } ( )
+                                            {
+                                              ${ pkgs.coreutils }/bin/echo \
+                                                ${ pkgs.coreutils }/bin/nice \
+                                                  --adjustment 19 \
+                                                  ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
+                                                  ${ at } now 2> /dev/null
+                                            } &&
+                                            trap ${ variables.script.cleanup } EXIT &&
+                                            if [ ! -d ${ structure-directory } ]
+                                            then
+                                              ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                            fi &&
+                                            exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
+                                            ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
+                                            if [ ! -d ${ structure-directory }/logs ]
+                                            then
+                                              ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
+                                            fi &&
+                                            exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
+                                            ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
+                                            export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
+                                            exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                            ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
+                                            ${ _utils.strip process } &&
+                                            ${ _utils.strip temporary } &&
+                                            ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script "${ _utils.bash-variable "@" }" \
+                                              > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
+                                              2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
+                                              if [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
+                                              then
+                                                exit ${ numbers.script.err }
+                                              fi
+                                            '' ;
+                                        temporary =
+                                          if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] track.reduced == track.reduced then "export ${ variables.shared.temporary }="
+                                            else
+                                              ''
+                                                if [ ! -d ${ structure-directory }/temporary ]
+                                                then
+                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                fi &&
+                                                exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                                ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                                export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                                ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
+                                              '' ;
+                                        in _utils.strip program ;
                                   programs =
                                     _utils.visit
                                       {
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
-                                        string =
-                                          track :
-                                            let
-                                              cleanup =
-                                                ''
-                                                  LOG=${ _utils.bash-variable "1" } &&
-                                                  TEMP=${ _utils.bash-variable "2" } &&
-                                                  [ -d ${ structure-directory } ] &&
-                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                                  [ -d ${ structure-directory }/logs ] &&
-                                                  exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                                  [ -d ${ _utils.bash-variable "LOG" } ] &&
-                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
-                                                  ${ pkgs.coreutils }/bin/touch \
-                                                    ${ _utils.bash-variable "LOG" }/out \
-                                                    ${ _utils.bash-variable "LOG" }/err \
-                                                    ${ _utils.bash-variable "LOG" }/din \
-                                                    ${ _utils.bash-variable "LOG" }/debug \
-                                                    ${ _utils.bash-variable "LOG" }/notes
-                                                  ${ pkgs.coreutils }/bin/chmod \
-                                                    0400 \
-                                                    ${ _utils.bash-variable "LOG" }/out \
-                                                    ${ _utils.bash-variable "LOG" }/err \
-                                                    ${ _utils.bash-variable "LOG" }/din \
-                                                    ${ _utils.bash-variable "LOG" }/debug \
-                                                    ${ _utils.bash-variable "LOG" }/notes &&
-                                                  [ -d ${ structure-directory }/temporary ] &&
-                                                  exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                  if [ -d "${ _utils.bash-variable "TEMP" }" ]
-                                                  then
-                                                    exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
-                                                    ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-                                                    ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-                                                    ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
-                                                  fi &&
-                                                  ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
-                                                  ${ unlock.temporaries }
-                                                '' ;
-                                              process =
-                                                ''
-                                                  export ${ variables.script.process }=${ _utils.bash-variable "!" }
-                                                '' ;
-                                              program =
-                                                ''
-                                                  ${ variables.script.cleanup } ( )
-                                                  {
-                                                    ${ pkgs.coreutils }/bin/echo \
-                                                      ${ pkgs.coreutils }/bin/nice \
-                                                        --adjustment 19 \
-                                                        ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
-                                                      ${ at } now 2> /dev/null
-                                                  } &&
-                                                  trap ${ variables.script.cleanup } EXIT &&
-                                                  if [ ! -d ${ structure-directory } ]
-                                                  then
-                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                  fi &&
-                                                  exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                                  if [ ! -d ${ structure-directory }/logs ]
-                                                  then
-                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logs
-                                                  fi &&
-                                                  exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                                  export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                                  exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
-                                                  ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                                  ${ _utils.strip process } &&
-                                                  ${ _utils.strip temporary } &&
-                                                  ${ pkgs.writeShellScriptBin "script" ( _utils.strip track.reduced ) }/bin/script "${ _utils.bash-variable "@" }" \
-                                                    > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
-                                                    2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
-                                                  if [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
-                                                  then
-                                                    exit ${ numbers.script.err }
-                                                  fi
-                                                '' ;
-                                              temporary =
-                                                if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] track.reduced == track.reduced then "export ${ variables.shared.temporary }="
-                                                else
-                                                  ''
-                                                    if [ ! -d ${ structure-directory }/temporary ]
-                                                    then
-                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                                    fi &&
-                                                    exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                    export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                                    exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-                                                    ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
-                                                  '' ;
-                                              in _utils.strip program ;
+                                        string = track : program track.reduced ;
                                         undefined = track : builtins.throw "0b2d765f-efb2-40c5-a4a2-346af4703a6d" ;
                                       } _scripts ;
                                   structure =
@@ -235,19 +236,25 @@
                                                   starter : finisher : salter :
                                                     let
                                                       create = seconds : is-resource :
-						        let
-							  item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource )" ;
-							  resource =
-						            ''
-							      if [ ! -d ${ structure-directory } ]
-							      then
-							        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-							      fi &&
-							      exec ${ numbers.resource.structure }<>${ structure-directory }/lock &&
-							      ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure } &&
-							      ${ pkgs.coreutils }/bin/echo PLACE_HOLDER 3
-							    '' ;
-							  in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
+                                                        let
+                                                          item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource )" ;
+                                                          resource =
+                                                            ''
+                                                              if [ ! -d ${ structure-directory } ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                              fi &&
+                                                              exec ${ numbers.resource.structure }<>${ structure-directory }/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure } &&
+                                                              if [ ! -d ${ structure-directory }/links ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
+                                                              fi &&
+                                                              exec ${ numbers.resource.link }<>${ structure-directory }/links/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ nubers.resource.link } &&
+                                                              ${ variables.structure.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "512" ( builtins.concatStringsSep "" [ starter finisher ] ) } $( ${ pkgs.writeShellScriptBin "salter" 
+                                                            '' ;
+                                                          in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
@@ -380,12 +387,12 @@
                                   {
                                     numbers =
                                       {
-				        resource = [ "structure" "links" "link" "resources" "resource" "securities" "security" ] ;
+                                        resource = [ "structure" "links" "link" "resources" "resource" "securities" "security" ] ;
                                         script = [ "structure" "logs" "log" "temporaries" "temporary" "err" ] ;
                                       } ;
                                     variables =
                                       {
-				        resource = [ ] ;
+                                        resource = [ ] ;
                                         script = [ "cleanup" "log" "process" "time" ] ;
                                         shared = [ "temporary" ] ;
                                       } ;
