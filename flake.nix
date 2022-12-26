@@ -380,7 +380,7 @@
                                               ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
                                               ${ commands.links }
                                            '' ;
-                                          logs =
+                                          links =
                                             ''
                                               [ -d ${ structure-directory } ] &&
                                               exec 121<>${ structure-directory }/lock &&
