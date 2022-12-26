@@ -67,7 +67,7 @@
                                             ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
                                             ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
                                           fi &&
-                                          ${ unlock.log } ${ _utils.bash-variable "LOG" } &&
+                                          ${ unlock.log } ${ _utils.bash-variable "LOG" } 2> /dev/null &&
                                           ${ unlock.temporaries }
                                         '' ;
                                       process =
