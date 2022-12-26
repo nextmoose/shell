@@ -256,7 +256,8 @@
                                                               fi &&
                                                               exec 202<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
-							      ${ pkgs.coreutils }/bin/echo TIME=${ _utils.bash-variable variables.script.time } > /dev/stderr &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) > /dev/stderr &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.writeScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter > /dev/stderr &&
                                                               ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes 128 ) &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
                                                               then
