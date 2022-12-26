@@ -234,7 +234,15 @@
                                                 resource =
                                                   starter : finisher : salter :
                                                     let
-                                                      create = seconds : is-resource : "PLACE_HOLDER" ;
+                                                      create = seconds : is-resource :
+						        ''
+							  if [ ! -d ${ structure-directory } ]
+							  then
+							    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+							  fi &&
+							  exec ${ numbers.resource.structure }<>${ structure-directory }/lock &&
+							  ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure }
+							''
                                                       in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
@@ -367,10 +375,12 @@
                                   {
                                     numbers =
                                       {
+				        resource = [ "structure" "links" "link" "resources" "resource" "securities" "security" ] ;
                                         script = [ "structure" "logs" "log" "temporaries" "temporary" "err" ] ;
                                       } ;
                                     variables =
                                       {
+				        resource = [ ] ;
                                         script = [ "cleanup" "log" "process" "time" ] ;
                                         shared = [ "temporary" ] ;
                                       } ;
