@@ -85,10 +85,10 @@
                                                 ${ at } now 2> /dev/null
                                           } &&
                                           trap ${ variables.script.cleanup } EXIT &&
-  					  if [ -z "${ _utils.bash-variable variables.script.time }" ]
-					  then
-					    export ${ variables.script.time }=$( ${ pkgs.coreutils }/bin/date +%s )
-					  fi &&
+                                          if [ -z "${ _utils.bash-variable variables.script.time }" ]
+                                          then
+                                            export ${ variables.script.time }=$( ${ pkgs.coreutils }/bin/date +%s )
+                                          fi &&
                                           if [ ! -d ${ structure-directory } ]
                                           then
                                             ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -259,24 +259,24 @@
                                                               ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-							        ${ pkgs.coreutils }/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
-							      else
+                                                                ${ pkgs.coreutils }/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                              else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-							        exec 204<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
-							        ${ pkgs.flock }/bin/flock 204 &&
-								if [ ! -d ${ structure-directory }/resources ]
-								then
-								  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
-								fi &&
-								exec 205<>${ structure-directory }/resources &&
-								${ pkgs.flock }/bin/flock -s 205 &&
-								RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
-								exec 206<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
-								${ pkgs.flock }/bin/flock 206 &&
-								${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
-								${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                              fi &&
-                                                              ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                                exec 204<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                                ${ pkgs.flock }/bin/flock 204 &&
+                                                                if [ ! -d ${ structure-directory }/resources ]
+                                                                then
+                                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
+                                                                fi &&
+                                                                exec 205<>${ structure-directory }/resources &&
+                                                                ${ pkgs.flock }/bin/flock -s 205 &&
+                                                                RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
+                                                                exec 206<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
+                                                                ${ pkgs.flock }/bin/flock 206 &&
+                                                                ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
+                                                                ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
+                                                                ${ pkgs.coreutils }/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                              fi
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
