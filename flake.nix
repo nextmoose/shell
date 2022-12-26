@@ -417,12 +417,12 @@
                                           resources =
                                             ''
                                               [ -d ${ structure-directory } ] &&
-                                              exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
-                                              [ -d ${ structure-directory }/logs ] &&
-                                              exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
-                                              ${ pkgs.flock }/bin/flock ${ numbers.script.logs } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logs/lock &&
+                                              exec 101<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock -s 201 &&
+                                              [ -d ${ structure-directory }/resources ] &&
+                                              exec 110<>${ structure-directory }/logs/lock &&
+                                              ${ pkgs.flock }/bin/flock 110 &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/resources/lock &&
                                               ${ commands.structure }
                                            '' ;
                                           structure =
