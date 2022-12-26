@@ -276,12 +276,7 @@
                                                                 ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-								${ pkgs.coreutils }/bin/echo ${ at } >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                                                ${ pkgs.coreutils }/bin/echo \
-                                                                  ${ pkgs.coreutils }/bin/nice \
-                                                                    --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } now 2> /dev/null
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup | ${ at } ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } now 2> /dev/null
                                                               } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
