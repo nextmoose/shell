@@ -248,31 +248,31 @@
                                                               then
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                               fi &&
-                                                              exec 201<>${ structure-directory }/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s 201 &&
+                                                              exec 137<>${ structure-directory }/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s 137 &&
                                                               if [ ! -d ${ structure-directory }/links ]
                                                               then
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
                                                               fi &&
-                                                              exec 202<>${ structure-directory }/links/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s 202 &&
+                                                              exec 153<>${ structure-directory }/links/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s 153 &&
                                                               ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-                                                                ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                                ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
                                                               else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                                exec 204<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
-                                                                ${ pkgs.flock }/bin/flock 204 &&
+                                                                exec 119<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                                ${ pkgs.flock }/bin/flock 119 &&
                                                                 if [ ! -d ${ structure-directory }/resources ]
                                                                 then
                                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
                                                                 fi &&
-                                                                exec 205<>${ structure-directory }/resources/lock &&
-                                                                ${ pkgs.flock }/bin/flock -s 205 &&
+                                                                exec 129<>${ structure-directory }/resources/lock &&
+                                                                ${ pkgs.flock }/bin/flock -s 129 &&
                                                                 RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
-                                                                exec 206<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
-                                                                ${ pkgs.flock }/bin/flock 206 &&
+                                                                exec 168<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
+                                                                ${ pkgs.flock }/bin/flock 168 &&
                                                                 ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
                                                                 ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
                                                                 ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
