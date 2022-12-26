@@ -243,7 +243,8 @@
                                                         let
                                                           cleanup =
                                                             ''
-                                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca aefd7bd0-0144-41b9-a482-9b1df2b74446 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+                                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca aefd7bd0-0144-41b9-a482-9b1df2b74446 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&							      
+                                                              ${ pkgs.coreutils }/bin/echo ${ unlock.link } >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&							      
                                                               ${ unlock.link }
                                                             '' ;
                                                           delete =
