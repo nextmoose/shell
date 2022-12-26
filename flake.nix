@@ -418,7 +418,7 @@
                                             ''
                                               [ -d ${ structure-directory } ] &&
                                               exec 101<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock }/bin/flock -s 201 &&
+                                              ${ pkgs.flock }/bin/flock -s 101 &&
                                               [ -d ${ structure-directory }/resources ] &&
                                               exec 110<>${ structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock 110 &&
