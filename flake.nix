@@ -241,7 +241,7 @@
                                                     let
                                                       create = seconds : is-resource :
                                                         let
-                                                          item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource )" ;
+                                                          item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource ${ _utils.bash-variable "1" } )" ;
                                                           resource =
                                                             ''
                                                               if [ ! -d ${ structure-directory } ]
