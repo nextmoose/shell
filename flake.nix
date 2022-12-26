@@ -235,14 +235,19 @@
                                                   starter : finisher : salter :
                                                     let
                                                       create = seconds : is-resource :
-						        ''
-							  if [ ! -d ${ structure-directory } ]
-							  then
-							    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-							  fi &&
-							  exec ${ numbers.resource.structure }<>${ structure-directory }/lock &&
-							  ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure }
-							''
+						        let
+							  item = "$( ${ pkgs.writeShellScriptBin "resource" ( utils.strip resource ) }/bin/resource )" ;
+							  resource =
+						            ''
+							      if [ ! -d ${ structure-directory } ]
+							      then
+							        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+							      fi &&
+							      exec ${ numbers.resource.structure }<>${ structure-directory }/lock &&
+							      ${ pkgs.flock }/bin/flock -s ${ numbers.resource.structure } &&
+							      ${ pkgs.coreutils }/bin/echo PLACE_HOLDER 3
+							    '' ;
+							  in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } ) else item ;
                                                       in create ;
                                                 in track.reduced resource ;
                                           list = track : track.reduced ;
