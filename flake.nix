@@ -85,6 +85,10 @@
                                                 ${ at } now 2> /dev/null
                                           } &&
                                           trap ${ variables.script.cleanup } EXIT &&
+  					  if [ -z "${ _utils.bash-variable variables.script.time }" ]
+					  then
+					    ${ variables.script.time }=$( ${ pkgs.coreutils }/bin/date +%s )
+					  fi &&
                                           if [ ! -d ${ structure-directory } ]
                                           then
                                             ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
