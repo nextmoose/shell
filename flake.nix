@@ -369,7 +369,7 @@
                                            '' ;
                                           link =
                                             ''
-                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 85d84123-7395-42ab-b3bd-d9836ddb285e >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 9320a0ac-7570-4890-a50b-8c4d44076531 BEGIN ${ _utils.bash-variable "1" } END >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                               [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "1" } ) == ${ structure-directory }/link ] &&
                                               [ -d ${ structure-directory } ] &&
                                               exec 150<>${ structure-directory }/lock &&
