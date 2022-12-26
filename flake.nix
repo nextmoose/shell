@@ -105,26 +105,26 @@
                                           ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) }/bin/script "${ _utils.bash-variable "@" }" \
                                             > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                             2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
-                                            if [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
-                                            then
-                                              exit ${ numbers.script.err }
-                                            fi
-                                          '' ;
-                                        temporary =
-                                          if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] script == script then "export ${ variables.shared.temporary }="
-                                            else
-                                              ''
-                                                if [ ! -d ${ structure-directory }/temporary ]
-                                                then
-                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                                fi &&
-                                                exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
-                                                ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                                export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                                exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
-                                                ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
-                                              '' ;
-                                        in _utils.strip program ;
+                                          if [ -f ${ _utils.bash-variable variables.script.log }/err ]
+                                          then
+                                            exit ${ numbers.script.err }
+                                          fi
+                                        '' ;
+                                      temporary =
+                                        if builtins.replaceStrings [ variables.shared.temporary ] [ "" ] script == script then "export ${ variables.shared.temporary }="
+                                          else
+                                            ''
+                                              if [ ! -d ${ structure-directory }/temporary ]
+                                              then
+                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                              fi &&
+                                              exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
+                                              ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
+                                              export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                              exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                              ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
+                                            '' ;
+                                      in _utils.strip program ;
                                   programs =
                                     _utils.visit
                                       {
