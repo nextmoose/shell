@@ -241,6 +241,26 @@
                                                     let
                                                       create = seconds : is-resource :
                                                         let
+							  delete =
+							    ''
+							      LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
+							      RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
+							      [ -d ${ structure-directory } ] &&
+							      exec 202<>${ structure-directory }/lock &&
+							      ${ pkgs.flock }/bin/flock -s 202 &&
+							      [ -d ${ structure-directory }/links ] &&
+							      exec 295<>${ structure-directory }/links//lock &&
+							      ${ pkgs.flock }/bin/flock -s 295 &&
+							      [ -d ${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
+							      exec 261<>${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+							      ${ pkgs.flock }/bin/flock 261 &&
+							      ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+							      ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "LINK_DIRECTORY" } &&
+							      [ -d ${ structure-directory }/resources ] &&
+							      exec 241<>${ structure-directory }/resources/lock &&
+							      ${ pkgs.flock }/bin/flock -s 241 &&
+							      
+							    '' ;
                                                           item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource ${ _utils.bash-variable "1" } )" ;
                                                           resource =
                                                             ''
