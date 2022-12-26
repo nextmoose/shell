@@ -243,8 +243,8 @@
                                                         let
 							  cleanup =
 							    ''
-							      ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d
-							      ${ pkgs.coreutils }/bin/echo ${ unlock.link } | ${ at } now
+							      ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+							      ${ unlock.link }
 							    '' ;
 							  delete =
 							    ''
