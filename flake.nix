@@ -29,7 +29,7 @@
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
                                   program =
-				    script :
+                                    script :
                                     let
                                       cleanup =
                                         ''
@@ -252,14 +252,14 @@
                                                               fi &&
                                                               exec ${ numbers.resource.link }<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s ${ numbers.resource.link } &&
-                                                              ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ variables.script.time } ) &&
-							      if [ -f ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
-							      then
-							        ${ pkgs.coreutils }/bin/true
-							      else
-							        ${ pkgs.coreutils }/bin/echo PLACEHOLDER > ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }
-							      fi &&
-							      ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }
+                                                              ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ variables.script.time } ) ) &&
+                                                              if [ -f ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/true
+                                                              else
+                                                                ${ pkgs.coreutils }/bin/echo PLACEHOLDER > ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }
+                                                              fi &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
