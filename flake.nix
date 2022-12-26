@@ -241,6 +241,10 @@
                                                     let
                                                       create = seconds : is-resource :
                                                         let
+							  cleanup =
+							    ''
+							      ${ pkgs.coreutils }/bin/echo ${ unlock.link } | ${ at } now
+							    '' ;
 							  delete =
 							    ''
 							      LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
@@ -259,11 +263,19 @@
 							      [ -d ${ structure-directory }/resources ] &&
 							      exec 241<>${ structure-directory }/resources/lock &&
 							      ${ pkgs.flock }/bin/flock -s 241 &&
-							      
+							      ${ pkgs.coreutils }/bin/true
 							    '' ;
                                                           item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource ${ _utils.bash-variable "1" } )" ;
                                                           resource =
                                                             ''
+							      cleanup ( )
+							      {
+							        ${ pkgs.coreutils }/bin/echo \
+								  ${ pkgs.coreutils }/bin/nice \
+								    --adjustment 19 \
+								    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } 2> /dev/null
+							      } &&
+							      trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
                                                               then
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
