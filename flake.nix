@@ -262,7 +262,7 @@
 							        ${ pkgs.coreutils }/bin/true
 							      else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } &&
-							        exec 203<>${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } &&
+							        exec 203<>${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }/lock &&
 							        ${ pkgs.flock }/bin/flock 203 &&
 							        ${ pkgs.coreutils }/bin/echo PLACEHOLDER > ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link }/link
                                                               fi &&
