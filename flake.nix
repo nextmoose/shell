@@ -252,7 +252,7 @@
                                                               fi &&
                                                               exec ${ numbers.resource.link }<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s ${ numbers.resource.link } &&
-                                                              ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( programs salter ) ) }/bin/salter ${ variables.script.time } ) &&
+                                                              ${ variables.resource.link }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( programs salter ) ) }/bin/salter ${ variables.script.time } ) &&
 							      if [ -f ${ structure-directory }/links/${ _utils.bash-variable variables.resource.link } ]
 							      then
 							        ${ pkgs.coreutils }/bin/true
