@@ -244,31 +244,23 @@
                                                           item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource )" ;
                                                           resource =
                                                             ''
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0010  &&
                                                               if [ ! -d ${ structure-directory } ]
                                                               then
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                               fi &&
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0020  &&                                                         
                                                               exec 201<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 201 &&
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0030  &&
                                                               if [ ! -d ${ structure-directory }/links ]
                                                               then
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
                                                               fi &&
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0040 &&
                                                               exec 202<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0050  &&
                                                               ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip ( program salter ) ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0060  &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-                                                                ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0061  &&
                                                                 ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
                                                               else
-                                                                ${ pkgs.coreutils }/bin/echo 80caf164-2a65-4986-bfb4-767b2952cd64 0062  &&
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
                                                                 exec 204<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
                                                                 ${ pkgs.flock }/bin/flock 204 &&
