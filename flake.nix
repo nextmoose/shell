@@ -379,7 +379,7 @@
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 2d65358f-cafd-4637-af01-e40742dc42f1 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                               [ -d ${ structure-directory }/links/${ _utils.bash-variable "1" } ] &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 08bda07b-e3c2-48df-9ff2-b00986d6e2bd >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                              exec 139<>${ structure-directory }/link/${ _utils.bash-variable "1" }/lock &&
+                                              exec 139<>${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock 139 &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca d5fe1a17-3704-4403-84a8-97b261f78010 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
