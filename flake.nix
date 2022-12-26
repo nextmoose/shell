@@ -244,8 +244,8 @@
                                                           cleanup =
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca aefd7bd0-0144-41b9-a482-9b1df2b74446 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&							      
-                                                              ${ pkgs.coreutils }/bin/echo ${ unlock.link } >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&							      
-                                                              ${ unlock.link }
+                                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 6f3509b4-33f9-405d-ae29-da9f072fe43e ${ unlock.link } >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&							      
+                                                              ${ unlock.link } ${ _utils.bash-variable "1" }
                                                             '' ;
                                                           delete =
                                                             ''
@@ -281,7 +281,7 @@
                                                                 ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } now 2> /dev/null
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup | ${ at } ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } now 2> /dev/null
                                                               } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
