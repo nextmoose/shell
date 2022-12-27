@@ -284,7 +284,7 @@
                                                                 ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> /dev/null
                                                               } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
