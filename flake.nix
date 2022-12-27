@@ -239,14 +239,16 @@
                                                 resource =
                                                   starter : finisher : salter :
                                                     let
-                                                      create = seconds : is-resource :
+                                                      create = minutes : is-resource :
                                                         let
                                                           cleanup =
                                                             ''
                                                               ${ unlock.link } ${ _utils.bash-variable "1" } 2> /dev/null &&
-							      ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null
+							      ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null &&
+							      DATE=$( ${ pkgs.coreutils }/bin/date --date "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _utils.strip delete-link ) }/bin/delete-link ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now + ${ builtins.toString minutes }min 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 | ${ pkgs.coreutils }/bin/cut --fields 4-8 --delimiter " " )" ) &&
+							      ${ pkgs.coreutils }/bin/touch ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/${ _utils.bash-variable "DATE" }.date
                                                             '' ;
-                                                          delete =
+                                                          delete-links =
                                                             ''
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
@@ -254,18 +256,28 @@
                                                               exec 202<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
                                                               [ -d ${ structure-directory }/links ] &&
-                                                              exec 295<>${ structure-directory }/links//lock &&
+                                                              exec 295<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 295 &&
-                                                              [ -d ${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
-                                                              exec 261<>${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                              [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
+                                                              exec 261<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 261 &&
-                                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
-                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                              [ -d ${ structure-directory }/resources ] &&
+                                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
+							      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip delete-resource ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now
+                                                            '' ;
+							  delete-resource =
+							    ''
+							      RESOURCE_DIRECTORY=${ _utils.bash-variable "1" } &&
+							      [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ) == ${ structure-directory }/links ] &&
+							      [ -d ${ structure-directory }/resources ] &&
                                                               exec 241<>${ structure-directory }/resources/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 241 &&
-                                                              ${ pkgs.coreutils }/bin/true
-                                                            '' ;
+							      [ -d ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ] &&
+							      exec 278<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
+							      ${ pkgs.flock }/bin/flock 278 &&
+							      ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "RESOURCE_DIRECTORY" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+							      ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "RESOURCE_DIRECTORY" }
+							    '' ;
                                                           item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource ${ _utils.bash-variable "1" } )" ;
                                                           resource =
                                                             ''
@@ -274,7 +286,7 @@
                                                                 ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> /dev/null
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 
                                                               } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
