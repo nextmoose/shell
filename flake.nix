@@ -296,7 +296,7 @@
                                                               else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
                                                                 exec 119<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
-                                                                ${ pkgs.flock }/bin/flock 119 &&
+                                                                ${ pkgs.flock }/bin/flock -s 119 &&
                                                                 if [ ! -d ${ structure-directory }/resources ]
                                                                 then
                                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
@@ -310,7 +310,7 @@
                                                                 ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link &&
                                                                 ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource
                                                               fi &&
-							      ${ pkgs.coreutils }/bin/tail --follow --pid ${ _utils.bash-variable variables.process } &
+							      ${ pkgs.coreutils }/bin/tail --follow --pid ${ _utils.bash-variable variables.script.process } &
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
