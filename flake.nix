@@ -309,7 +309,12 @@
                                                                 ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
                                                                 ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link &&
                                                                 ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource
-                                                              fi
+                                                              fi &&
+							      holdit ( )
+							      {
+							        wait ${ _utils.bash-variable variables.process }
+							      } &&
+							      holdit &
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
                                                       in create ;
