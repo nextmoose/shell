@@ -248,7 +248,7 @@
 							      DATE=$( ${ pkgs.coreutils }/bin/date --date "${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _utils.strip delete-link ) }/bin/delete-link ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now + ${ builtins.toString minutes }min 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 | ${ pkgs.coreutils }/bin/cut --fields 4-8 --delimiter " " )" ) &&
 							      ${ pkgs.coreutils }/bin/touch ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/${ _utils.bash-variable "DATE" }.date
                                                             '' ;
-                                                          delete-links =
+                                                          delete-link =
                                                             ''
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
