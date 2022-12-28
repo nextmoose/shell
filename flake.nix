@@ -336,7 +336,7 @@
                                                                 RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
                                                                 exec 168<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
                                                                 ${ pkgs.flock }/bin/flock 168 &&
-                                                                ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
+                                                                ${ pkgs.writeShellScriptBin "program" ( _utils.strip starter ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
                                                                 ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link &&
                                                                 ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource
                                                               fi
