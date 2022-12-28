@@ -287,6 +287,7 @@
                                                               [ -d ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ] &&
                                                               exec 278<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 278 &&
+							      ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip finisher ) }/bin/finisher &&
                                                               ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "RESOURCE_DIRECTORY" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                               ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "RESOURCE_DIRECTORY" }
                                                             '' ;
