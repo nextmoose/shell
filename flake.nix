@@ -244,6 +244,7 @@
                                                         let
                                                           cleanup =
                                                             ''
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the cleanup string > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 264983a0-abfc-45f1-9f6e-b48e3ad798f7 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ builtins.toString minutes } &&
                                                               ${ unlock.link } ${ _utils.bash-variable "1" } 2> /dev/null &&
@@ -257,6 +258,7 @@
                                                             '' ;
                                                           delete-link =
                                                             ''
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the delete link string > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b dd2d605f-6f61-4294-9bb2-649af18a77ac > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd71e0c6-cab5-4b8c-8501-7cdbdc9b1781 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
@@ -280,6 +282,7 @@
                                                             '' ;
                                                           delete-resource =
                                                             ''
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the delete-resource string > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "1" } &&
                                                               [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ) == ${ structure-directory }/links ] &&
                                                               [ -d ${ structure-directory }/resources ] &&
@@ -298,6 +301,7 @@
                                                               {
                                                                 ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 2726ad25-c5e7-4e6b-8858-873ed250b86b > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                                 ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 RESOURCE_DIRECTORY=${ _utils.bash-variable "RESOURCE_DIRECTORY" } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
+                                                                ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                                 TIME=$( ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
