@@ -172,7 +172,7 @@
                                                     then
                                                       ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "LOG" }
                                                     else
-                                                      ${ pkgs.coreutils }/bin/echo FAILED TO DELETE ${ _utils.bash-variable "LOG" } > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/echo FAILED TO DELETE ${ _utils.bash-variable "LOG" } > /dev/null
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
@@ -202,7 +202,7 @@
                                                       ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
                                                     elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" } > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/basename FAILED TO QUERY ${ _utils.bash-variable "SOURCE" } > /dev/null
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
