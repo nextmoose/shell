@@ -42,6 +42,7 @@
                                           exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
                                           [ -d ${ _utils.bash-variable "LOG" } ] &&
+					  ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) }/bin/script ${ _utils.bash-variable "LOG" }/command &&
                                           exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
                                           ${ pkgs.coreutils }/bin/touch \
