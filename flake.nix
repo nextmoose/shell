@@ -313,7 +313,6 @@
                                                                 fi &&
                                                                 exec 129<>${ structure-directory }/resources/lock &&
                                                                 ${ pkgs.flock }/bin/flock -s 129 &&
-								${ pkgs.coreutils }/bin/echo 9882b95d-72a2-4ad5-bdc7-998f26b9d581 e631693f-9482-4f5a-ad5e-e1a24f7f700c &&
                                                                 RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
                                                                 exec 168<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
                                                                 ${ pkgs.flock }/bin/flock 168 &&
