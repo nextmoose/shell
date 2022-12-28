@@ -282,11 +282,12 @@
                                                               cleanup ( )
                                                               {
 							        ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 2726ad25-c5e7-4e6b-8858-873ed250b86b >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
-                                                                ${ pkgs.coreutils }/bin/echo \
+							        TIME= $( ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> /dev/null
-                                                              } &&
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( program cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 ) ) &&
+								${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 844c85f3-6247-4629-a38f-970a9ddba033 ${ _utils.bash-variable "TIME" } >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e
+						              } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
                                                               then
