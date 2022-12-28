@@ -249,20 +249,26 @@
 							      ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null &&
 							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 4428a3ad-c340-4ac9-b5bd-d511cb48bfd3 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
 							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b a33be843-2cbd-400f-ad1f-e2ef0a9c5990 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustments 19 ${ pkgs.writeShellScriptBin "delete-link" ( program ( _utils.strip ( delete-link ) ) ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
-							      ${ pkgs.coreutils }/bin/echo ${ at } now + ${ builtins.toString minutes }min
+ 							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 39ad2910-f284-4f89-8b0b-10cb93cf775e >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ at } now + ${ builtins.toString minutes }min &&
 							      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustments 19 ${ pkgs.writeShellScriptBin "delete-link" ( program ( _utils.strip ( delete-link ) ) ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } | ${ at } now + ${ builtins.toString minutes }min
                                                             '' ;
                                                           delete-link =
                                                             ''
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b dd2d605f-6f61-4294-9bb2-649af18a77ac >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd71e0c6-cab5-4b8c-8501-7cdbdc9b1781 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ _utils.bash-variable "LINK_DIRECTORY" } &&
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b d6e78f03-f988-4a69-bf2d-c709c0a3c055 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9d39af1b-e434-44a3-95d8-055e5c28b420 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
                                                               [ -d ${ structure-directory } ] &&
                                                               exec 202<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
                                                               [ -d ${ structure-directory }/links ] &&
                                                               exec 295<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 295 &&
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 260ddf65-213b-494c-ae08-c4889fa7e622 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
+							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b af23da27-8216-4c7a-8acb-4d204041ea2b >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               exec 261<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 261 &&
                                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
