@@ -256,10 +256,10 @@
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b dd2d605f-6f61-4294-9bb2-649af18a77ac >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd71e0c6-cab5-4b8c-8501-7cdbdc9b1781 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ _utils.bash-variable "LINK_DIRECTORY" } &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd71e0c6-cab5-4b8c-8501-7cdbdc9b1781 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b d6e78f03-f988-4a69-bf2d-c709c0a3c055 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9d39af1b-e434-44a3-95d8-055e5c28b420 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9d39af1b-e434-44a3-95d8-055e5c28b420 ${ _utils.bash-variable "RESOURCE_DIRECTORY" } >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                               [ -d ${ structure-directory } ] &&
                                                               exec 202<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
@@ -294,7 +294,7 @@
                                                               cleanup ( )
                                                               {
                                                                 ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 2726ad25-c5e7-4e6b-8858-873ed250b86b >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
-								${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
+								${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 RESOURCE_DIRECTORY=${ _utils.bash-variable "RESOURCE_DIRECTORY" } >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
                                                                 TIME=$( ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
