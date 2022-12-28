@@ -244,6 +244,7 @@
                                                           cleanup =
                                                             ''
 							      ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e &&
+							      ${ unlock.link } ${ _utils.bash-variable "1" } 2> /dev/null &&
 							      ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null
                                                             '' ;
                                                           delete-link =
