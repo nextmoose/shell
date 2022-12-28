@@ -319,7 +319,7 @@
                                                               ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( program salter ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
                                                               if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-                                                                RESOURCE_DIRECTORY=$( ${ pkgs.coreutils }/bin/dirname ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ) &&
+                                                                RESOURCE_DIRECTORY=$( ${ pkgs.coreutils }/bin/dirname $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ) ) &&
                                                                 ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
                                                               else
                                                                 ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
