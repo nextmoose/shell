@@ -172,7 +172,7 @@
                                                     then
                                                       ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "LOG" }
                                                     else
-                                                      ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "LOG" } > /dev/stderr
+                                                      ${ pkgs.coreutils }/bin/echo FAILED TO DELETE ${ _utils.bash-variable "LOG" } > /dev/stderr
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
