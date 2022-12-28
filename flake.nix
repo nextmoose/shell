@@ -244,16 +244,10 @@
                                                         let
                                                           cleanup =
                                                             ''
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the cleanup string > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 264983a0-abfc-45f1-9f6e-b48e3ad798f7 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ builtins.toString minutes } &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the cleanup script is called > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ unlock.link } ${ _utils.bash-variable "1" } 2> /dev/null &&
                                                               ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9533f281-c184-4253-a6b8-670914ccda34 RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 4428a3ad-c340-4ac9-b5bd-d511cb48bfd3 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b a33be843-2cbd-400f-ad1f-e2ef0a9c5990 >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustments 19 ${ pkgs.writeShellScriptBin "delete-link" ( program ( _utils.strip ( delete-link ) ) ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 39ad2910-f284-4f89-8b0b-10cb93cf775e >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e ${ at } now + ${ builtins.toString minutes }min &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad the cleanup script is about to schedule > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustments 19 ${ pkgs.writeShellScriptBin "delete-link" ( program ( _utils.strip ( delete-link ) ) ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } | ${ at } now + ${ builtins.toString minutes }min
                                                             '' ;
                                                           delete-link =
