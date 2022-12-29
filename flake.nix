@@ -290,7 +290,7 @@
                                                               ${ pkgs.flock }/bin/flock 278 &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b0b1952c-7429-4b93-bea4-4331cb5d7621 6 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
 							      ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip finisher ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/6a5eaf23-018d-4877-b8e1-a792f9fda6be &&
-							      ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip finisher ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
+							      ${ pkgs.writeShellScriptBin "delete-resource" ( program ( _utils.strip finisher ) ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 0bcab047-3550-4699-927f-100f6771523e 7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "RESOURCE_DIRECTORY" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 0bcab047-3550-4699-927f-100f6771523e 7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
