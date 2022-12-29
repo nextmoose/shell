@@ -255,26 +255,22 @@
                                                           delete-link =
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the delete link string >> >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b dd2d605f-6f61-4294-9bb2-649af18a77ac > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd71e0c6-cab5-4b8c-8501-7cdbdc9b1781 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b d6e78f03-f988-4a69-bf2d-c709c0a3c055 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9d39af1b-e434-44a3-95d8-055e5c28b420 ${ _utils.bash-variable "RESOURCE_DIRECTORY" } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               [ -d ${ structure-directory } ] &&
                                                               exec 202<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
                                                               [ -d ${ structure-directory }/links ] &&
                                                               exec 295<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 295 &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 260ddf65-213b-494c-ae08-c4889fa7e622 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b af23da27-8216-4c7a-8acb-4d204041ea2b > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               exec 261<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 261 &&
                                                               ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
                                                               ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip delete-resource ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now
+                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip delete-resource ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 80a367af-8c9f-4d88-a352-80dbad3e45a7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                             '' ;
                                                           delete-resource =
                                                             ''
