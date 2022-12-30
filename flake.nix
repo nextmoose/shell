@@ -356,6 +356,7 @@
                                           set = track : track.reduced ;
                                           undefined = track : builtins.throw "2b30d5ba-319f-475e-b502-38f15537a0d0" ;
                                         } ( resources _scripts ) ;
+			              structure-directory = structure-directory ;
                                       urandom = urandom ;
                                       utils = _utils ;
                                       variables = variables.shared ;
