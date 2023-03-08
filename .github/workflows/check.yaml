@@ -24,9 +24,9 @@ jobs:
       - uses: nextmoose/test-action@eef4910e8ed5b796ffc68397185d0292e1c52cf3
         with:
           implementation-url: github:nextmoose/shell
-          implementation-postulate: true
+          implementation-postulate: false
           test-url: github:nextmoose/shell-test
-          test-postulate: false
+          test-postulate: true
           test-rev: 
           test-defect:
           postulate: false
