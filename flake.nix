@@ -3,7 +3,7 @@
         {
 	  bash-variable.url = "github:nextmoose/bash-variable?rev=f3379946326bc530c7987bfc0f296d367914b6a2" ;
           flake-utils.url = "github:numtide/flake-utils" ;
-	  strip.url = "github:nexmoose/strip?rev=16f71c3c06cdf8f183251c448afff23026476ddb" ;
+	  strip.url = "github:nextmoose/strip?rev=16f71c3c06cdf8f183251c448afff23026476ddb" ;
 	  try.url = "github:nextmoose/try?rev64b86329e1cace1d43e54a325a1558bd50151ec4" ;
 	  visit.url = "github:nextmoose/visit?rev=1f99dae8a13e8c53e9aae3b6bde2a8e8cb1c7161" ;
         } ;
