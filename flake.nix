@@ -1,11 +1,14 @@
   {
       inputs =
         {
+	  bash-variable.url = "github:nextmoose/bash-variable?rev=f3379946326bc530c7987bfc0f296d367914b6a2" ;
           flake-utils.url = "github:numtide/flake-utils" ;
-          utils.url = "github:nextmoose/utils" ;
+	  strip.url = "github:nexmoose/strip?rev=16f71c3c06cdf8f183251c448afff23026476ddb" ;
+	  try.url = "github:nextmoose/try?rev64b86329e1cace1d43e54a325a1558bd50151ec4" ;
+	  visit.url = "github:nextmoose/visit?rev=1f99dae8a13e8c53e9aae3b6bde2a8e8cb1c7161" ;
         } ;
       outputs =
-        { self , flake-utils , utils } :
+        { bash-variable ,self , flake-utils , utils } :
           flake-utils.lib.eachDefaultSystem
           (
             system :
@@ -16,16 +19,19 @@
                       let
                         _ =
                           let
-                            _utils = builtins.getAttr system utils.lib ;
+			    _bash-variable = builtins.getAttr system bash-variable.lib ;
+			    _strip = builtins.getAttr system strip.lib ;
+			    _try = builtins.getAttr system try.lib ;
+			    _visit = builtins.getAttr system utils.lib ;
                             fun =
                               numbers : variables :
                                 let
                                   _scripts =
-                                    _utils.visit
+                                    _visit
                                       {
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
-                                        string = track : _utils.strip track.reduced ;
+                                        string = track : _strip track.reduced ;
                                         undefined = track : builtins.throw "517fa195-01d0-47e3-8998-2d05ff2f95e7" ;
                                       } ( scripts structure ) ;
                                   program =
@@ -33,47 +39,47 @@
                                     let
                                       cleanup =
                                         ''
-                                          LOG=${ _utils.bash-variable "1" } &&
-                                          TEMP=${ _utils.bash-variable "2" } &&
+                                          LOG=${ _bash-variable "1" } &&
+                                          TEMP=${ _bash-variable "2" } &&
                                           [ -d ${ structure-directory } ] &&
                                           exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
                                           [ -d ${ structure-directory }/logs ] &&
                                           exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                          [ -d ${ _utils.bash-variable "LOG" } ] &&
-                                          ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) }/bin/script ${ _utils.bash-variable "LOG" }/command &&
-                                          exec ${ numbers.script.log }<>${ _utils.bash-variable "LOG" }/lock &&
+                                          [ -d ${ _bash-variable "LOG" } ] &&
+                                          ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "script" ( _strip script ) }/bin/script ${ _bash-variable "LOG" }/command &&
+                                          exec ${ numbers.script.log }<>${ _bash-variable "LOG" }/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
                                           ${ pkgs.coreutils }/bin/touch \
-                                          ${ _utils.bash-variable "LOG" }/out \
-                                          ${ _utils.bash-variable "LOG" }/err \
-                                          ${ _utils.bash-variable "LOG" }/din \
-                                          ${ _utils.bash-variable "LOG" }/debug \
-                                          ${ _utils.bash-variable "LOG" }/notes
+                                          ${ _bash-variable "LOG" }/out \
+                                          ${ _bash-variable "LOG" }/err \
+                                          ${ _bash-variable "LOG" }/din \
+                                          ${ _bash-variable "LOG" }/debug \
+                                          ${ _bash-variable "LOG" }/notes
                                           ${ pkgs.coreutils }/bin/chmod \
                                             0400 \
-                                            ${ _utils.bash-variable "LOG" }/out \
-                                            ${ _utils.bash-variable "LOG" }/err \
-                                            ${ _utils.bash-variable "LOG" }/din \
-                                            ${ _utils.bash-variable "LOG" }/debug \
-                                            ${ _utils.bash-variable "LOG" }/notes &&
+                                            ${ _bash-variable "LOG" }/out \
+                                            ${ _bash-variable "LOG" }/err \
+                                            ${ _bash-variable "LOG" }/din \
+                                            ${ _bash-variable "LOG" }/debug \
+                                            ${ _bash-variable "LOG" }/notes &&
                                           [ -d ${ structure-directory }/temporary ] &&
                                           exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
-                                          if [ -d "${ _utils.bash-variable "TEMP" }" ]
+                                          if [ -d "${ _bash-variable "TEMP" }" ]
                                           then
-                                            exec ${ numbers.script.temporary }<>${ _utils.bash-variable "TEMP" }/lock &&
+                                            exec ${ numbers.script.temporary }<>${ _bash-variable "TEMP" }/lock &&
                                             ${ pkgs.flock }/bin/flock ${ numbers.script.temporary } &&
-                                            ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
-                                            ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "TEMP" }
+                                            ${ pkgs.findutils }/bin/find ${ _bash-variable "TEMP" } -type f -exec ${ pkgs.coreutils }/shred --force --remove {} \; &&
+                                            ${ pkgs.coreutils }/bin/rm --recursive ${ _bash-variable "TEMP" }
                                           fi &&
-                                          ${ unlock.log } ${ _utils.bash-variable "LOG" } 2> /dev/null &&
+                                          ${ unlock.log } ${ _bash-variable "LOG" } 2> /dev/null &&
                                           ${ unlock.temporaries }
                                         '' ;
                                       process =
                                         ''
-                                          export ${ variables.script.process }=${ _utils.bash-variable "!" }
+                                          export ${ variables.script.process }=${ _bash-variable "!" }
                                         '' ;
                                       program =
                                         ''
@@ -82,11 +88,11 @@
                                             ${ pkgs.coreutils }/bin/echo \
                                               ${ pkgs.coreutils }/bin/nice \
                                                 --adjustment 19 \
-                                                ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable variables.script.log } ${ _utils.bash-variable variables.shared.temporary } |
+                                                ${ pkgs.writeShellScriptBin "cleanup" ( _strip cleanup ) }/bin/cleanup ${ _bash-variable variables.script.log } ${ _bash-variable variables.shared.temporary } |
                                                 ${ at } now 2> /dev/null
                                           } &&
                                           trap ${ variables.script.cleanup } EXIT &&
-                                          if [ -z "${ _utils.bash-variable variables.script.time }" ]
+                                          if [ -z "${ _bash-variable variables.script.time }" ]
                                           then
                                             export ${ variables.script.time }=$( ${ pkgs.coreutils }/bin/date +%s )
                                           fi &&
@@ -103,14 +109,14 @@
                                           exec ${ numbers.script.logs }<>${structure-directory }/logs/lock &&
                                           ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
                                           export ${ variables.script.log }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logs/XXXXXXXX ) &&
-                                          exec ${ numbers.script.log }<>${ _utils.bash-variable variables.script.log }/lock &&
+                                          exec ${ numbers.script.log }<>${ _bash-variable variables.script.log }/lock &&
                                           ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                          ${ _utils.strip process } &&
-                                          ${ _utils.strip temporary } &&
-                                          ${ pkgs.writeShellScriptBin "script" ( _utils.strip script ) }/bin/script "${ _utils.bash-variable "@" }" \
-                                            > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
-                                            2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
-                                          if [ -f ${ _utils.bash-variable variables.script.log }/err ] && [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _utils.bash-variable variables.script.log }/err )" ]
+                                          ${ _strip process } &&
+                                          ${ _strip temporary } &&
+                                          ${ pkgs.writeShellScriptBin "script" ( _strip script ) }/bin/script "${ _bash-variable "@" }" \
+                                            > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _bash-variable variables.script.log }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
+                                            2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _bash-variable variables.script.log }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" ) &&
+                                          if [ -f ${ _bash-variable variables.script.log }/err ] && [ ! -z "$( ${ pkgs.coreutils }/bin/cat ${ _bash-variable variables.script.log }/err )" ]
                                           then
                                             exit ${ numbers.script.err }
                                           fi
@@ -126,12 +132,12 @@
                                               exec ${ numbers.script.temporaries }<>${ structure-directory }/temporary/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.temporaries } &&
                                               export ${ variables.shared.temporary }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                              exec ${ numbers.script.temporary }<>${ _utils.bash-variable variables.shared.temporary }/lock &&
+                                              exec ${ numbers.script.temporary }<>${ _bash-variable variables.shared.temporary }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.temporary }
                                             '' ;
-                                      in _utils.strip program ;
+                                      in _strip program ;
                                   programs =
-                                    _utils.visit
+                                    _visit
                                       {
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
@@ -141,11 +147,11 @@
                                   structure =
                                     {
                                       commands =
-                                        _utils.visit
+                                        _visit
                                           {
                                             list = track : track.reduced ;
                                             set = track : track.reduced ;
-                                            string = track : "${ pkgs.writeShellScriptBin "command" ( _utils.strip track.reduced ) }/bin/command" ;
+                                            string = track : "${ pkgs.writeShellScriptBin "command" ( _strip track.reduced ) }/bin/command" ;
                                             undefined = track : builtins.throw "9d8e3fa4-9e9a-4553-8b4f-296023def4c4" ;
                                           } programs ;
                                       loggers =
@@ -155,9 +161,9 @@
                                               {
                                                 name = name ;
                                                 value =
-                                                  _utils.strip
+                                                  _strip
                                                     ''
-                                                      >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _utils.bash-variable variables.script.log }/${ name } 2> /dev/null )
+                                                      >( ${ pkgs.moreutils }/bin/ts %Y-%m-%d-%H-%M-%S > ${ _bash-variable variables.script.log }/${ name } 2> /dev/null )
                                                     '' ;
                                               } ;
                                           in builtins.listToAttrs ( builtins.map mapper [ "din" "debug" "notes" ] ) ;
@@ -169,53 +175,53 @@
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
-                                                    if [ ${ _utils.bash-variable "?" } == 0 ]
+                                                    if [ ${ _bash-variable "?" } == 0 ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "LOG" }
+                                                      ${ pkgs.coreutils }/bin/echo ${ _bash-variable "LOG" }
                                                     else
-                                                      ${ pkgs.coreutils }/bin/echo FAILED TO DELETE ${ _utils.bash-variable "LOG" } > /dev/null
+                                                      ${ pkgs.coreutils }/bin/echo FAILED TO DELETE ${ _bash-variable "LOG" } > /dev/null
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
-                                                  LOG=${ _utils.bash-variable "1" } &&
+                                                  LOG=${ _bash-variable "1" } &&
                                                   [ -d ${ structure-directory } ] &&
                                                   exec ${ numbers.script.structure }<>${ structure-directory }/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.structure } &&
                                                   [ -d ${ structure-directory }/logs ] &&
                                                   exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.log } &&
-                                                  [ -d ${ structure-directory }/logs/${ _utils.bash-variable "1" } ] &&
-                                                  exec ${ numbers.script.log }<>${ structure-directory }/logs/${ _utils.bash-variable "LOG" }/lock &&
+                                                  [ -d ${ structure-directory }/logs/${ _bash-variable "1" } ] &&
+                                                  exec ${ numbers.script.log }<>${ structure-directory }/logs/${ _bash-variable "LOG" }/lock &&
                                                   ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _utils.bash-variable "LOG" } &&
-                                                  ${ unlock.log } ${ _utils.bash-variable "LOG" } 2> /dev/null
+                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs/${ _bash-variable "LOG" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                  ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/logs/${ _bash-variable "LOG" } &&
+                                                  ${ unlock.log } ${ _bash-variable "LOG" } 2> /dev/null
                                                 '' ;
-                                              in "${ pkgs.writeShellScriptBin "delete" ( _utils.strip delete ) }/bin/delete" ;
+                                              in "${ pkgs.writeShellScriptBin "delete" ( _strip delete ) }/bin/delete" ;
                                           query =
                                             let
                                               directory =
                                                 ''
                                                   ${ variables.script.cleanup } ( )
                                                   {
-                                                    if [ ${ _utils.bash-variable "?" } == 0 ] && [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
+                                                    if [ ${ _bash-variable "?" } == 0 ] && [ ${ _bash-variable "SOURCE" } != ${ _bash-variable variables.script.log } ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/basename ${ _utils.bash-variable "SOURCE" }
-                                                    elif [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
+                                                      ${ pkgs.coreutils }/bin/basename ${ _bash-variable "SOURCE" }
+                                                    elif [ ${ _bash-variable "SOURCE" } != ${ _bash-variable variables.script.log } ]
                                                     then
-                                                      ${ pkgs.coreutils }/bin/basename FAILED TO QUERY ${ _utils.bash-variable "SOURCE" } > /dev/null
+                                                      ${ pkgs.coreutils }/bin/basename FAILED TO QUERY ${ _bash-variable "SOURCE" } > /dev/null
                                                     fi
                                                   } &&
                                                   trap ${ variables.script.cleanup } EXIT &&
-                                                  SOURCE=${ _utils.bash-variable "1" } &&
-                                                  TARGET=${ _utils.bash-variable "2" } &&
-                                                  if [ ${ _utils.bash-variable "SOURCE" } != ${ _utils.bash-variable variables.script.log } ]
+                                                  SOURCE=${ _bash-variable "1" } &&
+                                                  TARGET=${ _bash-variable "2" } &&
+                                                  if [ ${ _bash-variable "SOURCE" } != ${ _bash-variable variables.script.log } ]
                                                   then
-                                                    [ -d ${ _utils.bash-variable "SOURCE" } ] &&
-                                                    exec ${ numbers.script.log }<>${ _utils.bash-variable "SOURCE" }/lock &&
+                                                    [ -d ${ _bash-variable "SOURCE" } ] &&
+                                                    exec ${ numbers.script.log }<>${ _bash-variable "SOURCE" }/lock &&
                                                     ${ pkgs.flock }/bin/flock -sn ${ numbers.script.log } &&
-                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _utils.bash-variable "SOURCE" } ${ _utils.bash-variable "TARGET" } &&
-                                                    ${ unlock.log } ${ _utils.bash-variable "SOURCE" } 2> /dev/null
+                                                    ${ pkgs.coreutils }/bin/cp --recursive ${ _bash-variable "SOURCE" } ${ _bash-variable "TARGET" } &&
+                                                    ${ unlock.log } ${ _bash-variable "SOURCE" } 2> /dev/null
                                                   fi
                                                 '' ;
                                               query =
@@ -226,13 +232,13 @@
                                                   [ -d ${ structure-directory }/logs ] &&
                                                   exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                                   ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _utils.strip directory ) }/bin/directory {} ${ _utils.bash-variable "1" } \;
+                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logs -mindepth 1 -maxdepth 1 -type d -exec ${ pkgs.writeShellScriptBin "directory" ( _strip directory ) }/bin/directory {} ${ _bash-variable "1" } \;
                                                 '' ;
-                                              in "${ pkgs.writeShellScriptBin "query" ( _utils.strip query ) }/bin/query" ;
+                                              in "${ pkgs.writeShellScriptBin "query" ( _strip query ) }/bin/query" ;
                                         } ;
                                       numbers = numbers.shared ;
                                       pkgs = pkgs ;
-                                      resources = _utils.visit
+                                      resources = _visit
                                         {
                                           lambda =
                                             track :
@@ -245,73 +251,73 @@
                                                           cleanup =
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the cleanup script is called > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ unlock.link } ${ _utils.bash-variable "1" } 2> /dev/null &&
-                                                              ${ unlock.resource } ${ _utils.bash-variable "2" } 2> /dev/null &&
+                                                              ${ unlock.link } ${ _bash-variable "1" } 2> /dev/null &&
+                                                              ${ unlock.resource } ${ _bash-variable "2" } 2> /dev/null &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad the cleanup script is about to schedule > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad the cleanup script is about to schedule ${ pkgs.writeShellScriptBin "delete-link" ( _utils.strip delete-link ) } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _utils.strip delete-link ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" }  > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _utils.strip delete-link ) }/bin/delete-link ${ _utils.bash-variable "1" } ${ _utils.bash-variable "2" } | ${ at } now + ${ builtins.toString minutes }min 2> >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null )
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b3bb4c62-fee4-4561-9d1f-9ca2b91586ad the cleanup script is about to schedule ${ pkgs.writeShellScriptBin "delete-link" ( _strip delete-link ) } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _strip delete-link ) }/bin/delete-link ${ _bash-variable "1" } ${ _bash-variable "2" }  > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-link" ( _strip delete-link ) }/bin/delete-link ${ _bash-variable "1" } ${ _bash-variable "2" } | ${ at } now + ${ builtins.toString minutes }min 2> >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null )
                                                             '' ;
                                                           delete-link =
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b the delete link string >> >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              LINK_DIRECTORY=${ _utils.bash-variable "1" } &&
+                                                              LINK_DIRECTORY=${ _bash-variable "1" } &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b d6e78f03-f988-4a69-bf2d-c709c0a3c055 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              RESOURCE_DIRECTORY=${ _utils.bash-variable "2" } &&
+                                                              RESOURCE_DIRECTORY=${ _bash-variable "2" } &&
                                                               [ -d ${ structure-directory } ] &&
                                                               exec 202<>${ structure-directory }/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 202 &&
                                                               [ -d ${ structure-directory }/links ] &&
                                                               exec 295<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 295 &&
-                                                              [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] &&
-                                                              exec 261<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                              [ -d ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" } ] &&
+                                                              exec 261<>${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 261 &&
-                                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
-                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip delete-resource ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now &&
+                                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/link ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/lock &&
+                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" } &&
+                                                              ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScriptBin "delete-resource" ( _strip delete-resource ) }/bin/delete-resource ${ _bash-variable "RESOURCE_DIRECTORY" } | ${ at } now &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 80a367af-8c9f-4d88-a352-80dbad3e45a7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null )
                                                             '' ;
                                                           delete-resource =
                                                             ''
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b e7fea2ea-5bf3-42ed-b440-92cef4737faa the delete-resource string > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              RESOURCE_DIRECTORY=${ _utils.bash-variable "1" } &&
-                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9201d245-066a-4f61-8e0b-7a5c3aad207e 1 $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ) ${ structure-directory }/resources > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              [ $( ${ pkgs.coreutils }/bin/dirname ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ) == ${ structure-directory }/resources ] &&
+                                                              RESOURCE_DIRECTORY=${ _bash-variable "1" } &&
+                                                              ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9201d245-066a-4f61-8e0b-7a5c3aad207e 1 $( ${ pkgs.coreutils }/bin/dirname ${ _bash-variable "RESOURCE_DIRECTORY" } ) ${ structure-directory }/resources > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
+                                                              [ $( ${ pkgs.coreutils }/bin/dirname ${ _bash-variable "RESOURCE_DIRECTORY" } ) == ${ structure-directory }/resources ] &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 12395881-074b-4ac1-8caa-561e4f73bd05 2 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               [ -d ${ structure-directory }/resources ] &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b cd917153-8459-47b1-98e3-43a5a5ef5899 3 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               exec 241<>${ structure-directory }/resources/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 241 &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 05fd0df3-0058-474f-8dac-095bff35b62f 4 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              [ -d ${ _utils.bash-variable "RESOURCE_DIRECTORY" } ] &&
+                                                              [ -d ${ _bash-variable "RESOURCE_DIRECTORY" } ] &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 05fd0df3-0058-474f-8dac-095bff35b62f 5 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              exec 278<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
+                                                              exec 278<>${ _bash-variable "RESOURCE_DIRECTORY" }/lock &&
                                                               ${ pkgs.flock }/bin/flock 278 &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b b0b1952c-7429-4b93-bea4-4331cb5d7621 6 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-							      ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "delete-resource" ( _utils.strip finisher ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/6a5eaf23-018d-4877-b8e1-a792f9fda6be &&
-							      ${ pkgs.writeShellScriptBin "delete-resource" ( program ( _utils.strip finisher ) ) }/bin/delete-resource ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
+							      ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScriptBin "delete-resource" ( _strip finisher ) }/bin/delete-resource ${ _bash-variable "RESOURCE_DIRECTORY" }/6a5eaf23-018d-4877-b8e1-a792f9fda6be &&
+							      ${ pkgs.writeShellScriptBin "delete-resource" ( program ( _strip finisher ) ) }/bin/delete-resource ${ _bash-variable "RESOURCE_DIRECTORY" }/resource &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 0bcab047-3550-4699-927f-100f6771523e 7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.findutils }/bin/find ${ _utils.bash-variable "RESOURCE_DIRECTORY" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                              ${ pkgs.findutils }/bin/find ${ _bash-variable "RESOURCE_DIRECTORY" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 0bcab047-3550-4699-927f-100f6771523e 7 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ _utils.bash-variable "RESOURCE_DIRECTORY" } &&
+                                                              ${ pkgs.coreutils }/bin/rm --recursive ${ _bash-variable "RESOURCE_DIRECTORY" } &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 505c9231-6f73-491f-aa37-2a85fa368c2f 8 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 9d4d40e5-e606-483b-9215-ee99fcd17742 9 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                               ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b finished the delete resource > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null )
                                                             '' ;
-                                                          item = "$( ${ pkgs.writeShellScriptBin "resource" ( _utils.strip resource ) }/bin/resource ${ _utils.bash-variable "1" } )" ;
+                                                          item = "$( ${ pkgs.writeShellScriptBin "resource" ( _strip resource ) }/bin/resource ${ _bash-variable "1" } )" ;
                                                           resource =
                                                             ''
                                                               cleanup ( )
                                                               {
                                                                 ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 2726ad25-c5e7-4e6b-8858-873ed250b86b > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
-                                                                ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 RESOURCE_DIRECTORY=${ _utils.bash-variable "RESOURCE_DIRECTORY" } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
+                                                                ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 RESOURCE_DIRECTORY=${ _bash-variable "RESOURCE_DIRECTORY" } > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                                 ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b f60d7f63-1fd8-4b89-82df-aa1bbea5dda4 > >( ${ pkgs.moreutils }/bin/ts >> ${ structure-directory }/fa82912-e555-46ea-b5be-a178721b367e 2> /dev/null ) &&
                                                                 TIME=$( ${ pkgs.coreutils }/bin/echo \
                                                                   ${ pkgs.coreutils }/bin/nice \
                                                                     --adjustment 19 \
-                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _utils.strip cleanup ) }/bin/cleanup ${ _utils.bash-variable "LINK_DIRECTORY" } ${ _utils.bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 ) ) &&
-                                                                ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 844c85f3-6247-4629-a38f-970a9ddba033 ${ _utils.bash-variable "TIME" } >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e
+                                                                    ${ pkgs.writeShellScriptBin "cleanup" ( _strip cleanup ) }/bin/cleanup ${ _bash-variable "LINK_DIRECTORY" } ${ _bash-variable "RESOURCE_DIRECTORY" } | ${ at } now 2> >( ${ pkgs.coreutils }/bin/tail --lines 1 ) ) &&
+                                                                ${ pkgs.coreutils }/bin/echo 9a4e5cb1-8a21-4000-af73-9f1b41c26b2b 844c85f3-6247-4629-a38f-970a9ddba033 ${ _bash-variable "TIME" } >> ${ structure-directory }/afa82912-e555-46ea-b5be-a178721b367e
                                                               } &&
                                                               trap cleanup EXIT &&
                                                               if [ ! -d ${ structure-directory } ]
@@ -326,14 +332,14 @@
                                                               fi &&
                                                               exec 153<>${ structure-directory }/links/lock &&
                                                               ${ pkgs.flock }/bin/flock -s 153 &&
-                                                              ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _utils.strip salter ) }/bin/salter ${ _utils.bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
-                                                              if [ -d ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
+                                                              ${ "LINK_DIRECTORY" }=$( ${ pkgs.coreutils }/bin/echo ${ builtins.hashString "sha512" ( builtins.concatStringsSep "" [ starter finisher ] ) }-$( ${ pkgs.writeShellScriptBin "salter" ( _strip salter ) }/bin/salter ${ _bash-variable variables.script.time } ) | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
+                                                              if [ -d ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" } ] && exec 203<>${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/lock && ${ pkgs.flock }/bin/flock -s 203
                                                               then
-                                                                RESOURCE_DIRECTORY=$( ${ pkgs.coreutils }/bin/dirname $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link ) ) &&
-                                                                ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link
+                                                                RESOURCE_DIRECTORY=$( ${ pkgs.coreutils }/bin/dirname $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/link ) ) &&
+                                                                ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/link
                                                               else
-                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" } &&
-                                                                exec 119<>${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/lock &&
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" } &&
+                                                                exec 119<>${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/lock &&
                                                                 ${ pkgs.flock }/bin/flock -s 119 &&
                                                                 if [ ! -d ${ structure-directory }/resources ]
                                                                 then
@@ -342,11 +348,11 @@
                                                                 exec 129<>${ structure-directory }/resources/lock &&
                                                                 ${ pkgs.flock }/bin/flock -s 129 &&
                                                                 RESOURCE_DIRECTORY=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
-                                                                exec 168<>${ _utils.bash-variable "RESOURCE_DIRECTORY" }/lock &&
+                                                                exec 168<>${ _bash-variable "RESOURCE_DIRECTORY" }/lock &&
                                                                 ${ pkgs.flock }/bin/flock 168 &&
-                                                                ${ pkgs.writeShellScriptBin "program" ( program ( _utils.strip starter ) ) }/bin/program ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource &&
-                                                                ${ pkgs.coreutils }/bin/ln --symbolic ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _utils.bash-variable "LINK_DIRECTORY" }/link &&
-                                                                ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "RESOURCE_DIRECTORY" }/resource
+                                                                ${ pkgs.writeShellScriptBin "program" ( program ( _strip starter ) ) }/bin/program ${ _bash-variable "RESOURCE_DIRECTORY" }/resource &&
+                                                                ${ pkgs.coreutils }/bin/ln --symbolic ${ _bash-variable "RESOURCE_DIRECTORY" }/resource ${ structure-directory }/links/${ _bash-variable "LINK_DIRECTORY" }/link &&
+                                                                ${ pkgs.coreutils }/bin/echo ${ _bash-variable "RESOURCE_DIRECTORY" }/resource
                                                               fi
                                                             '' ;
                                                           in if is-resource then "$( ${ pkgs.coreutils }/bin/cat ${ item } )" else item ;
@@ -358,7 +364,7 @@
                                         } ( resources _scripts ) ;
 			              structure-directory = structure-directory ;
                                       urandom = urandom ;
-                                      utils = _utils ;
+                                      utils = { bash-variable = _bash-variable ; strip = _strip ; try = _try ; visit = _visit ; } ;
                                       variables = variables.shared ;
                                     } ;
                                   unlock =
@@ -373,10 +379,10 @@
                                                    ${ pkgs.coreutils }/bin/echo \
                                                      ${ pkgs.coreutils }/bin/nice \
                                                        --adjustment 19 \
-                                                       ${ pkgs.writeShellScriptBin "script" ( _utils.strip value ) }/bin/script "${ _utils.bash-variable "@" }" |
+                                                       ${ pkgs.writeShellScriptBin "script" ( _strip value ) }/bin/script "${ _bash-variable "@" }" |
                                                        ${ at } now 2> /dev/stderr
                                                  '' ;
-                                               in "${ pkgs.writeShellScriptBin "derivation" ( _utils.strip derivation ) }/bin/derivation" ;
+                                               in "${ pkgs.writeShellScriptBin "derivation" ( _strip derivation ) }/bin/derivation" ;
                                          in builtins.mapAttrs mapper scripts ;
                                       scripts =
                                         {
@@ -388,10 +394,10 @@
                                               [ -d ${ structure-directory }/logs ] &&
                                               exec ${ numbers.script.logs }<>${ structure-directory }/logs/lock &&
                                               ${ pkgs.flock }/bin/flock -s ${ numbers.script.logs } &&
-                                              [ -d ${ _utils.bash-variable "1" } ] &&
-                                              exec ${ numbers.script.log }<>${ _utils.bash-variable "1" }/lock &&
+                                              [ -d ${ _bash-variable "1" } ] &&
+                                              exec ${ numbers.script.log }<>${ _bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock ${ numbers.script.log } &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _bash-variable "1" }/lock &&
                                               ${ commands.logs }
                                            '' ;
                                           logs =
@@ -407,7 +413,7 @@
                                            '' ;
                                           link =
                                             ''
-                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 9320a0ac-7570-4890-a50b-8c4d44076531 BEGIN ${ _utils.bash-variable "1" } END >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
+                                              ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 9320a0ac-7570-4890-a50b-8c4d44076531 BEGIN ${ _bash-variable "1" } END >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                               [ -d ${ structure-directory } ] &&
                                               exec 150<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s 150 &&
@@ -415,12 +421,12 @@
                                               exec 140<>${ structure-directory }/links/lock &&
                                               ${ pkgs.flock }/bin/flock -s 140 &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 2d65358f-cafd-4637-af01-e40742dc42f1 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                              [ -d ${ structure-directory }/links/${ _utils.bash-variable "1" } ] &&
+                                              [ -d ${ structure-directory }/links/${ _bash-variable "1" } ] &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 08bda07b-e3c2-48df-9ff2-b00986d6e2bd >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                              exec 139<>${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
+                                              exec 139<>${ structure-directory }/links/${ _bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock 139 &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca d5fe1a17-3704-4403-84a8-97b261f78010 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
-                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ _bash-variable "1" }/lock &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca 86e92b84-8858-41ff-a68e-ad812669ea33 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d &&
                                               ${ commands.links } &&
                                               ${ pkgs.coreutils }/bin/echo f8231a7c-b5e9-4fd3-b33e-43f0a6a154ca c92da3a7-1966-4023-8313-c6896fa33fc8 >> ${ structure-directory }/2bbd83b5-ba74-4071-9cd1-cac0a2008a4d
@@ -438,17 +444,17 @@
                                            '' ;
                                           resource =
                                             ''
-                                              [ ${ structure-directory }/resources/$( ${ pkgs.coreutils }/bin/echo ${ _utils.bash-variable "1" } | ${ pkgs.gnused }/bin/sed -e "s#^${ structure-directory }/resources/\(.*\)#\1#"  ) == ${ _utils.bash-variable "1" } ] &&
+                                              [ ${ structure-directory }/resources/$( ${ pkgs.coreutils }/bin/echo ${ _bash-variable "1" } | ${ pkgs.gnused }/bin/sed -e "s#^${ structure-directory }/resources/\(.*\)#\1#"  ) == ${ _bash-variable "1" } ] &&
                                               [ -d ${ structure-directory } ] &&
                                               exec 194<>${ structure-directory }/lock &&
                                               ${ pkgs.flock }/bin/flock -s 194 &&
                                               [ -d ${ structure-directory }/logs ] &&
                                               exec 116<>${ structure-directory }/resources/lock &&
                                               ${ pkgs.flock }/bin/flock -s 116 &&
-                                              [ -d ${ _utils.bash-variable "1" } ] &&
-                                              exec 113<>${ _utils.bash-variable "1" }/lock &&
+                                              [ -d ${ _bash-variable "1" } ] &&
+                                              exec 113<>${ _bash-variable "1" }/lock &&
                                               ${ pkgs.flock }/bin/flock 113 &&
-                                              ${ pkgs.coreutils }/bin/rm ${ _utils.bash-variable "1" }/lock &&
+                                              ${ pkgs.coreutils }/bin/rm ${ _bash-variable "1" }/lock &&
                                               ${ commands.resources }
                                            '' ;
                                           resources =
@@ -485,7 +491,7 @@
                                   in
                                     {
                                       hook = hook _scripts ;
-                                      inputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _utils.strip value ) ) ( inputs programs ) ) ;
+                                      inputs = builtins.attrValues ( builtins.mapAttrs ( name : value : pkgs.writeShellScriptBin name ( _strip value ) ) ( inputs programs ) ) ;
                                       scripts = _scripts ;
                                     } ;
                             zero =
@@ -493,7 +499,7 @@
                                 numbers =
                                   let
                                     indexed =
-                                      _utils.visit
+                                      _visit
                                         {
                                           list = track : builtins.concatLists track.reduced ;
                                           set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
@@ -504,7 +510,7 @@
                                       let
                                         reducer =
                                           previous : current :
-                                            _utils.try
+                                            _try
                                               (
                                                 seed :
                                                   let
@@ -515,7 +521,7 @@
                                                           let
                                                             is-big = seed > 2 ;
                                                             is-not-in-zero =
-                                                              _utils.visit
+                                                              _visit
                                                                 {
                                                                   list = track : builtins.all ( x : x ) track.reduced ;
                                                                   set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
@@ -529,7 +535,7 @@
                                               ) ;
                                         in builtins.foldl' reducer [ ] indexed ;
                                     in
-                                      _utils.visit
+                                      _visit
                                         {
                                           list = track : builtins.trace "XXXX LIST ${ builtins.toString track.index } ${ builtins.toString track.size }" builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : builtins.trace "XXXX SET ${ builtins.toString track.index } ${ builtins.toString track.size }" track.reduced ;
@@ -553,7 +559,7 @@
                                 variables =
                                   let
                                     indexed =
-                                      _utils.visit
+                                      _visit
                                         {
                                           list = track : builtins.concatLists track.reduced ;
                                           set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
@@ -564,7 +570,7 @@
                                       let
                                         reducer =
                                           previous : current :
-                                            _utils.try
+                                            _try
                                               (
                                                 seed :
                                                   let
@@ -574,7 +580,7 @@
                                                         success =
                                                           let
                                                             is-not-in-zero =
-                                                              _utils.visit
+                                                              _visit
                                                                 {
                                                                   list = track : builtins.all ( x : x ) track.reduced ;
                                                                   set = track : builtins.all ( x : x ) ( builtins.attrValues track.reduced ) ;
@@ -588,7 +594,7 @@
                                               ) ;
                                         in builtins.foldl' reducer [ ] indexed ;
                                     in
-                                      _utils.visit
+                                      _visit
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;  
@@ -598,11 +604,11 @@
                                 zero =
                                   let
                                     processed =
-                                      _utils.visit
+                                      _visit
                                         {
                                           list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
                                           set = track : track.reduced ;
-                                          string = track : { "${ _utils.strip track.reduced }" = "" ; } ;
+                                          string = track : { "${ _strip track.reduced }" = "" ; } ;
                                           undefined = track : builtins.throw "7a282524-34ba-4ae7-b026-6fbd78716180" ;
                                         } raw ;
                                     in fun processed.numbers processed.variables ;
