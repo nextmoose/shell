@@ -22,7 +22,7 @@
 			    _bash-variable = builtins.getAttr system bash-variable.lib ;
 			    _strip = builtins.getAttr system strip.lib ;
 			    _try = builtins.getAttr system try.lib ;
-			    _visit = builtins.getAttr system utils.lib ;
+			    _visit = builtins.getAttr system visit.lib ;
                             fun =
                               numbers : variables :
                                 let
