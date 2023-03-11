@@ -8,7 +8,7 @@
 	  visit.url = "github:nextmoose/visit?rev=1f99dae8a13e8c53e9aae3b6bde2a8e8cb1c7161" ;
         } ;
       outputs =
-        { bash-variable ,self , flake-utils , utils } :
+        { bash-variable , flake-utils , self , strip , try , visit } :
           flake-utils.lib.eachDefaultSystem
           (
             system :
