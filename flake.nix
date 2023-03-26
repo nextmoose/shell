@@ -96,142 +96,145 @@
                                                 list = builtins.genList generator length ;
                                                 in builtins.concatStringsSep "" list ;
                                             trap =
-                                              ''
-                                                # BEGIN TRAP
-                                                ${ variables.trap.exec } ( )
-                                                {
-                                                  # UNLOCK
-                                                  ${ pkgs.flock }/bin/flock -u ${ numbers.logging-dir.init } &&
-                                                  ${ pkgs.flock }/bin/flock -u ${ numbers.logging-directory.init } &&
-                                                  ${ pkgs.flock }/bin/flock -u ${ numbers.temporary-dir.init } &&
-                                                  ${ pkgs.flock }/bin/flock -u ${ numbers.temporary-directory.init } &&
-                                                  ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.init } &&
-                                                  # FINISH LOGGING
-                                                  if [ -d ${ bash-variable variables.logging-dir.init } ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
-                                                    if [ -d ${ bash-variable variables.logging-dir.init } ]
-                                                    then
-                                                      exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
-                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
-                                                      if [ -d ${ bash-variable variables.logging-dir.init } ]
-                                                      then
-                                                        exec ${ numbers.logging-dir.release }<>${ bash-variable variables.logging-dir.init }/lock &&
-                                                        ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release }
-                                                        ${ pkgs.coreutils }/bin/touch ${ bash-variable variables.logging-dir.init }/out &&
-                                                        ${ pkgs.coreutils }/bin/touch ${ bash-variable variables.logging-dir.init }/err &&
-                                                        ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/out &&
-                                                        ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/err &&
-                                                        ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/time &&
-                                                        ${ pkgs.findutils }/bin/find ${ bash-variable variables.logging-dir.init } -type f -name '*.*' -exec ${ pkgs.coreutils }/bin/chmod 0400 {} \; &&
-                                                        ${ pkgs.flock }/bin/flock -u ${ numbers.logging-dir.release } 
-                                                      fi &&
-                                                      ${ pkgs.flock }/bin/flock -u ${ numbers.logging-directory.release }
-                                                    fi &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi &&
-                                                  # DELETE TEMPORARY
-                                                  if [ -d ${ bash-variable variables.temporary-dir.init } ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                              let
+                                                delete-temporary-dir =
+                                                  ''
+                                                    # delete temporary dir
                                                     if [ -d ${ bash-variable variables.temporary-dir.init } ]
                                                     then
-                                                      exec ${ numbers.logging-directory.release }<>${ structure-directory }/temporary/lock &&
-                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
                                                       if [ -d ${ bash-variable variables.temporary-dir.init } ]
                                                       then
-                                                        exec ${ numbers.logging-dir.release }<>${ bash-variable variables.temporary-dir.init }/lock &&
-                                                        ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release } &&
-                                                        ${ pkgs.findutils }/bin/find ${ bash-variable variables.temporary-dir.init } -type f -exec ${ pkgs.coreutils }/bin/shred --remove {} \; &&
-                                                        ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable variables.temporary-dir.init } &&
-                                                        ${ pkgs.flock }/bin/flock -u ${ numbers.logging-dir.release }
-                                                      fi &&
-                                                      ${ pkgs.flock }/bin/flock -u ${ numbers.logging-directory.release }
+                                                        exec ${ numbers.logging-directory.release }<>${ structure-directory }/temporary/lock &&
+                                                        ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
+                                                        if [ -d ${ bash-variable variables.temporary-dir.init } ]
+                                                        then
+                                                          exec ${ numbers.logging-dir.release }<>${ bash-variable variables.temporary-dir.init }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release } &&
+                                                          ${ pkgs.findutils }/bin/find ${ bash-variable variables.temporary-dir.init } -type f -exec ${ pkgs.coreutils }/bin/shred --remove {} \; &&
+                                                          ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable variables.temporary-dir.init }
+                                                        fi
+                                                      fi
                                                     fi &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi &&
-                                                  # DELOCK LOGGING-DIR
-                                                  if [ -d ${ bash-variable variables.logging-dir.init } ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-temporary-directory ) } | ${ at } now
+                                                  '' ;
+                                                delock-logging-dir =
+                                                  ''
+                                                    # delock logging dir
                                                     if [ -d ${ bash-variable variables.logging-dir.init } ]
                                                     then
-                                                      exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
-                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
                                                       if [ -d ${ bash-variable variables.logging-dir.init } ]
                                                       then
-                                                        exec ${ numbers.logging-dir.release }<>${ bash-variable variables.logging-dir.init }/lock &&
-                                                        ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release } &&
-                                                        ${ pkgs.coreutils }/bin/rm ${ bash-variable variables.logging-dir.init }/lock &&
-						        ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ bash-variable variables.logging-dir.init } &&
-                                                        ${ pkgs.flock }/bin/flock -u ${ numbers.logging-dir.release }
-                                                      fi &&
-                                                      ${ pkgs.flock }/bin/flock -u ${ numbers.logging-directory.release }
+                                                        exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
+                                                        ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
+                                                        if [ -d ${ bash-variable variables.logging-dir.init } ]
+                                                        then
+                                                          exec ${ numbers.logging-dir.release }<>${ bash-variable variables.logging-dir.init }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release } &&
+                                                          ${ pkgs.coreutils }/bin/rm ${ bash-variable variables.logging-dir.init }/lock &&
+                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ bash-variable variables.logging-dir.init }
+                                                        fi
+                                                      fi
                                                     fi &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi &&
-                                                  # DELOCK LOGGING DIRECTORY
-                                                  if [ -d ${ structure-directory }/logging ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-logging-directory ) } | ${ at } now 2>> debug
+                                                  '' ;
+                                                delock-logging-directory =
+                                                  ''
+                                                    # delock logging directory
                                                     if [ -d ${ structure-directory }/logging ]
                                                     then
-                                                      exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
-                                                      ${ pkgs.flock }/bin/flock ${ numbers.logging-directory.release } &&
-                                                      ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logging/lock &&
-						      ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/logging &&
-                                                      ${ pkgs.flock }/bin/flock -u ${ numbers.logging-directory.release }
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                      if [ -d ${ structure-directory }/logging ]
+                                                      then
+                                                        exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
+                                                        ${ pkgs.flock }/bin/flock ${ numbers.logging-directory.release } &&
+                                                        ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logging/lock &&
+                                                        ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/logging
+                                                      fi
                                                     fi &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi &&
-                                                  # DELOCK TEMPORARY DIRECTORY
-                                                  if [ -d ${ structure-directory }/temporary ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-structure-directory ) } | ${ at } now
+                                                  '' ;
+                                                delock-structure-directory =
+                                                  ''
+                                                    # delock structure directory
+                                                    if [ -d ${ structure-directory } ]
+                                                    then
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock ${ numbers.structure-directory.release } &&
+                                                      ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
+                                                      ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
+                                                    fi
+                                                  '' ;
+                                                delock-temporary-directory =
+                                                  ''
+                                                    # delock temporary directory
                                                     if [ -d ${ structure-directory }/temporary ]
                                                     then
-                                                      exec ${ numbers.temporary-directory.release }<>${ structure-directory }/temporary/lock &&
-                                                      ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory.release } &&
-                                                      ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
-						      ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary &&
-                                                      ${ pkgs.flock }/bin/flock -u ${ numbers.temporary-directory.release }
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                      if [ -d ${ structure-directory }/temporary ]
+                                                      then
+                                                        exec ${ numbers.temporary-directory.release }<>${ structure-directory }/temporary/lock &&
+                                                        ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory.release } &&
+                                                        ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
+                                                        ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary
+                                                      fi
                                                     fi &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi &&
-                                                  # DELOCK STRUCTURE DIRECTORY
-                                                  if [ -d ${ structure-directory } ]
-                                                  then
-                                                    exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
-                                                    ${ pkgs.flock }/bin/flock ${ numbers.structure-directory.release } &&
-						    ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
-						    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory } &&
-                                                    ${ pkgs.flock }/bin/flock -u ${ numbers.structure-directory.release }
-                                                  fi
-                                                } &&
-                                                ${ variables.trap.init } ( )
-                                                {
-                                                  ( ${ variables.trap.exec } & ) &&
-                                                  if [ -f ${ bash-variable variables.logging-dir.init }/time ] && [ ! -s ${ bash-variable variables.logging-dir.init }/err ]
-                                                  then
-                                                    exit $( ${ pkgs.coreutils }/bin/head --lines 1 ${ bash-variable variables.logging-dir.init }/time )
-                                                  elif [ -f ${ bash-variable variables.logging-dir.init }/time ]
-                                                  then
-                                                    exit 64
-                                                  elif [ ! -s ${ bash-variable variables.logging-dir.init }/err ]
-                                                  then
-                                                    exit 65
-                                                  else
-                                                    exit 66
-                                                  fi
-                                                } &&
-                                                trap ${ variables.trap.init } EXIT
-                                                # END TRAP
-                                              '' ;
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-structure-directory ) } | ${ at } now
+                                                  '' ;
+                                                finish-logging =
+                                                  ''
+                                                    # finish logging
+                                                    if [ -d ${ bash-variable variables.logging-dir.init } ]
+                                                    then
+                                                      exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
+                                                      ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.release } &&
+                                                      if [ -d ${ bash-variable variables.logging-dir.init } ]
+                                                      then
+                                                        exec ${ numbers.logging-directory.release }<>${ structure-directory }/logging/lock &&
+                                                        ${ pkgs.flock }/bin/flock -s ${ numbers.logging-directory.release } &&
+                                                        if [ -d ${ bash-variable variables.logging-dir.init } ]
+                                                        then
+                                                          exec ${ numbers.logging-dir.release }<>${ bash-variable variables.logging-dir.init }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ numbers.logging-dir.release }
+                                                          ${ pkgs.coreutils }/bin/touch ${ bash-variable variables.logging-dir.init }/out &&
+                                                          ${ pkgs.coreutils }/bin/touch ${ bash-variable variables.logging-dir.init }/err &&
+                                                          ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/out &&
+                                                          ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/err &&
+                                                          ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable variables.logging-dir.init }/time &&
+                                                          ${ pkgs.findutils }/bin/find ${ bash-variable variables.logging-dir.init } -type f -name '*.*' -exec ${ pkgs.coreutils }/bin/chmod 0400 {} \;
+                                                        fi
+                                                      fi
+                                                    fi &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-logging-dir ) } | ${ at } now
+                                                  '' ;
+                                                in
+                                                  ''
+                                                    # BEGIN TRAP
+                                                    ${ variables.trap.init } ( )
+                                                    {
+                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip finish-logging ) } | ${ at } now 2> /dev/null &&
+                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delete-temporary-dir ) } | ${ at } now 2> /dev/null &&
+                                                      if [ -f ${ bash-variable variables.logging-dir.init }/time ] && [ ! -s ${ bash-variable variables.logging-dir.init }/err ]
+                                                      then
+                                                        exit $( ${ pkgs.coreutils }/bin/head --lines 1 ${ bash-variable variables.logging-dir.init }/time )
+                                                      elif [ -f ${ bash-variable variables.logging-dir.init }/time ]
+                                                      then
+                                                        exit 64
+                                                      elif [ ! -s ${ bash-variable variables.logging-dir.init }/err ]
+                                                      then
+                                                        exit 65
+                                                      else
+                                                        exit 66
+                                                      fi
+                                                    } &&
+                                                    trap ${ variables.trap.init } EXIT
+                                                    # END TRAP
+                                                  '' ;
                                             in main ;
                                         numbers = variable arguments.numbers builtins.toString false ;
                                         string =
