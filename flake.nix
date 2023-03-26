@@ -13,6 +13,30 @@
                         devShell =
                           let
                             _flakes = builtins.mapAttrs ( name : value : builtins.getAttr "lib" value ) flakes ;
+                            _resources =
+                              let
+                                lambda =
+                                  track :
+                                    let
+				      resource =
+                                        init : release : salt :
+                                          let
+                                            unsalted-fun =
+                                              show :
+                                                if builtins.typeOf show != "bool" then builtins.throw "2400375f-9520-4776-a2dd-eb15aca98e6a"
+                                                else if salt then
+                                                  if show then builtins.toString init
+                                                  else builtins.toFile "resource" ( builtins.toString init )
+                                                else
+                                                  if builtins.typeOf init != "path" then builtins.throw "9301948f-2a11-4ef4-b00b-3fb3cbcb7d18"
+                                                  else if show then builtins.readFile ( builtins.import init )
+                                                  else init ;
+                                            in unsalted-fun ;
+				      	    in track.reduced resource ;
+                                list = track : track.reduced ;
+				set = track : track.reduced ;
+				undefined = track : builtins.throw "4cfd5cbe-4624-445c-9fd1-2ac368c5ee56" ;
+				in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                             _scripts =
                               target :
                                 let
@@ -245,7 +269,7 @@
                                         structure =
                                           numbers : variables :
                                             {
-                                              command = fun : fun ( _scripts "command" ) ;
+                                              commands = _scripts "command" ;
                                               flakes = flakes ;
                                               logger =
                                                 name :
@@ -261,7 +285,7 @@
                                                           ''
                                                             exec ${ numbers.logging-dir.init }<>${ bash-variable "1" }/lock &&
                                                             ${ pkgs.flock }/bin/flock -n ${ numbers.logging-dir.init } &&
-                                                            if [ -f ${ bash-variable "1" }/out ] && [ ! -f ${ bash-variable "1" }/lock ]
+                                                            if [ -f ${ bash-variable "1" }/out ] && [ $( ${ pkgs.coreutils }/bin/stat --format "%a" ${ bash-variable "1" }/out ) -eq 0400 ]
                                                             then
                                                               ${ pkgs.coreutils }/bin/mv ${ bash-variable "1" } ${ bash-variable variables.temporary-dir.init }
                                                             fi
@@ -272,45 +296,9 @@
                                                         ''
                                                   ) ;
                                               pkgs = pkgs ;
-                                              resource =
-                                                init : release : salt :
-                                                  let
-                                                    fun =
-                                                      show : minutes :
-                                                        let
-                                                          eval = "$( ${ program } )" ;
-                                                          pre-salt = builtins.hashString "sha512" ( builtins.map builtins.toString [ init release salt ] ) ;
-                                                          program = pkgs.writeShellScript "program" ( strip script ) ;
-                                                          script =
-                                                            ''
-                                                              if [ -z "${ bash-variable timestamp-variable }" ]
-                                                              then
-                                                                export ${ timestamp-variable }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
-                                                              fi &&
-                                                              SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ bash-variable timestamp-variable } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
-                                                              if [ ! -d ${ structure-directory } ]
-                                                              then
-                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                              fi &&
-                                                              exec 101<>${ structure-directory }/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s 101 &&
-                                                              if [ ! -d ${ structure-directory }/links ]
-                                                              then
-                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
-                                                              fi &&
-                                                              exec 102<>${ structure-directory }/links/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s 102 &&
-                                                              if [ -d ${ structure-directory }/links/${ bash-variable "SALT" } ]
-                                                              then
-                                                                ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable "SALT" }
-                                                              else
-                                                                ${ pkgs.coreutils }/bin/true
-                                                              fi
-                                                            '' ;
-                                                          in if show then "$( ${ pkgs.coreutils }/bin/cat ${ eval } )" else eval ;
-                                                    in fun ;
-                                              temporary-dir = bash-variable variables.temporary-dir.init ;
-                                            } ;
+					      resources = _resources ;
+					      temporary-dir = bash-variable variables.temporary-dir.init ;
+					    } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
                                         variable =
                                           input : tokenizer : check :
