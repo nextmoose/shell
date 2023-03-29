@@ -19,24 +19,32 @@
                                   track :
                                     let
 				      resource =
-                                        init : release : salt :
-                                          let
-                                            unsalted-fun =
-                                              show :
-                                                if builtins.typeOf show != "bool" then builtins.throw "2400375f-9520-4776-a2dd-eb15aca98e6a"
-                                                else if salt then
-                                                  if show then builtins.toString init
-                                                  else builtins.toFile "resource" ( builtins.toString init )
-                                                else
-                                                  if builtins.typeOf init != "path" then builtins.throw "9301948f-2a11-4ef4-b00b-3fb3cbcb7d18"
-                                                  else if show then builtins.readFile ( builtins.import init )
-                                                  else init ;
-                                            in unsalted-fun ;
-				      	    in track.reduced resource ;
+				        salt :
+					  let
+					    bool = track : unsalted-fun track.reduced ;
+					    int = track : salted-fun "$(( ${ bash-variable timestamp-variable } / ${ builtins.toString track.reduced } ))" ;
+					    lambda = track : salted-fun "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable timestamp-variable } )" ;
+					    null = track : salted-fun "$(( ${ bash-variable timestamp-variable } / ${ builtins.toString track.reduced } ))" ;
+					    undefined = track : builtins.throw "14b4be09-a8b8-4eef-93c5-e24934217c6c" ;
+					    in visit { bool = bool ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
+			              salted-fun = builtins.throw "8194d17e-1bb9-4c26-8442-9f8996af6fb6" ;
+				      to-string =
+         				let
+					  path = track : builtins.toString track.reduced ;
+					  string = track : track.reduced ;
+					  undefined = track : builtins.throw "8f177a8f-d09e-49ff-a566-e9ac62af4efb" ;
+					  in visit { path = path ; string = string ; undefined = undefined ; } ;
+				      unsalted-fun =
+				        salt : init :
+					  {
+					    direct = if salt then to-string init else builtins.readFile ( to-string init ) ;
+					    indirect = if salt then builtins.toFile "resource" ( to-string init ) else to-string init ;
+					  } ;
+                                      in track.reduced resource ;
                                 list = track : track.reduced ;
-				set = track : track.reduced ;
-				undefined = track : builtins.throw "4cfd5cbe-4624-445c-9fd1-2ac368c5ee56" ;
-				in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
+                                set = track : track.reduced ;
+                                undefined = track : builtins.throw "4cfd5cbe-4624-445c-9fd1-2ac368c5ee56" ;
+                                in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                             _scripts =
                               target :
                                 let
@@ -296,9 +304,9 @@
                                                         ''
                                                   ) ;
                                               pkgs = pkgs ;
-					      resources = _resources ;
-					      temporary-dir = bash-variable variables.temporary-dir.init ;
-					    } ;
+                                              resources = _resources ;
+                                              temporary-dir = bash-variable variables.temporary-dir.init ;
+                                            } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
                                         variable =
                                           input : tokenizer : check :
@@ -347,6 +355,7 @@
                                   in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts ;
                             bash-variable = flake "bash-variable" ;
                             buildInputs = builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs ( _scripts "input" ) ) ) ;
+			    contains = string : target : builtins.replaceStrings [ target ] [ "" ] string != string ;
                             flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
                             pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                             shellHook = hook ( _scripts "hook" ) ;
