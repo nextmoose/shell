@@ -13,38 +13,6 @@
                         devShell =
                           let
                             _flakes = builtins.mapAttrs ( name : value : builtins.getAttr "lib" value ) flakes ;
-                            _resources =
-                              let
-                                lambda =
-                                  track :
-                                    let
-				      resource =
-				        salt :
-					  let
-					    bool = track : unsalted-fun track.reduced ;
-					    int = track : salted-fun "$(( ${ bash-variable timestamp-variable } / ${ builtins.toString track.reduced } ))" ;
-					    lambda = track : salted-fun "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable timestamp-variable } )" ;
-					    null = track : salted-fun "$(( ${ bash-variable timestamp-variable } / ${ builtins.toString track.reduced } ))" ;
-					    undefined = track : builtins.throw "14b4be09-a8b8-4eef-93c5-e24934217c6c" ;
-					    in visit { bool = bool ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
-			              salted-fun = builtins.throw "8194d17e-1bb9-4c26-8442-9f8996af6fb6" ;
-				      to-string =
-         				let
-					  path = track : builtins.toString track.reduced ;
-					  string = track : track.reduced ;
-					  undefined = track : builtins.throw "8f177a8f-d09e-49ff-a566-e9ac62af4efb" ;
-					  in visit { path = path ; string = string ; undefined = undefined ; } ;
-				      unsalted-fun =
-				        salt : init :
-					  {
-					    direct = if salt then to-string init else builtins.readFile ( to-string init ) ;
-					    indirect = if salt then builtins.toFile "resource" ( to-string init ) else to-string init ;
-					  } ;
-                                      in track.reduced resource ;
-                                list = track : track.reduced ;
-                                set = track : track.reduced ;
-                                undefined = track : builtins.throw "4cfd5cbe-4624-445c-9fd1-2ac368c5ee56" ;
-                                in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                             _scripts =
                               target :
                                 let
@@ -63,11 +31,26 @@
                                                 logs = [ "init" "release" ] ;
                                               } ;
                                             variables =
-                                              {
-                                                temporary-dir = [ "init" ] ;
-                                                logging-dir = [ "init" ] ;
-                                                trap = [ "exec" "init" ] ;
-                                              }  ;
+					      let
+						_resources =
+						  tag :
+  						    let
+						      lambda = track : [ tag ] ;
+						      list = track : track.reduced ;
+						      set = track : track.reduced ;
+						      undefined = track : track.throw "c7e1f17c-ddb3-4daf-ab9c-65559b8c9836" ;
+						      in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
+					        in
+                                                  {
+                                                    temporary-dir = [ "init" ] ;
+                                                    logging-dir = [ "init" ] ;
+                                                    trap = [ "exec" "init" ] ;
+						    resources =
+						      {
+						        direct = _resources "direct" ;
+						        indirect = _resources "indirect" ;
+						      } ;
+                                              } ;
                                           } ;
                                         command = pkgs.writeShellScript "command" input ;
                                         date-format = "%Y-%m-%d-%H-%M-%S" ;
@@ -101,11 +84,19 @@
                                                 ${ builtins.replaceStrings [ "\n" ] [ ( if is-temporary then "\n" else "\n# " ) ] ( strip temporary ) }
                                                 ${ strip logging }
                                                 ${ strip trap }
+						${ builtins.concatStringsSep " &&\n" _resources }
                                                 ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable variables.logging-dir.init }/time ${ program } ${ bash-variable "@" } \
                                                   > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts ${ date-format } > ${ bash-variable variables.logging-dir.init }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                                   2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts ${ date-format } > ${ bash-variable variables.logging-dir.init }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
                                               '' ;
                                             program = pkgs.writeShellScript "program" ( strip hook ) ;
+					    _resources =
+					      let
+					        list = track : builtins.concatLists track.reduced ;
+						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+						string = track : [ "export ${ track.reduced }=WRONG" ] ;
+						undefined = track : track.throw "d3a6158e-78a5-43a4-8d81-b3364d0ab233" ;
+					        in visit { list = list ; set = set ; string = string ; undefined = undefined ; } variables.resources.direct ;
                                             temporary =
                                               ''
                                                 # BEGIN TEMPORARY
@@ -304,7 +295,13 @@
                                                         ''
                                                   ) ;
                                               pkgs = pkgs ;
-                                              resources = _resources ;
+                                              resources =
+					        let
+						  list = track : track.reduced ;
+						  set = track : track.reduced ;
+						  string = track : bash-variable track.reduced ;
+						  undefined = track : track.throw "8ad3bc4d-60a9-4ae2-9483-b235726676b9" ;
+						  in visit { list = list ; set = set ; string = string ; undefined = undefined ; } { direct = variables.resources.direct ; indirect = variables.resources.indirect ; } ;
                                               temporary-dir = bash-variable variables.temporary-dir.init ;
                                             } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
@@ -355,7 +352,7 @@
                                   in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts ;
                             bash-variable = flake "bash-variable" ;
                             buildInputs = builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs ( _scripts "input" ) ) ) ;
-			    contains = string : target : builtins.replaceStrings [ target ] [ "" ] string != string ;
+                            contains = string : target : builtins.replaceStrings [ target ] [ "" ] string != string ;
                             flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
                             pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                             shellHook = hook ( _scripts "hook" ) ;
