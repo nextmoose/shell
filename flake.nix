@@ -29,27 +29,27 @@
                                                 logging-directory = [ "init" "release" ] ;
                                                 logging-dir = [ "init" "release" ] ;
                                                 logs = [ "init" "release" ] ;
+                                                resources =
+                                                  let
+                                                    lambda = track : [ "link" "resource" ] ;
+                                                    list = track : track.reduced ;
+                                                    set = track : track.reduced ;
+                                                    undefined = track : track.throw "63be445e-d4a9-42e6-bd02-4e46d667f3f6" ;
+                                                    in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                               } ;
                                             variables =
-					      let
-						_resources =
-						  tag :
-  						    let
-						      lambda = track : [ tag ] ;
-						      list = track : track.reduced ;
-						      set = track : track.reduced ;
-						      undefined = track : track.throw "c7e1f17c-ddb3-4daf-ab9c-65559b8c9836" ;
-						      in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
-					        in
-                                                  {
-                                                    temporary-dir = [ "init" ] ;
-                                                    logging-dir = [ "init" ] ;
-                                                    trap = [ "exec" "init" ] ;
-						    resources =
-						      {
-						        direct = _resources "direct" ;
-						        indirect = _resources "indirect" ;
-						      } ;
+                                              {
+                                                temporary-dir = [ "init" ] ;
+                                                timestamp = [ "init" ] ;
+                                                logging-dir = [ "init" ] ;
+                                                trap = [ "exec" "init" ] ;
+                                                resources =
+                                                    let
+                                                      lambda = track : [ "salt" "direct" "indirect" ] ;
+                                                      list = track : track.reduced ;
+                                                      set = track : track.reduced ;
+                                                      undefined = track : track.throw "c7e1f17c-ddb3-4daf-ab9c-65559b8c9836" ;
+                                                      in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                               } ;
                                           } ;
                                         command = pkgs.writeShellScript "command" input ;
@@ -58,7 +58,6 @@
                                         identity = x : x ;
                                         input =
                                           let
-                                            is-temporary = builtins.replaceStrings [ variables.temporary-dir.init ] [ "" ] hook != hook ;
                                             logging =
                                               ''
                                                 # BEGIN LOGGING
@@ -81,22 +80,14 @@
                                                 fi &&
                                                 exec ${ numbers.structure-directory.init }<>${ structure-directory }/lock &&
                                                 ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory.init } &&
-                                                ${ builtins.replaceStrings [ "\n" ] [ ( if is-temporary then "\n" else "\n# " ) ] ( strip temporary ) }
+                                                ${ builtins.replaceStrings [ "\n" ] [ ( if contains hook variables.temporary-dir.init then "\n" else "\n# " ) ] ( strip temporary ) }
                                                 ${ strip logging }
                                                 ${ strip trap }
-						${ builtins.concatStringsSep " &&\n" _resources }
                                                 ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable variables.logging-dir.init }/time ${ program } ${ bash-variable "@" } \
                                                   > >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts ${ date-format } > ${ bash-variable variables.logging-dir.init }/out 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stdout" ) \
                                                   2> >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts ${ date-format } > ${ bash-variable variables.logging-dir.init }/err 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/stderr" )
                                               '' ;
                                             program = pkgs.writeShellScript "program" ( strip hook ) ;
-					    _resources =
-					      let
-					        list = track : builtins.concatLists track.reduced ;
-						set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-						string = track : [ "export ${ track.reduced }=WRONG" ] ;
-						undefined = track : track.throw "d3a6158e-78a5-43a4-8d81-b3364d0ab233" ;
-					        in visit { list = list ; set = set ; string = string ; undefined = undefined ; } variables.resources.direct ;
                                             temporary =
                                               ''
                                                 # BEGIN TEMPORARY
@@ -122,7 +113,6 @@
                                               let
                                                 delete-temporary-dir =
                                                   ''
-                                                    # delete temporary dir
                                                     if [ -d ${ bash-variable variables.temporary-dir.init } ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -144,7 +134,6 @@
                                                   '' ;
                                                 delock-logging-dir =
                                                   ''
-                                                    # delock logging dir
                                                     if [ -d ${ bash-variable variables.logging-dir.init } ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -166,7 +155,6 @@
                                                   '' ;
                                                 delock-logging-directory =
                                                   ''
-                                                    # delock logging directory
                                                     if [ -d ${ structure-directory }/logging ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -183,7 +171,6 @@
                                                   '' ;
                                                 delock-structure-directory =
                                                   ''
-                                                    # delock structure directory
                                                     if [ -d ${ structure-directory } ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -194,7 +181,6 @@
                                                   '' ;
                                                 delock-temporary-directory =
                                                   ''
-                                                    # delock temporary directory
                                                     if [ -d ${ structure-directory }/temporary ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -211,7 +197,6 @@
                                                   '' ;
                                                 finish-logging =
                                                   ''
-                                                    # finish logging
                                                     if [ -d ${ bash-variable variables.logging-dir.init } ]
                                                     then
                                                       exec ${ numbers.structure-directory.release }<>${ structure-directory }/lock &&
@@ -269,7 +254,7 @@
                                           numbers : variables :
                                             {
                                               commands = _scripts "command" ;
-                                              flakes = flakes ;
+                                              flakes = _flakes ;
                                               logger =
                                                 name :
                                                   ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.mktemp }/bin/mktemp ${ bash-variable variables.logging-dir.init }/${ builtins.hashString "sha512" ( builtins.toString name ) }.XXXXXXXX ) 2> /dev/null )" ;
@@ -297,11 +282,44 @@
                                               pkgs = pkgs ;
                                               resources =
 					        let
-						  list = track : track.reduced ;
+						  lambda =
+						    track :
+						      let
+						        fun =
+							  salt :
+							    let
+							      bool = track : unsalted track.reduced ;
+							      int = track : salted track.reduced ;
+							      null = track : salted track.reduced ;
+							      undefined = track : track.throw "f79788be-8944-43ac-bf58-5a816009b5f3" ;
+							      in visit { bool = bool ; int = int ; null = null ; undefined = undefined ; } salt ;
+							salted =
+							  salt : init : release : show : minutes :
+							    let
+							      in "WRONG" ;
+							to-string =
+							  let
+							    path = track : builtins.toString track.reduced ;
+							    string = track : track.reduced ;
+							    undefined = track : track.throw "3ebbf22e-ebf7-49e4-a70a-207058c94c34" ;
+							    in visit { path = path ; string = string ; undefined = undefined ; } ;
+							unsalted =
+							  salt : init : show :
+							    let
+							      bool = track :
+							        if salt then
+								  if track.reduced then to-string init
+								  else "WRONG1"
+								else
+								  if track.reduced then builtins.readFile init
+								  else to-string init ;
+						              undefined = track : track.throw "3b1457d8-1f6b-4d5b-912b-5f6fe0c845a6" ;
+							      in visit { bool = bool ; undefined = undefined ; } show ;
+							in track.reduced fun ;
+				                  list = track : track.reduced ;
 						  set = track : track.reduced ;
-						  string = track : bash-variable track.reduced ;
-						  undefined = track : track.throw "8ad3bc4d-60a9-4ae2-9483-b235726676b9" ;
-						  in visit { list = list ; set = set ; string = string ; undefined = undefined ; } { direct = variables.resources.direct ; indirect = variables.resources.indirect ; } ;
+						  undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
+						  in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                               temporary-dir = bash-variable variables.temporary-dir.init ;
                                             } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
