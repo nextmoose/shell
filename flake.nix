@@ -313,46 +313,34 @@
                                                                           fi
                                                                         fi
                                                                       fi &&
-							              ${ pkgs.coreutils }/bin/echo debug 1 ${ bash-variable 1 } >> debug &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ bash-variable 1 } | ${ at } now + 1 min &&
-								      ${ pkgs.coreutils }/bin/echo debug 2 >> debug
+                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ bash-variable 1 } | ${ at } now + 1 min
                                                                     '' ;
                                                                   destroy-resources-dir =
                                                                     ''
                                                                       OLD_SALT=${ bash-variable 1 } &&
                                                                       TIMESTAMP=$( ${ pkgs.coreutils }/bin/date +%s ) &&
                                                                       NEW_SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
-  								      ${ pkgs.coreutils }/bin/echo debug 3 OLD_SALT=${ bash-variable "OLD_SALT" } NEW_SALT=${ bash-variable "NEW_SALT" } >> debug &&								    
-  								      ${ pkgs.coreutils }/bin/echo debug 4 >> debug &&								    
-                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
+                                                                       if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
                                                                       then
-    								        ${ pkgs.coreutils }/bin/echo debug 5 >> debug &&								    
                                                                         exec 201<>${ structure-directory }/lock &&
                                                                         ${ pkgs.flock }/bin/flock -s 201 &&
                                                                         if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
                                                                         then
-    								          ${ pkgs.coreutils }/bin/echo debug 6 >> debug &&								    
                                                                           exec 202<>${ structure-directory }/resources/lock &&
                                                                           ${ pkgs.flock }/bin/flock -s 202 &&
                                                                           if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
                                                                           then
-    								            ${ pkgs.coreutils }/bin/echo debug 7 >> debug &&								    
                                                                             exec 203<>${ structure-directory }/resources/${ bash-variable "OLD_SALT" }/lock &&
                                                                             ${ pkgs.flock }/bin/flock 203 &&
-    								            ${ pkgs.coreutils }/bin/echo debug 8 >> debug &&								    
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -name '*.pid' | while read PID_FILE
                                                                             do
     								              ${ pkgs.coreutils }/bin/echo debug 9 ${ bash-variable "PID_FILE" } >> debug &&								    
                                                                               ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
 									      ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
                                                                             done &&
-    								            ${ pkgs.coreutils }/bin/echo debug 10 >> debug &&								    
                                                                             ${ _release } &&
-    								            ${ pkgs.coreutils }/bin/echo debug 11 >> debug &&								    
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-    								            ${ pkgs.coreutils }/bin/echo debug 12 >> debug &&								    
-                                                                            ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } &&
-    								            ${ pkgs.coreutils }/bin/echo debug 13 >> debug								    
+                                                                            ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }
                                                                           fi
                                                                         fi
                                                                       else
@@ -365,7 +353,7 @@
                                                                   script =
                                                                     ''
                                                                       TIMESTAMP=${ bash-variable 1 } &&
-                                                                      SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                      export SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
                                                                       if [ ! -d ${ structure-directory } ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
