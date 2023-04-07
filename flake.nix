@@ -248,7 +248,7 @@
                                                                     let
                                                                       bool =
                                                                         track :
-                                                                          if track.reduced then "${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }/resource"
+                                                                          if track.reduced then "${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }/resource"
                                                                           else "${ pkgs.coreutils }/bin/true" ;
                                                                       lambda =
                                                                         track :
@@ -257,9 +257,9 @@
                                                                             script = track.reduced ( _scripts "command" ) ;
                                                                             in
                                                                               ''
-                                                                                ${ mkdir }${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
-                                                                                ${ mkdir }cd ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
-                                                                                ${ script } ${ structure-directory }/resources/${ bash-variable "SALT" }/resource
+                                                                                ${ mkdir }${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
+                                                                                ${ mkdir }cd ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
+                                                                                ${ script } ${ structure-directory }/resources/${ bash-variable globals.salt }/resource
                                                                               '' ;
                                                                       null = track : "${ pkgs.coreutils }/bin/true" ;
                                                                       undefined = track : track.throw "ab341084-29c7-4404-a60a-deaca66c6e4f" ;
@@ -320,7 +320,7 @@
                                                                       OLD_SALT=${ bash-variable 1 } &&
                                                                       TIMESTAMP=$( ${ pkgs.coreutils }/bin/date +%s ) &&
                                                                       NEW_SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
-                                                                       if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
+                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
                                                                       then
                                                                         exec 201<>${ structure-directory }/lock &&
                                                                         ${ pkgs.flock }/bin/flock -s 201 &&
@@ -349,11 +349,11 @@
                                                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory )} ${ bash-variable "OLD_SALT" } | ${ at } now
                                                                     '' ;
                                                                   pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ ( builtins.toString track.index ) _salt _init _release ] ) ;
-                                                                  program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" }" ;
+                                                                  program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" } ${ bash-variable globals.salt }" ;
                                                                   script =
                                                                     ''
                                                                       TIMESTAMP=${ bash-variable 1 } &&
-                                                                      export SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                      export ${ globals.salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
                                                                       if [ ! -d ${ structure-directory } ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -366,19 +366,23 @@
                                                                       fi &&
                                                                       exec 202<>${ structure-directory }/resources/lock &&
                                                                       ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                      if [ ! -d ${ structure-directory }/resources/${ bash-variable "SALT" } ]
+                                                                      if [ ! -d ${ structure-directory }/resources/${ bash-variable globals.salt } ]
                                                                       then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }
+                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }
                                                                       fi &&
-                                                                      exec 203<>${ structure-directory }/resources/${ bash-variable "SALT" }/lock &&
+                                                                      exec 203<>${ structure-directory }/resources/${ bash-variable globals.salt }/lock &&
                                                                       ${ pkgs.flock }/bin/flock 203 &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${bash-variable "SALT" }/XXXXXXXX ) &&
-                                                                      if [ ! -e ${ structure-directory }/resources/${ bash-variable "SALT" }/resource ]
+                                                                      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX ) &&
+								      if [ ${ bash-variable "#" } == 3 ]
+								      then
+								        ${ pkgs.coreutils }/bin/echo ${ bash-variable 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX )
+								      fi &&
+                                                                      if [ ! -e ${ structure-directory }/resources/${ bash-variable globals.salt }/resource ]
                                                                       then
                                                                         ${ _init }
                                                                       fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable "SALT" } | ${ at } now 2> /dev/null
+                                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
+                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable globals.salt } | ${ at } now 2> /dev/null
                                                                     '' ;
                                                                   in if show then "$( ${ pkgs.coreutils }/bin/cat $( ${ program } ) )" else "$( ${ program } )" ;
                                                         to-string =
@@ -458,7 +462,7 @@
                             flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
                             globals =
                               let
-                                attrs = [ "timestamp" "process" "resource-dir" ] ;
+                                attrs = [ "salt" ] ;
                                 indexed =
                                   let
                                     list = track : builtins.concatLists track.reduced ;
