@@ -22,6 +22,26 @@
                                         arguments = [ "temporary-dir" "logging-dir" "trap" ] ;
                                         command = pkgs.writeShellScript "command" input ;
                                         date-format = "%Y-%m-%d-%H-%M-%S" ;
+                                        debug =
+                                          {
+                                            delock-structure-directory =
+                                              {
+                                                delock-logging-directory = 0 ;
+                                                delock-resources-directory = 0 ;
+                                                delock-temporary-directory = 0 ;
+                                              } ;
+                                          } ;
+                                        delock-structure-directory =
+                                          ''
+                                            if [ -d ${ structure-directory } ]
+                                            then
+                                              exec 201<>${ structure-directory }/lock &&
+                                              ${ pkgs.flock }/bin/flock 201 &&
+                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
+                                              ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
+                                            fi
+                                          '' ;
+
                                         hook = track.reduced ( structure locals ) ;
                                         identity = x : x ;
                                         input =
@@ -61,12 +81,18 @@
                                                     then
                                                       exec 203<>${ bash-variable locals.logging-dir }/lock &&
                                                       ${ pkgs.flock }/bin/flock 203 &&
+                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/out &&
+                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/err &&
+                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/out &&
+                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/err &&
+                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/time &&
+                                                      ${ pkgs.findutils }/bin/find ${ bash-variable locals.logging-dir } -type f -name '*.*' -exec ${ pkgs.coreutils }/bin/chmod 0400 {} \;
                                                       ${ pkgs.coreutils }/bin/rm ${ bash-variable locals.logging-dir }/lock &&
                                                       ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ bash-variable locals.logging-dir }
                                                     fi
                                                   fi
                                                 fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-logging-directory ) } | ${ at } now
+                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-logging-directory" ( strip delock-logging-directory ) } | ${ at } now
                                               '' ;
                                             delock-logging-directory =
                                               ''
@@ -79,19 +105,9 @@
                                                     exec 202<>${ structure-directory }/logging/lock &&
                                                     ${ pkgs.flock }/bin/flock 202 &&
                                                     ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logging/lock &&
-                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/logging
+                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/logging &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-logging-directory } min
                                                   fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-structure-directory ) } | ${ at } now
-                                              '' ;
-                                            delock-structure-directory =
-                                              ''
-                                                if [ -d ${ structure-directory } ]
-                                                then
-                                                  exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock 201 &&
-                                                  ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
-                                                  ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
                                                 fi
                                               '' ;
                                             delock-temporary-directory =
@@ -105,38 +121,13 @@
                                                     exec 202<>${ structure-directory }/temporary/lock &&
                                                     ${ pkgs.flock }/bin/flock 202 &&
                                                     ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
-                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary
+                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary &&
+                                                    ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-temporary-directory } min
                                                   fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-structure-directory ) } | ${ at } now
-                                              '' ;
-                                            finish-logging =
-                                              ''
-                                                if [ -d ${ bash-variable locals.logging-dir } ]
-                                                then
-                                                  exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s 201 &&
-                                                  if [ -d ${ bash-variable locals.logging-dir } ]
-                                                  then
-                                                    exec 202<>${ structure-directory }/logging/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s 202 &&
-                                                    if [ -d ${ bash-variable locals.logging-dir } ]
-                                                    then
-                                                      exec 203<>${ bash-variable locals.logging-dir }/lock &&
-                                                      ${ pkgs.flock }/bin/flock 203 &&
-                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/out &&
-                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/err &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/out &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/err &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/time &&
-                                                      ${ pkgs.findutils }/bin/find ${ bash-variable locals.logging-dir } -type f -name '*.*' -exec ${ pkgs.coreutils }/bin/chmod 0400 {} \;
-                                                    fi
-                                                  fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-logging-dir ) } | ${ at } now
+                                                fi
                                               '' ;
                                             temporary = if contains hook ( locals.temporary-dir ) then "" else "# " ;
-                                            program = pkgs.writeShellScript "program" ( strip hook ) ;
+                                            program = pkgs.writeShellScript "hook" ( strip hook ) ;
                                             standard =
                                               output :
                                                 let
@@ -178,10 +169,10 @@
                                                 export ${ locals.logging-dir }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logging/XXXXXXXX ) &&
                                                 exec 205<>${ bash-variable locals.logging-dir }/lock &&
                                                 ${ pkgs.flock }/bin/flock 205 &&
-                                                ${ locals.trap } ( )
+                                                cleanup ( )
                                                 {
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip finish-logging ) } | ${ at } now 2> /dev/null &&
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delete-temporary-dir ) } | ${ at } now 2> /dev/null &&
+                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-logging-dir" ( strip delock-logging-dir ) } | ${ at } now 2> /dev/null &&
+                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delete-temporary-dir" ( strip delete-temporary-dir ) } | ${ at } now 2> /dev/null &&
                                                   if [ -f ${ bash-variable locals.logging-dir }/time ] && [ ! -s ${ bash-variable locals.logging-dir }/err ]
                                                   then
                                                     exit $( ${ pkgs.coreutils }/bin/head --lines 1 ${ bash-variable locals.logging-dir }/time )
@@ -195,12 +186,12 @@
                                                     exit 66
                                                   fi
                                                 } &&
-                                                trap ${ locals.trap } EXIT
-                                                ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable locals.logging-dir }/time ${ program } ${ bash-variable "@" } \
+                                                trap cleanup EXIT
+                                                ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable locals.logging-dir }/time ${ program } "${ bash-variable "@" }" \
                                                   > ${ standard "out" } \
                                                   2> ${ standard "err" }
                                               '' ;
-                                        locals = variable arguments tokenizer false ;                                            
+                                        locals = variable arguments tokenizer false ;
                                         string =
                                           let
                                             locals = variable arguments builtins.toString true ;
@@ -214,7 +205,7 @@
                                                   flakes = _flakes ;
                                                   logger =
                                                     name :
-                                                      ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.mktemp }/bin/mktemp ${ bash-variable locals.logging-dir }/${ builtins.hashString "sha512" ( builtins.toString name ) }.XXXXXXXX ) 2> /dev/null )" ;
+                                                      ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable locals.logging-dir }/XXXXXXXX ) 2> /dev/null )" ;
                                                   logs =
                                                     pkgs.writeShellScript
                                                       "logs"
@@ -255,9 +246,24 @@
                                                                 let
                                                                   _init =
                                                                     let
-                                                                      lambda = track : track.reduced ( _scripts "command" ) ;
+								      bool =
+								        track :
+									  if track.reduced then "${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }/resource"
+									  else "${ pkgs.coreutils }/bin/true" ;
+                                                                      lambda =
+								        track :
+									  let
+                                                                            mkdir = if contains ( track.reduced ( _scripts "hook" ) ) ( bash-variable 1 ) then "# " else "" ;
+									    script = track.reduced ( _scripts "command" ) ;
+									    in
+									      ''
+                                                                                ${ mkdir }${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
+                                                                                ${ mkdir }cd ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
+                                                                                ${ script } ${ structure-directory }/resources/${ bash-variable "SALT" }/resource
+									      '' ;
+								      null = track : "${ pkgs.coreutils }/bin/true" ;
                                                                       undefined = track : track.throw "ab341084-29c7-4404-a60a-deaca66c6e4f" ;
-                                                                      in visit { lambda = lambda ; undefined = undefined ; } init ;
+                                                                      in visit { bool = bool ; lambda = lambda ; null = null ; undefined = undefined ; } init ;
                                                                   _release =
                                                                     let
                                                                       lambda = track : track.reduced ( _scripts "command" ) ;
@@ -268,80 +274,9 @@
                                                                     let
                                                                       int = track : "$(( ${ bash-variable "TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
                                                                       lambda = track : "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable "TIMESTAMP" } )" ;
-                                                                      null = track : "$(( ${ bash-variable "TIMESTAMP" } / ( 60 ) ))" ;
+                                                                      null = track : "$(( ${ bash-variable "TIMESTAMP" } / ( 60 * 60 ) ))" ;
                                                                       undefined = track : track.throw "547148a4-88ff-4eb9-aaa4-1703b46e5a6c" ;
                                                                       in visit { int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
-								  delink =
-								    ''
-								      if [ -d ${ structure-directory }/links/${ bash-variable 1 } ] && [ -d ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable 1 } ) == ${ bash-variable 2 } ] && [ TIMESTAMP=$( ${ pkgs.coreutils }/bin/date +%s ) $( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) != ${ bash-variable 1 } ]
-								      then
-								        exec 201<>${ structure-directory }/lock &&
-									${ pkgs.flock }/bin/flock -s 201 &&
-           						                if [ -d ${ structure-directory }/links/${ bash-variable 1 } ] && [ -d ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable 1 } ) == ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) != ${ bash-variable 1 } ]
-									then
-									  exec 202<>${ structure-directory }/resources/lock &&
-									  ${ pkgs.flock }/bin/flock -s 202 &&
-           						                  if [ -d ${ structure-directory }/links/${ bash-variable 1 } ] && [ -d ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable 1 } ) == ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) != ${ bash-variable 1 } ]
-									  then
-									    exec 203<>${ structure-directory }/links/lock &&
-									    ${ pkgs.flock }/bin/flock -s 203 &&
-           						                    if [ -d ${ structure-directory }/links/${ bash-variable 1 } ] && [ -d ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable 1 } ) == ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) != ${ bash-variable 1 } ]
-									    then
-									      exec 204<>${ bash-variable 2 }/lock &&
-									      ${ pkgs.flock }/bin/flock -s 204 &&
-           						                      if [ -d ${ structure-directory }/links/${ bash-variable 1 } ] && [ -d ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable 1 } ) == ${ bash-variable 2 } ] && [ $( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) != ${ bash-variable 1 } ]
-									      then
-									        exec 205<>${ structure-directory }/links/${ bash-variable 1 }/lock &&
-										${ pkgs.flock }/bin/flock 205 &&
-										${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ bash-variable 1 } &&
-										${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip deresource ) } ${ bash-variable 2 } | ${ at } now
-									      fi
-									    fi
-									  fi
-									fi
-									else
-									  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ bash-variable 0 } ${ bash-variable 1 } ${ bash-variable 2 } | ${ at } now + 1 min
-								      fi &&
-								      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-links-dir ) } ${ bash-variable 1 } | ${ at } now &&
-								      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-resources-dir ) } ${ bash-variable 1 } | ${ at } now
-								    '' ;
-                                                                  delock-links-dir =
-                                                                    ''
-                                                                      if [ -d ${ structure-directory }/links/${ bash-variable 1 } ]
-                                                                      then
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/links/${ bash-variable 1 } ]
-                                                                        then
-                                                                          exec 202<>${ structure-directory }/links/lock &&
-                                                                          ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          if [ -d ${ structure-directory }/links/${ bash-variable 1 } ]
-                                                                          then
-                                                                            exec 203<>${ structure-directory }/links/${ bash-variable 1 }/lock &&
-                                                                            ${ pkgs.flock }/bin/flock 203 &&
-                                                                            ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/${ bash-variable 1 }/lock &&
-                                                                            ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/links/${ bash-variable 1 }
-                                                                          fi
-                                                                        fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-links-directory ) } | ${ at } now
-                                                                    '' ;
-                                                                  delock-links-directory =
-                                                                    ''
-                                                                      if [ -d ${ structure-directory }/links/${ bash-variable 1 } ]
-                                                                      then
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/links/${ bash-variable 1 } ]
-                                                                        then
-                                                                          exec 202<>${ structure-directory }/links/lock &&
-                                                                          ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          ${ pkgs.coreutils }/bin/rm ${ structure-directory }/links/lock &&
-                                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/links
-                                                                        fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-resources-directory ) } | ${ at } now
-                                                                    '' ;
                                                                   delock-resources-directory =
                                                                     ''
                                                                       if [ -d ${ structure-directory }/resources ]
@@ -351,137 +286,65 @@
                                                                         if [ -d ${ structure-directory }/resources ]
                                                                         then
                                                                           exec 202<>${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.flock }/bin/flock -s 202 &&
+                                                                          ${ pkgs.flock }/bin/flock 202 &&
                                                                           ${ pkgs.coreutils }/bin/rm ${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/resources
+                                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/resources &&
+                                                                          ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-resources-directory } min
                                                                         fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-structure-directory ) } | ${ at } now
+                                                                      fi
                                                                     '' ;
                                                                   delock-resources-dir =
                                                                     ''
-                                                                      if [ -d ${ bash-variable 1 } ]
+                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
                                                                       then
                                                                         exec 201<>${ structure-directory }/lock &&
                                                                         ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ bash-variable 1 } ]
+                                                                        if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
                                                                         then
                                                                           exec 202<>${ structure-directory }/resources/lock &&
                                                                           ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          if [ -d ${ bash-variable 1 } ]
+                                                                          if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
                                                                           then
-                                                                            exec 203<>${ bash-variable 1 }/lock &&
+                                                                            exec 203<>${ structure-directory }/resources/${ bash-variable 1 }/lock &&
                                                                             ${ pkgs.flock }/bin/flock 203 &&
-                                                                            ${ pkgs.coreutils }/bin/rm ${ bash-variable 1 }/lock &&
-                                                                            ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ bash-variable 1 }
+                                                                            ${ pkgs.coreutils }/bin/rm ${ structure-directory }/resources/${ bash-variable 1 }/lock &&
+                                                                            ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/resources/${ bash-variable 1 } &&
+                                                                            ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory ) } | ${ at } now
                                                                           fi
                                                                         fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-resources-directory ) } | ${ at } now
-                                                                    '' ;
-                                                                  delock-structure-directory =
-                                                                    ''
-                                                                      if [ -d ${ structure-directory } ]
-                                                                      then
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock 201 &&
-                                                                        ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
-                                                                        ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
                                                                       fi
                                                                     '' ;
-								  deresource =
-								    ''
-								      if [ -d ${ bash-variable 1 } ]
-								      then
-								        exec 201<>${ structure-directory }/lock &&
-									${ pkgs.flock }/bin/flock -s 201 &&
-									if [ -d ${ bash-variable 1 } ]
-									then
-									  exec 202<>${ structure-directory }/resources/lock &&
-									  ${ pkgs.flock }/bin/flock -s 202 &&
-									  if [ -d ${ bash-variable 1 } ]
-									  then
-									    exec 203<>${ bash-variable 1 }/lock &&
-									    ${ pkgs.flock }/bin/flock 203 &&
-									    ${ pkgs.findutils }/bin/find ${ bash-variable 1 }/processes -mindepth 1 -maxdepth 1 | while read PID_FILE
-									    do
-									      ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null  &&
-									      ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
-									    done &&
-									    ${ pkgs.findutils }/bin/find ${ bash-variable 1 }/resource -mindepth 1 -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-									    ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable 1 }/resource
-									  fi
-									fi
-								      fi &&
-								      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" ( strip delock-resources-dir ) } ${ bash-variable 1 }
-								    '' ;
-                                                                  mkdir =
-                                                                    let
-                                                                      lambda = track : if contains ( track.reduced ( _scripts "hook" ) ) ( bash-variable 1 ) then "# " else "" ;
-                                                                      undefined = track : track.throw "8c71deea-8216-4867-9af8-87b967241cb2" ;
-                                                                      in visit { lambda = lambda ; undefined = undefined ; } init ;
-                                                                  pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ _salt _init _release ] ) ;
+                                                                  pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ ( builtins.toString track.index ) _salt _init _release ] ) ;
                                                                   program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" }" ;
                                                                   script =
                                                                     ''
-								      TIMESTAMP=${ bash-variable 1 } &&
-								      ${ pkgs.coreutils }/bin/echo ${ bash-variable 1 } >> debug &&
-								      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } >> debug &&
-                                                                      SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/sha512sum | ${ pkgs.coreutils }/bin/cut --bytes -128 ) &&
+                                                                      TIMESTAMP=${ bash-variable 1 } &&
+                                                                      SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
                                                                       if [ ! -d ${ structure-directory } ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                                       fi &&
                                                                       exec 201<>${ structure-directory }/lock &&
                                                                       ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                      if [ ! -d ${ structure-directory }/links ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links
-                                                                      fi &&
-                                                                      exec 202<>${ structure-directory }/links/lock &&
-                                                                      ${ pkgs.flock }/bin/flock -s 202 &&
                                                                       if [ ! -d ${ structure-directory }/resources ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
                                                                       fi &&
-                                                                      exec 203<>${ structure-directory }/resources/lock &&
-                                                                      ${ pkgs.flock }/bin/flock -s 203
-                                                                      if [ ! -d ${ structure-directory }/links/${ bash-variable "SALT" } ]
+                                                                      exec 202<>${ structure-directory }/resources/lock &&
+                                                                      ${ pkgs.flock }/bin/flock -s 202 &&
+                                                                      if [ ! -d ${ structure-directory }/resources/${ bash-variable "SALT" } ]
                                                                       then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/links/${ bash-variable "SALT" }
+                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable "SALT" }
                                                                       fi &&
-                                                                      exec 204<>${ structure-directory }/links/${ bash-variable "SALT" }/lock &&
-                                                                      ${ pkgs.flock }/bin/flock 204 &&
-                                                                      if [ -L ${ structure-directory }/links/${ bash-variable "SALT" }/link ]
+                                                                      exec 203<>${ structure-directory }/resources/${ bash-variable "SALT" }/lock &&
+                                                                      ${ pkgs.flock }/bin/flock 203 &&
+                                                                      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${bash-variable "SALT" }/XXXXXXXX ) &&
+                                                                      if [ ! -e ${ structure-directory }/resources/${ bash-variable "SALT" }/resource ]
                                                                       then
-                                                                        RESOURCE_DIR=$( ${ pkgs.coreutils }/bin/readlink ${ structure-directory }/links/${ bash-variable "SALT" }/link )
-                                                                      else
-                                                                        RESOURCE_DIR=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/resources/XXXXXXXX ) &&
-                                                                        ${ pkgs.coreutils }/bin/ln --symbolic ${ bash-variable "RESOURCE_DIR" } ${ structure-directory }/links/${ bash-variable "SALT" }/link
+								        ${ _init }
                                                                       fi &&
-                                                                      exec 205<>${ bash-variable "RESOURCE_DIR" }/lock &&
-                                                                      ${ pkgs.flock }/bin/flock 205 &&
-								      if [ ! -d ${ bash-variable "RESOURCE_DIR" }/processes ]
-								      then
-								        ${ pkgs.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIR" }/processes
-								      fi &&
-								      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.mktemp }/bin/mktemp ${ bash-variable "RESOURCE_DIR" }/processes/XXXXXXXX ) &&
-                                                                      if [ ! -e ${ bash-variable "RESOURCE_DIR" }/resource ]
-                                                                      then
-                                                                        ${ mkdir }${ pkgs.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIR" }/resource &&
-                                                                        ${ mkdir }cd ${ bash-variable "RESOURCE_DIR" }/resource &&
-                                                                        ${ _init } ${ bash-variable "RESOURCE_DIR" }/resource
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ bash-variable "RESOURCE_DIR" }/resource &&
-                                                                      ${ pkgs.coreutils }/bin/echo \
-                                                                        ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" delock-links-dir } ${ bash-variable "SALT" } | \
-                                                                        ${ at } now 2> /dev/null
-                                                                      ${ pkgs.coreutils }/bin/echo \
-                                                                        ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" delock-resources-dir } ${ bash-variable "RESOURCE_DIR" } | \
-                                                                        ${ at } now 2> /dev/null
-                                                                      ${ pkgs.coreutils }/bin/echo \
-                                                                        ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "program" delink } ${ bash-variable "SALT" } ${ bash-variable "RESOURCE_DIR" } | \
-                                                                        ${ at } now 2> /dev/null
+                                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable "SALT" }/resource &&
+                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable "SALT" } | ${ at } now 2> /dev/null
                                                                     '' ;
                                                                   in if show then "$( ${ pkgs.coreutils }/bin/cat $( ${ program } ) )" else "$( ${ program } )" ;
                                                         to-string =
@@ -503,11 +366,12 @@
                                                               undefined = track : track.throw "3b1457d8-1f6b-4d5b-912b-5f6fe0c845a6" ;
                                                               in visit { bool = bool ; undefined = undefined ; } show ;
                                                         in track.reduced fun ;
-                                                  list = track : track.reduced ;
-                                                  set = track : track.reduced ;
-                                                  undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
-                                                  in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
-                                              temporary-dir = bash-variable locals.temporary-dir ;
+                                                      list = track : track.reduced ;
+                                                      set = track : track.reduced ;
+                                                      undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
+                                                      in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
+						  structure-directory = structure-directory ;
+                                                  temporary-dir = bash-variable locals.temporary-dir ;
                                             } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "LOCAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
                                         variable =
