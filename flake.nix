@@ -19,7 +19,7 @@
                                   lambda =
                                     track :
                                       let
-                                        arguments = [ "temporary-dir" "logging-dir" "trap" ] ;
+                                        arguments = [ "temporary-dir" "logging-dir" ] ;
                                         command = pkgs.writeShellScript "command" input ;
                                         date-format = "%Y-%m-%d-%H-%M-%S" ;
                                         debug =
@@ -175,7 +175,7 @@
                                                   ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delete-temporary-dir" ( strip delete-temporary-dir ) } | ${ at } now 2> /dev/null &&
                                                   if [ -f ${ bash-variable locals.logging-dir }/time ] && [ ! -s ${ bash-variable locals.logging-dir }/err ]
                                                   then
-                                                    exit $( ${ pkgs.coreutils }/bin/head --lines 1 ${ bash-variable locals.logging-dir }/time )
+                                                    exit ${ bash-variable "EXIT_STATUS" }
                                                   elif [ -f ${ bash-variable locals.logging-dir }/time ]
                                                   then
                                                     exit 64
@@ -189,7 +189,8 @@
                                                 trap cleanup EXIT
                                                 ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable locals.logging-dir }/time ${ program } "${ bash-variable "@" }" \
                                                   > ${ standard "out" } \
-                                                  2> ${ standard "err" }
+                                                  2> ${ standard "err" } &&
+                                                EXIT_STATUS=${ bash-variable "?" }
                                               '' ;
                                         locals = variable arguments tokenizer false ;
                                         string =
@@ -201,6 +202,7 @@
                                             let
                                               in
                                                 {
+						  at = at ;
                                                   commands = _scripts "command" ;
                                                   flakes = _flakes ;
                                                   logger =
@@ -228,6 +230,23 @@
                                                             ''
                                                       ) ;
                                                   pkgs = pkgs ;
+                                                  release-resources =
+                                                    pkgs.writeShellScript
+                                                      "release-resources"
+                                                      ''
+                                                        if [ -d ${ structure-directory }/resources ]
+                                                        then
+                                                          exec 201<>${ structure-directory }/resources/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s 201 &&
+                                                          ${ pkgs.findutils }/bin/find ${ structure-directory }/resources -mindepth 2 -maxdepth 2 -type l -name destroy-resources-dir.sh | while read DESTROY_RESOURCES_DIR
+							  do
+							    if [ -L ${ bash-variable "DESTROY_RESOURCES_DIR" } ]
+							    then
+							      ${ bash-variable "DESTROY_RESOURCES_DIR" } no
+							    fi
+							  done
+                                                        fi
+                                                      '' ;
                                                   resources =
                                                     let
                                                       lambda =
@@ -312,31 +331,37 @@
                                                                             ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory ) } | ${ at } now
                                                                           fi
                                                                         fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ bash-variable 1 } | ${ at } now + 1 min
+                                                                      fi
                                                                     '' ;
                                                                   destroy-resources-dir =
                                                                     ''
-                                                                      OLD_SALT=${ bash-variable 1 } &&
+                                                                      FORCE=${ bash-variable 1 } &&
+                                                                      OLD_SALT=$( ${ pkgs.coreutils }/bin/basename $( ${ pkgs.coreutils }/bin/dirname ${ bash-variable 0 } ) ) &&
                                                                       TIMESTAMP=$( ${ pkgs.coreutils }/bin/date +%s ) &&
                                                                       NEW_SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
-                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
+                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
                                                                       then
+                                                                        ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -mindepth 1 -maxdepth 1 -type f -name '*.salt' -exec ${ pkgs.coreutils }/bin/cat {} \; | while read SALT
+                                                                        do
+									  if [ -L ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh ]
+									  then
+                                                                            ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh yes
+									  fi
+                                                                        done &&
                                                                         exec 201<>${ structure-directory }/lock &&
                                                                         ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
+                                                                        if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
                                                                         then
                                                                           exec 202<>${ structure-directory }/resources/lock &&
                                                                           ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] &&  [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ]
+                                                                          if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
                                                                           then
                                                                             exec 203<>${ structure-directory }/resources/${ bash-variable "OLD_SALT" }/lock &&
                                                                             ${ pkgs.flock }/bin/flock 203 &&
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -name '*.pid' | while read PID_FILE
                                                                             do
-    								              ${ pkgs.coreutils }/bin/echo debug 9 ${ bash-variable "PID_FILE" } >> debug &&								    
                                                                               ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
-									      ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
+                                                                              ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
                                                                             done &&
                                                                             ${ _release } &&
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
@@ -346,7 +371,7 @@
                                                                       else
                                                                         ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ bash-variable 0 } ${ bash-variable "OLD_SALT" } | ${ at } now + 1 min
                                                                       fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory )} ${ bash-variable "OLD_SALT" } | ${ at } now
+                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory )} ${ bash-variable "OLD_SALT" } | ${ at } now 
                                                                     '' ;
                                                                   pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ ( builtins.toString track.index ) _salt _init _release ] ) ;
                                                                   program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" } ${ bash-variable globals.salt }" ;
@@ -373,13 +398,14 @@
                                                                       exec 203<>${ structure-directory }/resources/${ bash-variable globals.salt }/lock &&
                                                                       ${ pkgs.flock }/bin/flock 203 &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX ) &&
-								      if [ ${ bash-variable "#" } == 3 ]
-								      then
-								        ${ pkgs.coreutils }/bin/echo ${ bash-variable 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX )
-								      fi &&
+                                                                      if [ ${ bash-variable "#" } == 3 ]
+                                                                      then
+                                                                        ${ pkgs.coreutils }/bin/echo ${ bash-variable 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX )
+                                                                      fi &&
                                                                       if [ ! -e ${ structure-directory }/resources/${ bash-variable globals.salt }/resource ]
                                                                       then
-                                                                        ${ _init }
+                                                                        ${ strip _init } &&
+                                                                        ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh
                                                                       fi &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable globals.salt } | ${ at } now 2> /dev/null
