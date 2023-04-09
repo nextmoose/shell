@@ -145,6 +145,10 @@
                                                 in builtins.concatStringsSep "" list ;
                                             in
                                               ''
+					        if [ -z "${ bash-variable globals.timestamp }" ]
+						then
+						  export ${ globals.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s )
+						fi &&
                                                 if [ ! -d ${ structure-directory } ]
                                                 then
                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -202,51 +206,57 @@
                                             let
                                               in
                                                 {
-						  at = at ;
+                                                  at = at ;
                                                   commands = _scripts "command" ;
                                                   flakes = _flakes ;
                                                   logger =
                                                     name :
                                                       ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable locals.logging-dir }/XXXXXXXX ) 2> /dev/null )" ;
-                                                  logs =
-                                                    pkgs.writeShellScript
-                                                      "logs"
-                                                      (
-                                                        let
-                                                          log =
-                                                            pkgs.writeShellScript
-                                                              "log"
-                                                              ''
-                                                                exec 201<>${ bash-variable "1" }/lock &&
-                                                                ${ pkgs.flock }/bin/flock -n 201 &&
-                                                                if [ -f ${ bash-variable "1" }/out ] && [ $( ${ pkgs.coreutils }/bin/stat --format "%a" ${ bash-variable "1" }/out ) -eq 0400 ]
-                                                                then
-                                                                  ${ pkgs.coreutils }/bin/mv ${ bash-variable "1" } ${ bash-variable locals.temporary-dir }
-                                                                fi
-                                                              '' ;
-                                                          in
-                                                            ''
-                                                              ${ pkgs.findutils }/bin/find ${ structure-directory }/logging -mindepth 1 -maxdepth 1 -type d -exec ${ log } {} \;
-                                                            ''
-                                                      ) ;
+                                                  logger2 =
+                                                    name :
+                                                      ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp ) 2> /dev/null )" ;
                                                   pkgs = pkgs ;
-                                                  release-resources =
-                                                    pkgs.writeShellScript
-                                                      "release-resources"
-                                                      ''
-                                                        if [ -d ${ structure-directory }/resources ]
-                                                        then
-                                                          exec 201<>${ structure-directory }/resources/lock &&
-                                                          ${ pkgs.flock }/bin/flock -s 201 &&
-                                                          ${ pkgs.findutils }/bin/find ${ structure-directory }/resources -mindepth 2 -maxdepth 2 -type l -name destroy-resources-dir.sh | while read DESTROY_RESOURCES_DIR
-							  do
-							    if [ -L ${ bash-variable "DESTROY_RESOURCES_DIR" } ]
-							    then
-							      ${ bash-variable "DESTROY_RESOURCES_DIR" } no
-							    fi
-							  done
-                                                        fi
-                                                      '' ;
+                                                  release =
+                                                    {
+                                                      logs =
+                                                        pkgs.writeShellScript
+                                                          "logs"
+                                                          (
+                                                            let
+                                                              log =
+                                                                pkgs.writeShellScript
+                                                                  "log"
+                                                                  ''
+                                                                    exec 201<>${ bash-variable "1" }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -n 201 &&
+                                                                    if [ -f ${ bash-variable "1" }/out ] && [ $( ${ pkgs.coreutils }/bin/stat --format "%a" ${ bash-variable "1" }/out ) -eq 0400 ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mv ${ bash-variable "1" } ${ bash-variable locals.temporary-dir }
+                                                                    fi
+                                                                  '' ;
+                                                              in
+                                                                ''
+                                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logging -mindepth 1 -maxdepth 1 -type d -exec ${ log } {} \;
+                                                                ''
+                                                          ) ;
+                                                      resources =
+                                                        pkgs.writeShellScript
+                                                          "resources"
+                                                          ''
+                                                            if [ -d ${ structure-directory }/resources ]
+                                                            then
+                                                              exec 201<>${ structure-directory }/resources/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s 201 &&
+                                                              ${ pkgs.findutils }/bin/find ${ structure-directory }/resources -mindepth 2 -maxdepth 2 -type l -name destroy-resources-dir.sh | while read DESTROY_RESOURCES_DIR
+                                                              do
+                                                                if [ -L ${ bash-variable "DESTROY_RESOURCES_DIR" } ]
+                                                                then
+                                                                  ${ bash-variable "DESTROY_RESOURCES_DIR" } no
+                                                                fi
+                                                              done
+                                                            fi
+                                                          '' ;
+                                                    } ;
                                                   resources =
                                                     let
                                                       lambda =
@@ -291,9 +301,9 @@
                                                                       in visit { lambda = lambda ; null = null ; undefined = undefined ; } release ;
                                                                   _salt =
                                                                     let
-                                                                      int = track : "$(( ${ bash-variable "TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                      lambda = track : "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable "TIMESTAMP" } )" ;
-                                                                      null = track : "$(( ${ bash-variable "TIMESTAMP" } / ( 60 * 60 ) ))" ;
+                                                                      int = track : "$(( ${ bash-variable "${ globals.timestamp }" } / ${ builtins.toString track.reduced } ))" ;
+                                                                      lambda = track : "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable "${ globals.timestamp }" } )" ;
+                                                                      null = track : "$(( ${ bash-variable "${ globals.timestamp }" } / ( 60 * 60 ) ))" ;
                                                                       undefined = track : track.throw "547148a4-88ff-4eb9-aaa4-1703b46e5a6c" ;
                                                                       in visit { int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
                                                                   delock-resources-directory =
@@ -337,16 +347,16 @@
                                                                     ''
                                                                       FORCE=${ bash-variable 1 } &&
                                                                       OLD_SALT=$( ${ pkgs.coreutils }/bin/basename $( ${ pkgs.coreutils }/bin/dirname ${ bash-variable 0 } ) ) &&
-                                                                      TIMESTAMP=$( ${ pkgs.coreutils }/bin/date +%s ) &&
+                                                                      ${ globals.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
                                                                       NEW_SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
                                                                       if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
                                                                       then
                                                                         ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -mindepth 1 -maxdepth 1 -type f -name '*.salt' -exec ${ pkgs.coreutils }/bin/cat {} \; | while read SALT
                                                                         do
-									  if [ -L ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh ]
-									  then
+                                                                          if [ -L ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh ]
+                                                                          then
                                                                             ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh yes
-									  fi
+                                                                          fi
                                                                         done &&
                                                                         exec 201<>${ structure-directory }/lock &&
                                                                         ${ pkgs.flock }/bin/flock -s 201 &&
@@ -363,7 +373,7 @@
                                                                               ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
                                                                               ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
                                                                             done &&
-                                                                            ${ _release } &&
+                                                                            ${ _release } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                                             ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }
                                                                           fi
@@ -377,7 +387,10 @@
                                                                   program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" } ${ bash-variable globals.salt }" ;
                                                                   script =
                                                                     ''
-                                                                      TIMESTAMP=${ bash-variable 1 } &&
+								      if [ -z "${ bash-variable globals.timestamp }" ]
+								      then
+                                                                        export ${ globals.timestamp }=${ bash-variable 1 }
+								      fi &&
                                                                       export ${ globals.salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
                                                                       if [ ! -d ${ structure-directory } ]
                                                                       then
@@ -488,7 +501,7 @@
                             flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
                             globals =
                               let
-                                attrs = [ "salt" ] ;
+                                attrs = [ "salt" "timestamp" ] ;
                                 indexed =
                                   let
                                     list = track : builtins.concatLists track.reduced ;
