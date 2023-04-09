@@ -293,6 +293,7 @@
                                                                       null = track : "${ pkgs.coreutils }/bin/true" ;
                                                                       undefined = track : track.throw "ab341084-29c7-4404-a60a-deaca66c6e4f" ;
                                                                       in visit { bool = bool ; lambda = lambda ; null = null ; undefined = undefined ; } init ;
+								  _path = builtins.concatStringsSep "/" ( builtins.map to-string track.path ) ;
                                                                   _release =
                                                                     let
                                                                       lambda = track : track.reduced ( _scripts "command" ) ;
@@ -373,9 +374,7 @@
                                                                               ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
                                                                               ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
                                                                             done &&
-                                                                            ${ pkgs.coreutils }/bin/echo 1 ${ _release } ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } >> /home/emory/projects/71tspv3q/repair &&
-                                                                            ${ _release } ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
-                                                                            ${ pkgs.coreutils }/bin/echo 2 ${ _release } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } >> /home/emory/projects/71tspv3q/repair &&
+                                                                            ${ _release } "$( ${ pkgs.coreutils }/bin/cat ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }/path )" ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                                             ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }
                                                                           fi
@@ -420,7 +419,9 @@
                                                                       if [ ! -e ${ structure-directory }/resources/${ bash-variable globals.salt }/resource ]
                                                                       then
                                                                         ${ strip _init } &&
-                                                                        ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh
+                                                                        ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh &&
+								        ${ pkgs.coreutils }/bin/echo ${ _path } > ${ structure-directory }/resources/${ bash-variable globals.salt }/path &&
+									${ pkgs.coreutils }/bin/chmod 0400 ${ structure-directory }/resources/${ bash-variable globals.salt }/path
                                                                       fi &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable globals.salt } | ${ at } now 2> /dev/null
