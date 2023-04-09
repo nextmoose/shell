@@ -208,13 +208,12 @@
                                                 {
                                                   at = at ;
                                                   commands = _scripts "command" ;
+						  cron = "/etc/cron.d" ;
                                                   flakes = _flakes ;
                                                   logger =
                                                     name :
                                                       ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable locals.logging-dir }/XXXXXXXX ) 2> /dev/null )" ;
-                                                  logger2 =
-                                                    name :
-                                                      ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp ) 2> /dev/null )" ;
+						  null = "/dev/null" ;
                                                   pkgs = pkgs ;
                                                   release =
                                                     {
@@ -451,6 +450,7 @@
                                                       undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
                                                       in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                                   structure-directory = structure-directory ;
+						  sudo = "/usr/bin/sudo" ;
                                                   temporary-dir = bash-variable locals.temporary-dir ;
                                             } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "LOCAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
