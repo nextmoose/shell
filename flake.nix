@@ -373,7 +373,9 @@
                                                                               ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
                                                                               ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
                                                                             done &&
-                                                                            ${ _release } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
+                                                                            ${ pkgs.coreutils }/bin/echo 1 ${ _release } ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } >> /home/emory/projects/71tspv3q/repair &&
+                                                                            ${ _release } ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
+                                                                            ${ pkgs.coreutils }/bin/echo 2 ${ _release } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } >> /home/emory/projects/71tspv3q/repair &&
                                                                             ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
                                                                             ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }
                                                                           fi
