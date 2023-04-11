@@ -450,6 +450,10 @@
                                                       undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
                                                       in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                                   structure-directory = structure-directory ;
+						  system =
+						    {
+						      random = "/dev/urandom" ;
+						    } ;
 						  sudo = "/usr/bin/sudo" ;
                                                   temporary-dir = bash-variable locals.temporary-dir ;
                                             } ;
