@@ -1,11 +1,11 @@
-  {
+ {
     inputs = { flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ; } ;
     outputs =
       { flake-utils , self } :
         (
           {
             lib =
-              nixpkgs : flakes : at : structure-directory : scripts : resources : hook : inputs :
+              nixpkgs : flakes : at : structure-directory : scripts : resources : hook : inputs : inputs2 :
                 flake-utils.lib.eachDefaultSystem
                   (
                     system :
@@ -145,10 +145,7 @@
                                                 in builtins.concatStringsSep "" list ;
                                             in
                                               ''
-					        if [ -z "${ bash-variable globals.timestamp }" ]
-						then
-						  export ${ globals.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s )
-						fi &&
+                                                export ${ globals.timestamp }=${ bash-variable "${ globals.timestamp }:=$( ${ pkgs.coreutils }/bin/date +%s )" } &&
                                                 if [ ! -d ${ structure-directory } ]
                                                 then
                                                   ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
@@ -208,12 +205,12 @@
                                                 {
                                                   at = at ;
                                                   commands = _scripts "command" ;
-						  cron = "/etc/cron.d" ;
+                                                  cron = "/etc/cron.d" ;
                                                   flakes = _flakes ;
                                                   logger =
                                                     name :
                                                       ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable locals.logging-dir }/XXXXXXXX ) 2> /dev/null )" ;
-						  null = "/dev/null" ;
+                                                  null = "/dev/null" ;
                                                   pkgs = pkgs ;
                                                   release =
                                                     {
@@ -292,7 +289,7 @@
                                                                       null = track : "${ pkgs.coreutils }/bin/true" ;
                                                                       undefined = track : track.throw "ab341084-29c7-4404-a60a-deaca66c6e4f" ;
                                                                       in visit { bool = bool ; lambda = lambda ; null = null ; undefined = undefined ; } init ;
-								  _path = builtins.concatStringsSep "/" ( builtins.map to-string track.path ) ;
+                                                                  _path = builtins.concatStringsSep "/" ( builtins.map to-string track.path ) ;
                                                                   _release =
                                                                     let
                                                                       lambda = track : track.reduced ( _scripts "command" ) ;
@@ -387,42 +384,66 @@
                                                                   program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" } ${ bash-variable globals.salt }" ;
                                                                   script =
                                                                     ''
-								      if [ -z "${ bash-variable globals.timestamp }" ]
-								      then
+                                                                      ${ pkgs.coreutils }/bin/echo 0001000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
+                                                                      if [ -z "${ bash-variable globals.timestamp }" ]
+                                                                      then
                                                                         export ${ globals.timestamp }=${ bash-variable 1 }
-								      fi &&
+                                                                      fi &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0002000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       export ${ globals.salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0001000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       if [ ! -d ${ structure-directory } ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
                                                                       fi &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0003000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       exec 201<>${ structure-directory }/lock &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0004000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.flock }/bin/flock -s 201 &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0005000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       if [ ! -d ${ structure-directory }/resources ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
                                                                       fi &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0006000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       exec 202<>${ structure-directory }/resources/lock &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0007000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.flock }/bin/flock -s 202 &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0008000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       if [ ! -d ${ structure-directory }/resources/${ bash-variable globals.salt } ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }
                                                                       fi &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0009000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       exec 203<>${ structure-directory }/resources/${ bash-variable globals.salt }/lock &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0010000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.flock }/bin/flock 203 &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0011000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX ) &&
                                                                       if [ ${ bash-variable "#" } == 3 ]
                                                                       then
                                                                         ${ pkgs.coreutils }/bin/echo ${ bash-variable 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX )
                                                                       fi &&
-                                                                      if [ ! -e ${ structure-directory }/resources/${ bash-variable globals.salt }/resource ]
+                                                                      ${ pkgs.coreutils }/bin/echo 0012000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
+                                                                      if [ ! -L ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh ]
                                                                       then
+                                                                        ${ pkgs.coreutils }/bin/echo 0012100 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
+                                                                        ( ${ pkgs.coreutils }/bin/cat >> /home/emory/projects/71tspv3q/repair <<EOF
+                                                                        ${ _init }
+                                                                      EOF
+                                                                        ) &&
+                                                                        ${ pkgs.coreutils }/bin/echo 0012110 ${ ( to-string _path ) } $( ${ pkgs.coreutils }/bin/pwd ) >> /home/emory/projects/71tspv3q/repair &&
                                                                         ${ strip _init } &&
+                                                                        ${ pkgs.coreutils }/bin/echo 0012200 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                         ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh &&
-								        ${ pkgs.coreutils }/bin/echo ${ _path } > ${ structure-directory }/resources/${ bash-variable globals.salt }/path &&
-									${ pkgs.coreutils }/bin/chmod 0400 ${ structure-directory }/resources/${ bash-variable globals.salt }/path
+                                                                        ${ pkgs.coreutils }/bin/echo 0012300 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
+                                                                        ${ pkgs.coreutils }/bin/echo ${ _path } > ${ structure-directory }/resources/${ bash-variable globals.salt }/path &&
+                                                                        ${ pkgs.coreutils }/bin/echo 0012400 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
+                                                                        ${ pkgs.coreutils }/bin/chmod 0400 ${ structure-directory }/resources/${ bash-variable globals.salt }/path
                                                                       fi &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0013000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
+                                                                      ${ pkgs.coreutils }/bin/echo 0014000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
                                                                       ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable globals.salt } | ${ at } now 2> /dev/null
                                                                     '' ;
                                                                   in if show then "$( ${ pkgs.coreutils }/bin/cat $( ${ program } ) )" else "$( ${ program } )" ;
@@ -450,11 +471,12 @@
                                                       undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
                                                       in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
                                                   structure-directory = structure-directory ;
-						  system =
-						    {
-						      random = "/dev/urandom" ;
-						    } ;
-						  sudo = "/usr/bin/sudo" ;
+                                                  system =
+                                                    {
+                                                      null = "/dev/null" ;
+                                                      random = "/dev/urandom" ;
+                                                    } ;
+                                                  sudo = "/usr/bin/sudo" ;
                                                   temporary-dir = bash-variable locals.temporary-dir ;
                                             } ;
                                         tokenizer = seed : builtins.concatStringsSep "_" [ "LOCAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
@@ -503,7 +525,12 @@
                                   undefined = track : builtins.throw "f92a4a30-d3d5-40cb-adfc-d23da3b3b3ef" ;
                                   in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts ;
                             bash-variable = flake "bash-variable" ;
-                            buildInputs = builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs ( _scripts "input" ) ) ) ;
+                            buildInputs =
+                              builtins.concatLists
+                                [
+                                  ( builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs ( _scripts "input" ) ) ) )
+                                  ( builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs2 ( _scripts "hook" ) ) ) )
+                                ] ;
                             contains = string : target : builtins.replaceStrings [ target ] [ "" ] string != string ;
                             flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
                             globals =
