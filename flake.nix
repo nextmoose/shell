@@ -1,580 +1,590 @@
  {
-    inputs = { flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ; } ;
+    inputs =
+      {
+        bash-variable.url = "/home/emory/projects/5juNXfpb" ;
+        flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ;
+        nixpkgs.url = "github:nixos/nixpkgs?rev=57eac89459226f3ec743ffa6bbbc1042f5836843" ;
+        scripts.url = "/home/emory/projects/61EJI0cs" ;
+        strip.url = "/home/emory/projects/0TFnR2fJ" ;
+        try.url = "/home/emory/projects/0gG3HgHu" ;
+        visit.url = "/home/emory/projects/wHpYNJk8" ;
+      } ;
     outputs =
-      { flake-utils , self } :
+      { bash-variable , flake-utils , nixpkgs , self , scripts , strip , try , visit } :
         (
           {
             lib =
-              nixpkgs : flakes : at : structure-directory : scripts : resources : hook : inputs : inputs2 :
-                flake-utils.lib.eachDefaultSystem
-                  (
-                    system :
-                      {
-                        devShell =
-                          let
-                            _flakes = builtins.mapAttrs ( name : value : builtins.getAttr "lib" value ) flakes ;
-                            _scripts =
-                              target :
-                                let
-                                  lambda =
-                                    track :
-                                      let
-                                        arguments = [ "temporary-dir" "logging-dir" ] ;
-                                        command = pkgs.writeShellScript "command" input ;
-                                        date-format = "%Y-%m-%d-%H-%M-%S" ;
-                                        debug =
-                                          {
-                                            delock-structure-directory =
-                                              {
-                                                delock-logging-directory = 0 ;
-                                                delock-resources-directory = 0 ;
-                                                delock-temporary-directory = 0 ;
-                                              } ;
-                                          } ;
-                                        delock-structure-directory =
-                                          ''
-                                            if [ -d ${ structure-directory } ]
-                                            then
-                                              exec 201<>${ structure-directory }/lock &&
-                                              ${ pkgs.flock }/bin/flock 201 &&
-                                              ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
-                                              ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
-                                            fi
-                                          '' ;
-
-                                        hook = track.reduced ( structure locals ) ;
-                                        identity = x : x ;
-                                        input =
-                                          let
-                                            delete-temporary-dir =
-                                              ''
-                                                if [ -d ${ bash-variable locals.temporary-dir } ]
-                                                then
-                                                 exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s 201 &&
-                                                  if [ -d ${ bash-variable locals.temporary-dir } ]
-                                                  then
-                                                    exec 202<>${ structure-directory }/temporary/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s 202 &&
-                                                    if [ -d ${ bash-variable locals.temporary-dir } ]
-                                                    then
-                                                      exec 203<>${ bash-variable locals.temporary-dir }/lock &&
-                                                      ${ pkgs.flock }/bin/flock 203 &&
-                                                      ${ pkgs.findutils }/bin/find ${ bash-variable locals.temporary-dir } -type f -exec ${ pkgs.coreutils }/bin/shred --remove {} \; &&
-                                                      ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable locals.temporary-dir }
-                                                     fi
-                                                  fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-temporary-directory" ( strip delock-temporary-directory ) } | ${ at } now
-                                              '' ;
-                                            delock-logging-dir =
-                                              ''
-                                                if [ -d ${ bash-variable locals.logging-dir } ]
-                                                then
-                                                  exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s 201 &&
-                                                  if [ -d ${ bash-variable locals.logging-dir } ]
-                                                  then
-                                                    exec 202<>${ structure-directory }/logging/lock &&
-                                                    ${ pkgs.flock }/bin/flock -s 202 &&
-                                                    if [ -d ${ bash-variable locals.logging-dir } ]
-                                                    then
-                                                      exec 203<>${ bash-variable locals.logging-dir }/lock &&
-                                                      ${ pkgs.flock }/bin/flock 203 &&
-                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/out &&
-                                                      ${ pkgs.coreutils }/bin/touch ${ bash-variable locals.logging-dir }/err &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/out &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/err &&
-                                                      ${ pkgs.coreutils }/bin/chmod 0400 ${ bash-variable locals.logging-dir }/time &&
-                                                      ${ pkgs.findutils }/bin/find ${ bash-variable locals.logging-dir } -type f -name '*.*' -exec ${ pkgs.coreutils }/bin/chmod 0400 {} \;
-                                                      ${ pkgs.coreutils }/bin/rm ${ bash-variable locals.logging-dir }/lock &&
-                                                      ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ bash-variable locals.logging-dir }
-                                                    fi
-                                                  fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-logging-directory" ( strip delock-logging-directory ) } | ${ at } now
-                                              '' ;
-                                            delock-logging-directory =
-                                              ''
-                                                if [ -d ${ structure-directory }/logging ]
-                                                then
-                                                  exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s 2-1 &&
-                                                  if [ -d ${ structure-directory }/logging ]
-                                                  then
-                                                    exec 202<>${ structure-directory }/logging/lock &&
-                                                    ${ pkgs.flock }/bin/flock 202 &&
-                                                    ${ pkgs.coreutils }/bin/rm ${ structure-directory }/logging/lock &&
-                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/logging
-                                                  fi
-                                                fi
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-logging-directory } min
-                                              '' ;
-                                            delock-temporary-directory =
-                                              ''
-                                                if [ -d ${ structure-directory }/temporary ]
-                                                then
-                                                  exec 201<>${ structure-directory }/lock &&
-                                                  ${ pkgs.flock }/bin/flock -s 201 &&
-                                                  if [ -d ${ structure-directory }/temporary ]
-                                                  then
-                                                    exec 202<>${ structure-directory }/temporary/lock &&
-                                                    ${ pkgs.flock }/bin/flock 202 &&
-                                                    ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
-                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary
-                                                  fi
-                                                fi &&
-                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-temporary-directory } min
-                                              '' ;
-                                            temporary = if contains hook ( locals.temporary-dir ) then "" else "# " ;
-                                            program = pkgs.writeShellScript "hook" ( strip hook ) ;
-                                            standard =
-                                              output :
-                                                let
-                                                  process =
-                                                    ''
-                                                      >( ${ pkgs.moreutils }/bin/pee "${ pkgs.moreutils }/bin/ts ${ date-format } > ${ bash-variable locals.logging-dir }/${ output } 2> /dev/null" "${ pkgs.coreutils }/bin/tee > /dev/std${ output }" )
-                                                    '' ;
-                                                  in strip process ;
-                                            time-format =
-                                              let
-                                                base = "xDEFIKMOPRSUWXZcekprstwC" ;
-                                                generator = index : builtins.concatStringsSep "" [ "%" ( builtins.substring index 1 base ) "\\n" ] ;
-                                                length = builtins.stringLength base ;
-                                                list = builtins.genList generator length ;
-                                                in builtins.concatStringsSep "" list ;
-                                            in
-                                              ''
-                                                export ${ globals.timestamp }=${ bash-variable "${ globals.timestamp }:=$( ${ pkgs.coreutils }/bin/date +%s )" } &&
-                                                if [ ! -d ${ structure-directory } ]
-                                                then
-                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                fi &&
-                                                exec 201<>${ structure-directory }/lock &&
-                                                ${ pkgs.flock }/bin/flock -s 201 &&
-                                                ${temporary }if [ ! -d ${ structure-directory }/temporary ]
-                                                ${temporary }then
-                                                ${temporary }  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                                ${temporary }fi &&
-                                                ${temporary }exec 202<>${ structure-directory }/temporary/lock &&
-                                                ${temporary }${ pkgs.flock }/bin/flock -s 202 &&
-                                                ${temporary }export ${ locals.temporary-dir }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                                ${temporary }exec 203<>${ bash-variable locals.temporary-dir }/lock &&
-                                                ${temporary }${ pkgs.flock }/bin/flock 203 &&
-                                                if [ ! -d ${ structure-directory }/logging ]
-                                                then
-                                                  ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/logging
-                                                fi &&
-                                                exec 204<>${ structure-directory }/logging/lock &&
-                                                ${ pkgs.flock }/bin/flock -s 204 &&
-                                                export ${ locals.logging-dir }=$( ${ pkgs.mktemp }/bin/mktemp --directory ${ structure-directory }/logging/XXXXXXXX ) &&
-                                                exec 205<>${ bash-variable locals.logging-dir }/lock &&
-                                                ${ pkgs.flock }/bin/flock 205 &&
-                                                cleanup ( )
-                                                {
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-logging-dir" ( strip delock-logging-dir ) } | ${ at } now 2> /dev/null &&
-                                                  ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delete-temporary-dir" ( strip delete-temporary-dir ) } | ${ at } now 2> /dev/null &&
-                                                  if [ -f ${ bash-variable locals.logging-dir }/time ] && [ ! -s ${ bash-variable locals.logging-dir }/err ]
-                                                  then
-                                                    exit ${ bash-variable "EXIT_STATUS" }
-                                                  elif [ -f ${ bash-variable locals.logging-dir }/time ]
-                                                  then
-                                                    exit 64
-                                                  elif [ ! -s ${ bash-variable locals.logging-dir }/err ]
-                                                  then
-                                                    exit 65
-                                                  else
-                                                    exit 66
-                                                  fi
-                                                } &&
-                                                trap cleanup EXIT
-                                                ${ pkgs.time }/bin/time --format "${ time-format }" --output ${ bash-variable locals.logging-dir }/time ${ program } "${ bash-variable "@" }" \
-                                                  > ${ standard "out" } \
-                                                  2> ${ standard "err" } &&
-                                                EXIT_STATUS=${ bash-variable "?" }
-                                              '' ;
-                                        locals = variable arguments tokenizer false ;
-                                        string =
-                                          let
-                                            locals = variable arguments builtins.toString true ;
-                                            in track.reduced ( structure locals ) ;
-                                        structure =
-                                          locals :
-                                            let
-                                              in
-                                                {
-                                                  at = at ;
-                                                  commands = _scripts "command" ;
-                                                  cron = "/etc/cron.d" ;
-                                                  flakes = _flakes ;
-                                                  logger =
-                                                    name :
-                                                      ">( ${ pkgs.moreutils }/bin/ts ${ date-format } > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable locals.logging-dir }/XXXXXXXX ) 2> /dev/null )" ;
-                                                  null = "/dev/null" ;
-                                                  pkgs = pkgs ;
-                                                  release =
-                                                    {
-                                                      logs =
-                                                        pkgs.writeShellScript
-                                                          "logs"
-                                                          (
-                                                            let
-                                                              log =
-                                                                pkgs.writeShellScript
-                                                                  "log"
-                                                                  ''
-                                                                    exec 201<>${ bash-variable "1" }/lock &&
-                                                                    ${ pkgs.flock }/bin/flock -n 201 &&
-                                                                    if [ -f ${ bash-variable "1" }/out ] && [ $( ${ pkgs.coreutils }/bin/stat --format "%a" ${ bash-variable "1" }/out ) -eq 0400 ]
-                                                                    then
-                                                                      ${ pkgs.coreutils }/bin/mv ${ bash-variable "1" } ${ bash-variable locals.temporary-dir }
-                                                                    fi
-                                                                  '' ;
-                                                              in
-                                                                ''
-                                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/logging -mindepth 1 -maxdepth 1 -type d -exec ${ log } {} \;
-                                                                ''
-                                                          ) ;
-                                                      resources =
-                                                        pkgs.writeShellScript
-                                                          "resources"
-                                                          ''
-                                                            if [ -d ${ structure-directory }/resources ]
-                                                            then
-                                                              exec 201<>${ structure-directory }/resources/lock &&
-                                                              ${ pkgs.flock }/bin/flock -s 201 &&
-                                                              ${ pkgs.findutils }/bin/find ${ structure-directory }/resources -mindepth 2 -maxdepth 2 -type l -name destroy-resources-dir.sh | while read DESTROY_RESOURCES_DIR
-                                                              do
-                                                                if [ -L ${ bash-variable "DESTROY_RESOURCES_DIR" } ]
-                                                                then
-                                                                  ${ bash-variable "DESTROY_RESOURCES_DIR" } no
-                                                                fi
-                                                              done
-                                                            fi
-                                                          '' ;
-                                                    } ;
-                                                  resources =
-                                                    let
-                                                      lambda =
-                                                        track :
-                                                          let
-                                                            fun =
-                                                              salt :
-                                                                let
-                                                                  bool = track : unsalted track.reduced ;
-                                                                  int = track : salted track.reduced ;
-                                                                  null = track : salted track.reduced ;
-                                                                  undefined = track : track.throw "f79788be-8944-43ac-bf58-5a816009b5f3" ;
-                                                                  in visit { bool = bool ; int = int ; null = null ; undefined = undefined ; } salt ;
-                                                            salted =
-                                                              salt : init : release : show :
-                                                                let
-                                                                  _init =
-                                                                    let
-                                                                      bool =
-                                                                        track :
-                                                                          if track.reduced then "${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }/resource"
-                                                                          else "${ pkgs.coreutils }/bin/true" ;
-                                                                      lambda =
-                                                                        track :
-                                                                          let
-                                                                            mkdir = if contains ( track.reduced ( _scripts "hook" ) ) ( bash-variable 1 ) then "# " else "" ;
-                                                                            script = track.reduced ( _scripts "command" ) ;
-                                                                            in
-                                                                              ''
-                                                                                ${ mkdir }${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
-                                                                                ${ mkdir }cd ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
-                                                                                ${ script } ${ structure-directory }/resources/${ bash-variable globals.salt }/resource
-                                                                              '' ;
-                                                                      null = track : "${ pkgs.coreutils }/bin/true" ;
-                                                                      undefined = track : track.throw "ab341084-29c7-4404-a60a-deaca66c6e4f" ;
-                                                                      in visit { bool = bool ; lambda = lambda ; null = null ; undefined = undefined ; } init ;
-                                                                  _path = builtins.concatStringsSep "/" ( builtins.map to-string track.path ) ;
-                                                                  _release =
-                                                                    let
-                                                                      lambda = track : track.reduced ( _scripts "command" ) ;
-                                                                      null = track : "${ pkgs.coreutils }/bin/true" ;
-                                                                      undefined = track : track.throw "0d2d96a3-4ada-405c-a919-9837bd701cc1" ;
-                                                                      in visit { lambda = lambda ; null = null ; undefined = undefined ; } release ;
-                                                                  _salt =
-                                                                    let
-                                                                      int = track : "$(( ${ bash-variable "${ globals.timestamp }" } / ${ builtins.toString track.reduced } ))" ;
-                                                                      lambda = track : "$( ${ track.reduced ( _scripts "command" ) } ${ bash-variable "${ globals.timestamp }" } )" ;
-                                                                      null = track : "$(( ${ bash-variable "${ globals.timestamp }" } / ( 60 * 60 ) ))" ;
-                                                                      undefined = track : track.throw "547148a4-88ff-4eb9-aaa4-1703b46e5a6c" ;
-                                                                      in visit { int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
-                                                                  delock-resources-directory =
-                                                                    ''
-                                                                      if [ -d ${ structure-directory }/resources ]
-                                                                      then
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/resources ]
-                                                                        then
-                                                                          exec 202<>${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.flock }/bin/flock 202 &&
-                                                                          ${ pkgs.coreutils }/bin/rm ${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/resources
-                                                                        fi
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure-directory" ( strip delock-structure-directory ) } | ${ at } now + ${ builtins.toString debug.delock-structure-directory.delock-resources-directory } min
-                                                                    '' ;
-                                                                  delock-resources-dir =
-                                                                    ''
-                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
-                                                                      then
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
-                                                                        then
-                                                                          exec 202<>${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          if [ -d ${ structure-directory }/resources/${ bash-variable 1 } ]
-                                                                          then
-                                                                            exec 203<>${ structure-directory }/resources/${ bash-variable 1 }/lock &&
-                                                                            ${ pkgs.flock }/bin/flock 203 &&
-                                                                            ${ pkgs.coreutils }/bin/rm ${ structure-directory }/resources/${ bash-variable 1 }/lock &&
-                                                                            ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/resources/${ bash-variable 1 } &&
-                                                                            ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory ) } | ${ at } now
-                                                                          fi
-                                                                        fi
-                                                                      fi
-                                                                    '' ;
-                                                                  destroy-resources-dir =
-                                                                    ''
-                                                                      FORCE=${ bash-variable 1 } &&
-                                                                      OLD_SALT=$( ${ pkgs.coreutils }/bin/basename $( ${ pkgs.coreutils }/bin/dirname ${ bash-variable 0 } ) ) &&
-                                                                      ${ globals.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
-                                                                      NEW_SALT=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
-                                                                      if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
-                                                                      then
-                                                                        ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -mindepth 1 -maxdepth 1 -type f -name '*.salt' -exec ${ pkgs.coreutils }/bin/cat {} \; | while read SALT
-                                                                        do
-                                                                          if [ -L ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh ]
-                                                                          then
-                                                                            ${ structure-directory }/resources/${ bash-variable "SALT" }/destroy-resources-dir.sh yes
-                                                                          fi
-                                                                        done &&
-                                                                        exec 201<>${ structure-directory }/lock &&
-                                                                        ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                        if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
-                                                                        then
-                                                                          exec 202<>${ structure-directory }/resources/lock &&
-                                                                          ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                          if [ -d ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } ] && ( [ ${ bash-variable "OLD_SALT" } != ${ bash-variable "NEW_SALT" } ] || [ ${ bash-variable "FORCE" } == yes ] )
-                                                                          then
-                                                                            exec 203<>${ structure-directory }/resources/${ bash-variable "OLD_SALT" }/lock &&
-                                                                            ${ pkgs.flock }/bin/flock 203 &&
-                                                                            ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -name '*.pid' | while read PID_FILE
-                                                                            do
-                                                                              ${ pkgs.coreutils }/bin/tail --pid $( ${ pkgs.coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) --follow /dev/null &&
-                                                                              ${ pkgs.coreutils }/bin/rm ${ bash-variable "PID_FILE" }
-                                                                            done &&
-                                                                            ${ _release } "$( ${ pkgs.coreutils }/bin/cat ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }/path )" ${ bash-variable "FORCE" } ${ bash-variable "OLD_SALT" } ${ bash-variable "NEW_SALT" } &&
-                                                                            ${ pkgs.findutils }/bin/find ${ structure-directory }/resources/${ bash-variable "OLD_SALT" } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                                            ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/resources/${ bash-variable "OLD_SALT" }
-                                                                          fi
-                                                                        fi
-                                                                      else
-                                                                        ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ bash-variable 0 } ${ bash-variable "OLD_SALT" } | ${ at } now + 1 min
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-directory" ( strip delock-resources-directory )} ${ bash-variable "OLD_SALT" } | ${ at } now 
-                                                                    '' ;
-                                                                  pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ ( builtins.toString track.index ) _salt _init _release ] ) ;
-                                                                  program = "${ pkgs.writeShellScript "program" ( strip script ) } $( ${ pkgs.coreutils }/bin/date +%s ) ${ bash-variable "$" } ${ bash-variable globals.salt }" ;
-                                                                  script =
-                                                                    ''
-                                                                      ${ pkgs.coreutils }/bin/echo 0001000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      if [ -z "${ bash-variable globals.timestamp }" ]
-                                                                      then
-                                                                        export ${ globals.timestamp }=${ bash-variable 1 }
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0002000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      export ${ globals.salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ _salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0001000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      if [ ! -d ${ structure-directory } ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0003000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      exec 201<>${ structure-directory }/lock &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0004000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.flock }/bin/flock -s 201 &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0005000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      if [ ! -d ${ structure-directory }/resources ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0006000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      exec 202<>${ structure-directory }/resources/lock &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0007000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.flock }/bin/flock -s 202 &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0008000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      if [ ! -d ${ structure-directory }/resources/${ bash-variable globals.salt } ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resources/${ bash-variable globals.salt }
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0009000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      exec 203<>${ structure-directory }/resources/${ bash-variable globals.salt }/lock &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0010000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.flock }/bin/flock 203 &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0011000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ bash-variable 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX ) &&
-                                                                      if [ ${ bash-variable "#" } == 3 ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/echo ${ bash-variable 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resources/${ bash-variable globals.salt }/XXXXXXXX )
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0012000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      if [ ! -L ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh ]
-                                                                      then
-                                                                        ${ pkgs.coreutils }/bin/echo 0012100 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                        ( ${ pkgs.coreutils }/bin/cat >> /home/emory/projects/71tspv3q/repair <<EOF
-                                                                        ${ _init }
-                                                                      EOF
-                                                                        ) &&
-                                                                        ${ pkgs.coreutils }/bin/echo 0012110 ${ ( to-string _path ) } $( ${ pkgs.coreutils }/bin/pwd ) >> /home/emory/projects/71tspv3q/repair &&
-                                                                        ${ strip _init } &&
-                                                                        ${ pkgs.coreutils }/bin/echo 0012200 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                        ${ pkgs.coreutils }/bin/ln --symbolic ${ pkgs.writeShellScript "destroy-resources-dir" ( strip destroy-resources-dir ) } ${ structure-directory }/resources/${ bash-variable globals.salt }/destroy-resources-dir.sh &&
-                                                                        ${ pkgs.coreutils }/bin/echo 0012300 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                        ${ pkgs.coreutils }/bin/echo ${ _path } > ${ structure-directory }/resources/${ bash-variable globals.salt }/path &&
-                                                                        ${ pkgs.coreutils }/bin/echo 0012400 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                        ${ pkgs.coreutils }/bin/chmod 0400 ${ structure-directory }/resources/${ bash-variable globals.salt }/path
-                                                                      fi &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0013000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resources/${ bash-variable globals.salt }/resource &&
-                                                                      ${ pkgs.coreutils }/bin/echo 0014000 ${ ( to-string _path ) } >> /home/emory/projects/71tspv3q/repair &&
-                                                                      ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-resources-dir" ( strip delock-resources-dir ) } ${ bash-variable globals.salt } | ${ at } now 2> /dev/null
-                                                                    '' ;
-                                                                  in if show then "$( ${ pkgs.coreutils }/bin/cat $( ${ program } ) )" else "$( ${ program } )" ;
-                                                        to-string =
-                                                          let
-                                                            path = track : builtins.toString track.reduced ;
-                                                            string = track : track.reduced ;
-                                                            undefined = track : track.throw "3ebbf22e-ebf7-49e4-a70a-207058c94c34" ;
-                                                            in visit { path = path ; string = string ; undefined = undefined ; } ;
-                                                        unsalted =
-                                                          salt : init : show :
-                                                            let
-                                                              bool = track :
-                                                                if salt then
-                                                                  if track.reduced then to-string init
-                                                                  else builtins.toFile "resource" ( to-string init )
-                                                                else
-                                                                  if track.reduced then builtins.readFile init
-                                                                  else to-string init ;
-                                                              undefined = track : track.throw "3b1457d8-1f6b-4d5b-912b-5f6fe0c845a6" ;
-                                                              in visit { bool = bool ; undefined = undefined ; } show ;
-                                                        in track.reduced fun ;
-                                                      list = track : track.reduced ;
-                                                      set = track : track.reduced ;
-                                                      undefined = track : track.throw "a66f1f44-3434-40cb-8e2e-e20481fa4c7b" ;
-                                                      in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
-                                                  structure-directory = structure-directory ;
-                                                  system =
-                                                    {
-                                                      null = "/dev/null" ;
-                                                      random = "/dev/urandom" ;
-                                                    } ;
-                                                  sudo = "/usr/bin/sudo" ;
-                                                  temporary-dir = bash-variable locals.temporary-dir ;
-                                            } ;
-                                        tokenizer = seed : builtins.concatStringsSep "_" [ "LOCAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
-                                        variable =
-                                          input : tokenizer : check :
-                                            let
-                                              indexed =
-                                                let
-                                                  list = track : builtins.concatLists track.reduced ;
-                                                  set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                                  string = track : [ track.reduced ] ;
-                                                  undefined = track : builtins.throw "380398e0-9b6c-4bc9-b6ab-acc09fb2f70a" ;
-                                                  in visit { list = list ; set = set ; string = string ; undefined = undefined ; } input ;
-                                              seeded =
-                                                let
-                                                  reducer =
-                                                    previous : current :
-                                                      try
-                                                        (
-                                                          seed :
-                                                            let
-                                                              token = tokenizer seed ;
-                                                              in
-                                                                {
-                                                                  success =
-                                                                    let
-                                                                      is-not-in-string = if check then true else builtins.replaceStrings [ token ] [ "" ] string == string ;
-                                                                      is-unique = builtins.all ( t : t != token ) previous ;
-                                                                      is-not-small = seed > 2 ;
-                                                                      in is-not-in-string && is-unique && is-not-small ;
-                                                                  value = builtins.concatLists [ previous [ token ] ] ;
-                                                                }
-                                                        ) ;
-                                                  in builtins.foldl' reducer [ ] indexed ;
-                                              to-list =
-                                                let
-                                                  list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                                  set = track : track.reduced ;
-                                                  string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-                                                  undefined = track : builtins.throw "4aad19a1-9b4e-4dec-b6b2-724a6b1c8e68" ;
-                                                  in visit { list = list ; set = set ; string = string ; undefined = undefined ; } input ;
-                                              in if builtins.typeOf to-list == "string" then builtins.throw "2d15c35d-cfcb-4a5e-94fc-c5d1cc8fccea" else to-list ;
-                                        in if target == "hook" then hook else if target == "input" then input else command ;
-                                  list = track : track.reduced ;
-                                  set = track : track.reduced ;
-                                  undefined = track : builtins.throw "f92a4a30-d3d5-40cb-adfc-d23da3b3b3ef" ;
-                                  in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts ;
-                            bash-variable = flake "bash-variable" ;
-                            buildInputs =
-                              builtins.concatLists
-                                [
-                                  ( builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs ( _scripts "input" ) ) ) )
-                                  ( builtins.attrValues ( builtins.mapAttrs pkgs.writeShellScriptBin ( inputs2 ( _scripts "hook" ) ) ) )
-                                ] ;
-                            contains = string : target : builtins.replaceStrings [ target ] [ "" ] string != string ;
-                            flake = name : if builtins.hasAttr name _flakes then builtins.getAttr name _flakes else builtins.throw "02b10e6f-b099-4bde-afec-9caa68e39950" ;
-                            globals =
+              let
+                flakes = { nixpkgs = nixpkgs ; scripts = scripts ; try = try ; visit = visit ; } ;
+                in
+                  {
+                    dev ? { null = "/dev/null" ; stdout = "/dev/stdout" ; } ,
+                    hook ,
+                    inputs ,
+                    nixpkgs ? flakes.nixpkgs ,
+                    resources ,
+                    scripts ? flakes.scripts ,
+                    structure-directory ? "/tmp/structure" ,
+                    try ? flakes.try ,
+                    visit ? flakes.visit
+                  } :
+                    flake-utils.lib.eachDefaultSystem
+                      (
+                        system :
+                          {
+                            devShell =
                               let
-                                attrs = [ "salt" "timestamp" ] ;
-                                indexed =
+                                _hook =
                                   let
-                                    list = track : builtins.concatLists track.reduced ;
-                                    set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
-                                    string = track : [ track.reduced ] ;
-                                    undefined = track : track.throw "d15d5429-2fee-4162-9da4-b88981624aa3" ;
-                                    in visit { list = list ; set = set ; string = string ; undefined = undefined ; } attrs ;
-                                seeded =
+                                    lambda = track : track.reduced _scripts { pathed = false ; simple-name = "hook" ; } ;
+                                    undefined = track : track.throw "74478eda-a96c-4257-9f15-8e6edb3f753c" ;
+                                    in visit.lib { lambda = lambda ; undefined = undefined ; } hook ;
+                                _inputs =
                                   let
-                                    reducer =
-                                      previous : current :
-                                        try
-                                          (
-                                            seed :
+                                    list = track : track.reduced ;
+                                    string = track : track.reduced ;
+                                    undefined = track : track.throw "b4c6c730-4669-4e7d-b312-8950bbce4971" ;
+                                    in visit.lib { list = list ; string = string ; undefined = undefined ; } ( inputs _scripts ) ;
+                                _resources =
+                                  fun :
+                                    let
+                                      lambda =
+                                        track :
+                                          let
+                                            resource =
+                                              { init , name ? null , make-directory ? null , permission ? null , salt ? null , salted ? null , show ? false } : { persist ? null } :
+                                                let
+                                                  pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues saltables ) ) );
+                                                  program = pkgs.writeShellScript reduced.name script ;
+                                                  reduced = saltables // unsaltables ;
+                                                  saltables =
+                                                    {
+                                                      init =
+                                                        let
+                                                          lambda = track : track.reduced _scripts { pathed = false ; } ;
+                                                          null = track : "" ;
+                                                          undefined = track : track.throw "a8a3bab5-90ce-4eac-bf03-e22ac62f0a78" ;
+                                                          in visit.lib { lambda = lambda ; null = null ; undefined = undefined ; } init ;
+                                                      make-directory =
+                                                        let
+                                                          bool = track : track.reduced ;
+                                                          null = track : false ;
+                                                          undefined = track : track.throw "cea2149e-f293-4b78-bd41-47e398289a69" ;
+                                                          in visit.lib { bool = bool ; null = null ; undefined = undefined ; } make-directory ;
+                                                      permission =
+                                                        let
+                                                          int = track : builtins.substring 1 4 ( builtins.toString ( 90000 + track.reduced ) ) ;
+                                                          null = track : "0400" ;
+                                                          string = track : track.reduced ;
+                                                          in visit.lib { int = int ; null = null ; string = string ; } permission ;
+                                                      salt =
+                                                        let
+                                                          int = track : "$(( ${ bash-variable.lib 1 } / ${ builtins.toString track.reduced } ))" ;
+                                                          lambda = track : "$( ${ track.reduced _scripts } ${ bash-variable.lib 1 } )" ;
+                                                          null = track : "$(( ${ bash-variable.lib 1 } / ${ builtins.toString ( 60 * 60 ) } ))" ;
+                                                          undefined = track : track.throw "48f9a455-aefa-4c8f-89ad-84ac93d0b3bd" ;
+                                                          in visit.lib { int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
+                                                    } ;
+                                                  script =
+                                                    let
+						      marked =
+						        let
+							  set = track : track.reduced ;
+							  string =
+							    track :
+							      ''
+							        # ${ track.qualified-name }
+
+								${ track.reduced }
+							      '' ;
+							  in visit.lib { set = set ; string = string ; undefined = undefined ; } scripts ;
+                                                      scripts =
+                                                        {
+                                                          persist =
+                                                            {
+                                                              cat =
+                                                                ''
+                                                                  export ${ _salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ reduced.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                  if [ ! -d ${ structure-directory }/resource/${ bash-variable.lib  _salt } ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable.lib _salt }
+                                                                  fi &&
+                                                                  exec 201<>${ structure-directory }/resource/${ bash-variable.lib _salt }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock 201 &&
+                                                                  if [ ! -f ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource ]
+                                                                  then
+                                                                    ${ reduced.init } > ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource &&
+                                                                    ${ pkgs.coreutils }/bin/chmod ${ reduced.permission } ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource 
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX ) &&
+                                                                  if [ ! -z "${ bash-variable.lib 3 }" ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX )
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/cat ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource
+                                                                '' ;
+                                                              echo =
+                                                                ''
+                                                                  export ${ _salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ saltables.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                  if [ ! -d ${ structure-directory }/resource/${ bash-variable.lib _salt } ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable.lib _salt }
+                                                                  fi &&
+                                                                  exec 201<>${ structure-directory }/resource/${ bash-variable.lib _salt }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock 201 &&
+                                                                  if [ ! -f ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource ]
+                                                                  then
+                                                                    ${ reduced.init } > ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource &&
+                                                                    ${ pkgs.coreutils }/bin/chmod ${ reduced.permission } ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource 
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX ) &&
+                                                                  if [ ! -z "${ bash-variable.lib 3 }" ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 3 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX )
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource
+                                                                '' ;
+                                                            } ;
+                                                          unpersist =
+                                                            {
+                                                              cat =
+                                                                ''
+                                                                  export ${ _salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ saltables.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                  if [ ! -d ${ structure-directory }/resource/${ bash-variable.lib _salt } ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable.lib _salt }
+                                                                  fi &&
+                                                                  exec 201<>${ structure-directory }/resource/${ bash-variable.lib _salt }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock 201 &&
+                                                                  if [ ! -f ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource ]
+                                                                  then
+                                                                    ${ reduced.init } > ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource &&
+                                                                    ${ pkgs.coreutils }/bin/chmod ${ reduced.permission } ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource 
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX ) &&
+                                                                  ${ pkgs.coreutils }/bin/cat ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource
+                                                                '' ;
+                                                              echo =
+                                                                ''
+                                                                  export ${ _salt }=$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ saltables.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 ) &&
+                                                                  if [ ! -d ${ structure-directory }/resource/${ bash-variable.lib _salt } ]
+                                                                  then
+                                                                    ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable.lib _salt }
+                                                                  fi &&
+                                                                  exec 201<>${ structure-directory }/resource/${ bash-variable.lib _salt }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock 201 &&
+                                                                  if [ ! -f ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource ]
+                                                                  then
+                                                                    ${ reduced.init } > ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource &&
+                                                                    ${ pkgs.coreutils }/bin/chmod ${ reduced.permission } ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource 
+                                                                  fi &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ bash-variable.lib 2 } > $( ${ pkgs.coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable.lib _salt }/XXXXXXXX ) &&
+                                                                  ${ pkgs.coreutils }/bin/echo ${ structure-directory }/resource/${ bash-variable.lib _salt }/resource
+                                                                '' ;
+                                                            } ;
+                                                        } ;
+                                                      in builtins.getAttr reduced.show ( builtins.getAttr reduced.persist marked ) ;
+                                                  unsaltables =
+                                                    {
+                                                      name =
+                                                        let
+                                                          null = track : "resource" ;
+                                                          string = track : track.reduced ;
+                                                          undefined = track : track.throw "6ce60b00-c9f4-476b-a911-39ec32bbb194" ;
+                                                          in visit.lib { null = null ; string = string ; undefined = undefined ; } name ;
+                                                      persist =
+                                                        let
+                                                          bool = track : if track.reduced then "persist" else "unpersist" ;
+                                                          null = track : "persist" ;
+                                                          undefined = track : track.throw "4c966b48-cae2-4215-a4be-59f0ed556223" ;
+                                                          in visit.lib { bool = bool ; null = null ; undefined = undefined ; } persist ;
+                                                      salted =
+                                                        let
+                                                          bool = track : track.reduced ;
+                                                          null = track : true ;
+                                                          undefined = track : builtins.throw "482251d5-f6a0-47e4-8b55-cc9e42ca114e" ;
+                                                          in visit.lib { bool = bool ; null = null ; undefined = undefined ; } salted ;
+                                                      show =
+                                                        let
+                                                          bool = track : if track.reduced then "cat" else "echo" ;
+                                                          null = track : "echo" ;
+                                                          undefined = track : track.throw "f88b44a2-52ca-47f5-a619-540f5840dde3" ;
+                                                          in visit.lib { bool = bool ; null = null ; undefined = undefined ; } show ;
+                                                    } ;
+                                                  in fun ( builtins.toString program ) ;
+                                          in track.reduced resource ;
+                                      list = track : track.reduced ;
+                                      set = track : track.reduced ;
+                                      undefined = track : track.throw "ee349946-85ea-43c4-9313-8c31d785de42" ;
+                                      in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } resources ;
+                                _salt =
+                                  try.lib
+                                    (
+                                      seed :
+                                        let
+                                          token = builtins.concatStringsSep "_" [ "GLOBAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
+                                          in
+                                            {
+                                              success = true ;
+					      # STRICTLY SPEAKING THE PREVIOUS IS A KLUDGE BECAUSE THERE IS A NON ZERO CHANCE OF A CONFLICT
+					      # BUT IT IS CLOSE TO ZERO
+					      success2 =
+                                                let
+                                                  lambda = track : builtins.replaceStrings [ token ] [ "" ] ( track.reduced { } ) == ( track.reduced { } ) ;
+                                                  list = track : builtins.all ( t : t ) track.reduced ;
+                                                  set = track : builtins.all ( t : t ) ( builtins.attrValues track.reduced ) ;
+                                                  undefined = track : track.throw "4d471245-b5e7-4e43-a555-87e1220480ae" ;
+                                                  in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } _scripts ;
+                                              value = token ;
+                                            }
+                                    ) ;
+                                _scripts =
+                                  let
+                                    lambda =
+                                      track :
+                                        let
+                                          arguments =
+                                            {
+                                              numbers = [ "xstdout" "xstderr" "xstdin" "structure-directory" "temporary-directory" "temporary-dir" "log-directory" "log-dir" "resource-directory" ] ;
+                                              variables = [ "temporary-dir" "log-dir" "resource-dir" "timestamp" ] ;
+                                            } ;
+                                          numbers = unique arguments.numbers builtins.toString ;
+                                          structure =
+                                            numbers : variables :
+                                              {
+                                                bash-variable = bash-variable.lib ;
+                                                command = lambda : lambda _scripts { } ;
+                                                dev = dev ;
+                                                index = builtins.toString track.index ;
+                                                log =
+                                                  target :
+                                                    let
+                                                      string =
+                                                        ''
+                                                          >( ${ pkgs.moreutils }/bin/pee "${ ts }" "${ tee }" )
+                                                        '' ;
+                                                      tee = "( ${ pkgs.coreutils }/bin/tee > ${ dev.stdout } ) > ${ dev.null }" ;
+                                                      ts = "${ pkgs.moreutils }/bin/ts > ${ bash-variable.lib variables.log-dir }/${ builtins.hashString "sha512" ( builtins.toString target ) } 2> ${ dev.null }" ;
+                                                      in strip.lib ( string ) ;
+                                                log-dir = bash-variable.lib variables.log-dir ;
+                                                numbers = numbers ;
+                                                path =
+                                                  let
+                                                    int = track : "[ ${ builtins.toString track.reduced } ]" ;
+                                                    list = track : builtins.concatStringsSep " - " track.reduced ;
+                                                    string = track : "{ ${ track.reduced } }" ;
+                                                    undefined = track : track.throw "4096a2fd-325e-473e-b987-976f5192e82b" ;
+                                                    in visit.lib { int = int ; list = list ; string = string ; undefined = undefined ; } track.path ;
+                                                pkgs = pkgs ;
+                                                resource =
+                                                lambda :
+                                                  let
+                                                    arguments =
+                                                      ''
+                                                        ${ bash-variable.lib variables.timestamp } ${ bash-variable.lib "$" } ${ bash-variable.lib _salt }
+                                                      '' ;
+                                                    in lambda ( _resources ( resource : "$( ${ resource } ${ strip.lib arguments } )" ) ) ;
+                                              structure-directory = structure-directory ;
+                                              temporary-dir = bash-variable.lib variables.temporary-dir ;
+                                              timestamp = bash-variable.lib variables.timestamp ;
+                                            } ;
+                                          string =
+                                            list : set :
                                               let
-                                                token = builtins.concatStringsSep "_" [ "GLOBAL" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ;
-                                                in
-                                                  {
-                                                    success = builtins.all ( p : p != token ) previous ;
-                                                    value = builtins.concatLists [ previous [ token ] ] ;
-                                                  }
-                                          ) ;
-                                    in builtins.foldl' reducer [ ] indexed ;
-                                to-list =
-                                  let
-                                    list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
-                                    set = track : track.reduced ;
-                                    string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
-                                    undefined = track : builtins.throw "4aad19a1-9b4e-4dec-b6b2-724a6b1c8e68" ;
-                                    in visit { list = list ; set = set ; string = string ; undefined = undefined ; } attrs ;
-                                in to-list ;
-                            pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                            shellHook = hook ( _scripts "hook" ) ;
-                            strip = flake "strip" ;
-                            try = flake "try" ;
-                            visit = flake "visit" ; 
-                            in pkgs.mkShell { buildInputs = buildInputs ; shellHook = shellHook ; } ;
-                      }
-                  ) ;
+                                                transformed =
+                                                  let
+                                                    string = track : { "${ track.reduced }" = "" ; } ;
+                                                    undefined = track : track.throw "f561df33-ab50-4023-a14b-6aa8139d7e52" ;
+                                                    in visit.lib { list = list ; set = set ; string = string ; undefined = undefined ; } ;
+                                                in track.reduced ( structure ( transformed arguments.numbers ) ( transformed arguments.variables ) ) ;
+                                          unique =
+                                            arguments : tokenizer :
+                                              let
+                                                indexed =
+                                                  let
+                                                    list = track : builtins.concatLists track.reduced ;
+                                                    set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+                                                    string = track : [ track.reduced ] ;
+                                                    undefined = track : track.throw "3e431c12-e6a7-447b-a2a8-69f075df88ad" ;
+                                                    in visit.lib { list = list ; set = set ; string = string ; undefined = undefined ; } arguments ;
+                                                list = track : builtins.foldl' ( previous : current : previous // current ) { } track.reduced ;
+                                                seeded =
+                                                  let
+                                                    reducer =
+                                                      previous : current :
+                                                        try.lib
+                                                          (
+                                                            seed :
+                                                              let
+                                                                str = string list set ;
+                                                                token = tokenizer seed ;
+                                                                in
+                                                                  {
+                                                                    success = builtins.all ( p : p != token ) previous && builtins.replaceStrings [ token ] [ "" ] str == str ;
+                                                                    value = builtins.concatLists [ previous [ token ] ] ;
+                                                                  }
+                                                          ) ;
+                                                    in builtins.foldl' reducer [ ] indexed ;
+                                                set = track : track.reduced ;
+                                                transformed =
+                                                  let
+                                                    string = track : { "${ track.reduced }" = builtins.elemAt seeded track.index ; } ;
+                                                    undefined = track : track.throw "353f90b4-d9dd-4a98-861a-08be775165a0" ;
+                                                    in visit.lib { list = list ; set = set ; string = string ; undefined = undefined ; } arguments ;
+                                                in transformed ;
+                                          variables = unique arguments.variables ( seed : builtins.concatStringsSep "_" [ "LOCALS" ( builtins.hashString "sha512" ( builtins.toString seed ) ) ] ) ;
+                                          script = strip.lib ( track.reduced ( structure numbers variables ) ) ;
+                                          program =
+                                            {
+                                              pathed ? true ,
+                                              simple-name ? null
+                                            } :
+                                              let
+                                                elem =
+                                                  let
+                                                    elems =
+                                                      {
+                                                        no-resource =
+                                                          {
+                                                            no-log =
+                                                              {
+                                                                no-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+                                                        
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                                 yes-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/temporary ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                                    fi &&
+                                                                    exec ${ numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.temporary-directory } &&
+                                                                    export ${ variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                                    exec ${ numbers.temporary-directory }<>${ bash-variable.lib variables.temporary-dir }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory } &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                              } ;
+                                                            yes-log =
+                                                              {
+                                                                no-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+                                                        
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/log ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                                    fi &&
+                                                                    exec ${ numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.log-directory } &&
+                                                                    export ${ variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                  '' ;
+                                                                yes-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+    
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/temporary ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                                    fi &&
+                                                                    exec ${ numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.temporary-directory } &&
+                                                                    export ${ variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                                    exec ${ numbers.temporary-directory }<>${ bash-variable.lib variables.temporary-dir }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/log ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                                    fi &&
+                                                                    exec ${ numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.log-directory } &&
+                                                                    export ${ variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                               } ;
+                                                          } ;   
+                                                        yes-resource =
+                                                          {
+                                                            no-log =
+                                                              {
+                                                                no-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/resource ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource
+                                                                    fi &&
+                                                                    exec ${ numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.resource-directory } &&
+                                                                    export ${ variables.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                                yes-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+ 
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/temporary ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                                    fi &&
+                                                                    exec ${ numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.temporary-directory } &&
+                                                                    export ${ variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                                    exec ${ numbers.temporary-directory }<>${ bash-variable.lib variables.temporary-dir }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/resource ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource
+                                                                    fi &&
+                                                                    exec ${ numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.resource-directory } &&
+                                                                    export ${ variables.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                              } ;
+                                                            yes-log =
+                                                              {
+                                                                no-temporary =
+                                                                  ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+                                                        
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/log ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                                    fi &&
+                                                                    exec ${ numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.log-directory } &&
+                                                                    export ${ variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                                                                    if [ ! -d ${ structure-directory }/resource ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource
+                                                                    fi &&
+                                                                    exec ${ numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.resource-directory } &&
+                                                                    export ${ variables.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                               yes-temporary =
+                                                                 ''
+                                                                    # ${ builtins.toString track.index }
+                                                                    # ${ track.qualified-name }
+
+                                                                    if [ ! -d ${ structure-directory } ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                                    fi &&
+                                                                    exec ${ numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.structure-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/temporary ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                                    fi &&
+                                                                    exec ${ numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.temporary-directory } &&
+                                                                    export ${ variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                                    exec ${ numbers.temporary-directory }<>${ bash-variable.lib variables.temporary-dir }/lock &&
+                                                                    ${ pkgs.flock }/bin/flock ${ numbers.temporary-directory } &&
+                                                                    if [ ! -d ${ structure-directory }/log ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                                    fi &&
+                                                                    exec ${ numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.log-directory } &&
+                                                                    export ${ variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                                                                    if [ ! -d ${ structure-directory }/resource ]
+                                                                    then
+                                                                      ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource
+                                                                    fi &&
+                                                                    exec ${ numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                                                                    ${ pkgs.flock }/bin/flock -s ${ numbers.resource-directory } &&
+                                                                    export ${ variables.timestamp }=$( ${ pkgs.coreutils }/bin/date +%s ) &&
+
+                                                                    exec ${ pkgs.writeShellScript track.simple-name script }
+                                                                 '' ;
+                                                              } ;
+                                                          } ;   
+                                                      } ;
+                                                    logging = if builtins.replaceStrings [ variables.log-dir ] [ "" ] script == script then "no-log" else "yes-log" ;
+                                                    resource =
+                                                      let
+                                                        search =
+                                                          let
+                                                            list = track : builtins.concatLists track.reduced ;
+                                                            set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
+                                                            string = track : [ track.reduced ] ;
+                                                            undefined = track : track.throw "4b7c374e-0bb6-495c-979c-a353c66a7e17" ;
+                                                            in visit.lib { list = list ; set = set ; string = string ; undefined = undefined ; } ( _resources ( resource : resource ) ) ;
+                                                        in "yes-resource" ;
+                                                    temporary = if builtins.replaceStrings [ variables.log-dir ] [ "" ] script == script then "no-temporary" else "yes-temporary" ;
+                                                    in builtins.getAttr temporary ( builtins.getAttr logging ( builtins.getAttr resource elems ) ) ;
+                                                name = if builtins.typeOf simple-name == "string" then simple-name else track.simple-name ;
+                                                writer = if pathed then pkgs.writeShellScriptBin else pkgs.writeShellScript ;
+                                                in builtins.toString ( writer name ( strip.lib elem ) ) ;
+                                          in program ;
+                                      list = track : track.reduced ;
+                                      set = track : track.reduced ;
+                                      undefined = track : track.throw "46a080f2-eed5-464a-816c-32925a099e7e" ;
+                                    in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts.lib ;
+                                pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+                                in pkgs.mkShell { buildInputs = _inputs ; shellHook = _hook ; } ;
+                          }
+                      ) ;
             }
           ) ;
   }
