@@ -12,17 +12,18 @@
       } ;
     outputs =
       { bash-variable , flake-utils , nixpkgs , self , scripts , strip , try , unique , visit } :
-        flake-utils.lib.eachDefaultSystem
-	  (
-	    system :
-	      let
-	        pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-		in
-		  {
-		    lib =
-		      {
-		        devShell = pkgs.mkShell { } ;
-		      } ;
-		  }
-	  ) ;
+        {
+          lib =
+	    { hook , inputs , resources } :
+	      flake-utils.lib.eachDefaultSystem
+	        (
+		  system :
+		    let
+		      pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+		      in
+		        {
+			  devShell = pkgs.mkShell { } ;
+			}
+		) ;
+        } ;
   }
