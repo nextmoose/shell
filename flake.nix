@@ -220,6 +220,25 @@
                                         track :
                                           let
 					    local =
+					      {
+					        numbers =
+						  {
+						    structure-directory = "101" ;
+						    temporary-directory = "102" ;
+						    temporary-dir = "103" ;
+						    log-directory = "104" ;
+						    log-dir = "105" ;
+						    resource-directory = "106" ;
+						  } ;
+						variables =
+						  {
+						    temporary-dir = "V_temporary-dir" ;
+						    log-dir = "V_log-dir" ;
+						    resource-dir = "V_resource-dir" ;
+						    timestamp = "V_timestamp" ;
+						  } ;
+					      } ;
+					    local2 =
 					      unique
 					        {
 					          numbers =
@@ -255,10 +274,6 @@
 					    numbers = global.numbers // local.numbers ;
                                             structure =
 					      local :
-					        let
-						  numbers = global.numbers // local.numbers ;
-						  variables = global.variables // local.variables ;
-						  in
                                                 {
                                                   bash-variable = bash-variable.lib ;
                                                   command = lambda : lambda ( _scripts global ) { } ;
@@ -561,7 +576,6 @@
                                   unique
                                     { numbers = { } ; variables = { salt = functions.hash "GLOBAL" ; } ; }
                                     ( _scripts )
-				    ( token : empty : true )
                                     (
                                       token :
                                         let
@@ -574,6 +588,19 @@
                                           set = track : builtins.all ( p : p ) ( builtins.attrValues track.reduced ) ;
                                           undefined = track : track.throw "50cfefcf-ce46-43c9-87fc-f1df8525e071" ;
                                           in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; }
+                                    )
+                                    (
+                                      token : scripts :
+                                        let
+                                          lambda =
+                                            track :
+                                              let
+                                                string = track.reduced { } ;
+                                                in builtins.replaceStrings [ token ] [ "" ] string == string ;
+                                          list = track : builtins.all ( p : p ) track.reduced ;
+                                          set = track : builtins.all ( p : p ) ( builtins.attrValues track.reduced ) ;
+                                          undefined = track : track.throw "50cfefcf-ce46-43c9-87fc-f1df8525e071" ;
+                                          in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } scripts
                                     ) ;
                                 unique =
                                   arguments : factory : predicate : fourth :
