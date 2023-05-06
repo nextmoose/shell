@@ -240,6 +240,7 @@
 						    } ;
 						}
 						( structure )
+						( token : empty : true )
 						(
 						  token : structure :
 						    let
@@ -555,6 +556,7 @@
                                   unique
                                     { numbers = { } ; variables = { salt = functions.hash "GLOBAL" ; } ; }
                                     ( _scripts )
+				    ( token : empty : true )
                                     (
                                       token :
                                         let
@@ -569,7 +571,7 @@
                                           in visit.lib { lambda = lambda ; list = list ; set = set ; undefined = undefined ; }
                                     ) ;
                                 unique =
-                                  arguments : factory : predicate :
+                                  arguments : factory : predicate : fourth :
                                     let
                                       empty =
                                         let
@@ -595,7 +597,7 @@
                                                   token = current seed ;
                                                   in
                                                     {
-                                                      success = builtins.all ( p : p != token ) previous && true ; # && predicate token ( factory empty ) ;
+                                                      success = builtins.all ( p : p != token ) previous && true && predicate token ( factory empty ) ;
                                                       value = builtins.concatLists [ previous [ token ] ] ;
                                                     }
                                             ) ;
