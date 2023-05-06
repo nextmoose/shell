@@ -595,7 +595,7 @@
                                                   token = current seed ;
                                                   in
                                                     {
-                                                      success = builtins.all ( p : p != token ) previous && ( builtins.trace ( if builtins.typeOf ( factory empty ) == "set" && builtins.hasAttr "config" ( factory empty ) then builtins.toString ( builtins.getAttr "config" ( ( factory empty ) ) { recurse = true ; } ) else "NO" ) true ) ; # && predicate token ( factory empty ) ;
+                                                      success = builtins.all ( p : p != token ) previous && true ; # && predicate token ( factory empty ) ;
                                                       value = builtins.concatLists [ previous [ token ] ] ;
                                                     }
                                             ) ;
