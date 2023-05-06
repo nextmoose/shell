@@ -240,7 +240,12 @@
 						    } ;
 						}
 						( structure )
-						( token : empty : true )
+						(
+						  token : structure :
+						    let
+						      string = track.reduced structure ;
+						      in builtins.replaceStrings [ token ] [ "" ] string == string
+						)
 						(
 						  token : structure :
 						    let
@@ -541,7 +546,7 @@
                                                     '' ;
                                                     '' ;
                                                   in if recurse then "FIND ME ${ name } ${ debug }" else builtins.toString ( writer name ( strip.lib elem ) ) ;
-				            variables = global.variables // local.variables ;
+				            variables = builtins.trace ( builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ global local ] ) ) ( global.variables // local.variables ) ;
                                             in program ;
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
