@@ -546,7 +546,7 @@
                                                     '' ;
                                                     '' ;
                                                   in if recurse then "FIND ME ${ name } ${ debug }" else builtins.toString ( writer name ( strip.lib elem ) ) ;
-				            variables = builtins.trace ( builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ global local ] ) ) ( global.variables // local.variables ) ;
+				            variables = global.variables // local.variables ;
                                             in program ;
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
