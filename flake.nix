@@ -282,7 +282,7 @@
                                                     let
                                                       arguments =
                                                         ''
-                                                          ${ bash-variable.lib ( builtins.trace ( builtins.concatStringsSep " , " ( builtins.attrNames variables ) ) variables.timestamp ) } ${ bash-variable.lib "$" } ${ bash-variable.lib global.variables.salt }
+                                                          ${ bash-variable.lib variables.timestamp } ${ bash-variable.lib "$" } ${ bash-variable.lib global.variables.salt }
                                                         '' ;
                                                       in lambda ( _resources ( resource : "$( ${ resource } ${ strip.lib arguments } )" ) ) ;
                                                 structure-directory = structure-directory ;
