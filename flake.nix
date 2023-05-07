@@ -1,4 +1,4 @@
- {
+  {
     inputs =
       {
         bash-variable.url = "/home/emory/projects/5juNXfpb" ;
@@ -17,6 +17,7 @@
             let
               _ =
                 {
+                  at = "/usr/bin/at" ;
                   bash-variable = bash-variable ;
                   flake-utils = flake-utils ;
                   nixpkgs = nixpkgs ;
@@ -27,6 +28,7 @@
                 } ;
               in
                 {
+                  at ? _.at ,
                   bash-variable ? _.bash-variable ,
                   flake-utils ? _.flake-utils ,
                   hook ,
@@ -201,19 +203,101 @@
                                                 pkgs = pkgs ;
                                                 temporary = bash-variable.lib { } local.variables.temporary-dir ;
                                                 tools =
-                                                  {
-                                                    temporary =
+                                                  let
+                                                    delock-structure =
+                                                      ''
+                                                        if [ -d ${ structure-directory } ]
+                                                        then
+                                                          exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ local.numbers.structure-directory } &&
+                                                          ${ pkgs.coreutils }/bin/rm ${ structure-directory }/lock &&
+                                                          ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }
+                                                        fi
+                                                      '' ;
+                                                    in
                                                       {
-                                                        dir =
+                                                        log =
                                                           let
+                                                            delock-log =
+                                                              ''
+                                                                if [ -d ${ structure-directory }/log ]
+                                                                then
+                                                                  exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory } &&
+                                                                  if [ -d ${ structure-directory }/log ]
+                                                                  then
+                                                                    exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.flock }/bin/flock ${ local.numbers.log-directory } &&
+                                                                    ${ pkgs.coreutils }/bin/rm ${ structure-directory }/log/lock &&
+                                                                    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/log
+                                                                  fi
+                                                                fi &&
+                                                                ${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure" ( strip.lib { } delock-structure ) } | ${ at } now
+                                                              '' ;
                                                             directory =
                                                               ''
-                                                                exec ${ local.numbers.temporary-dir }<>${ bash-variable.lib { } 1 }/lock &&
-                                                                ${ pkgs.flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-                                                                ${ pkgs.findutils }/bin/find ${ bash-variable.lib { } 1 } -mindepth 1 -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                                ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable.lib { } 1 }
+                                                                exec ${ local.numbers.log-dir }<>${ bash-variable.lib { } 1 }/lock &&
+                                                                ${ pkgs.flock }/bin/flock -n ${ local.numbers.log-dir } &&
+                                                                ${ pkgs.coreutils }/bin/echo "- " &&
+                                                                ${ pkgs.findutils }/bin/find \
+                                                                  ${ bash-variable.lib { } 1 } \
+                                                                  -mindepth 1 \
+                                                                  -maxdepth 1 \
+                                                                  -type f \
+                                                                  -name "${ builtins.concatStringsSep "" ( builtins.genList ( i : "?" ) 128 ) }" \
+                                                                  -exec ${ pkgs.writeShellScript "file" ( strip.lib { } file ) } {} \; &&
+                                                                  ${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable.lib { } 1 }
+                                                              '' ;
+                                                            file =
+                                                              ''
+                                                                ${ pkgs.coreutils }/bin/echo "  $( ${ pkgs.coreutils }/bin/basename ${ bash-variable.lib { } 1 } ): |" &&
+                                                                ${ pkgs.gnused }/bin/sed -e "s#^#    #" ${ bash-variable.lib { } 1 } &&
+                                                                ${ pkgs.coreutils }/bin/shred --force --remove ${ bash-variable.lib { } 1 }              
                                                               '' ;
                                                             script =
+                                                              ''
+                                                                if [ -d ${ structure-directory }/log ]
+                                                                then
+                                                                  exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                                  ${ pkgs.flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                                                                  ${ pkgs.findutils }/bin/find \
+                                                                    ${ structure-directory }/log \
+                                                                    -mindepth 1 \
+                                                                    -maxdepth 1 \
+                                                                    -name "????????" \
+                                                                    -type d \
+                                                                    -exec ${ pkgs.writeShellScript "directory" ( strip.lib { } directory ) } {} \;
+                                                                fi &&
+                                                                ${ pkgs.coreutils }/bin/echo "
+                                                                  ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-log" ( strip.lib { } delock-log ) }" | ${ at } now 2> ${ knull }
+                                                              '' ;
+                                                            in pkgs.writeShellScript "delete" ( strip.lib { } script ) ;
+                                                        temporary =
+							  let
+							    delock-temporary =
+							      ''
+							        if [ -d ${ structure-directory }/temporary ]
+								then
+								  exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+								  ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory } &&
+								  if [ -d ${ structure-directory }/temporary ]
+								  then
+								    exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+								    ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-directory } &&
+								    ${ pkgs.coreutils }/bin/rm ${ structure-directory }/temporary/lock &&
+								    ${ pkgs.coreutils }/bin/rmdir --ignore-fail-on-non-empty ${ structure-directory }/temporary
+								  fi
+								fi &&
+								${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-structure" ( strip.lib { } delock-structure ) } | ${ at } now
+							      '' ;
+							    directory =
+							      ''
+							        exec ${ local.numbers.temporary-dir }<>${ bash-variable.lib { } 1 }/lock &&
+								${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir } &&
+								${ pkgs.findutils }/bin/find ${ bash-variable.lib { } 1 } -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+								${ pkgs.coreutils }/bin/rm --recursive --force ${ bash-variable.lib { } 1 }
+							      '' ;
+							    script =
                                                               ''
                                                                 if [ -d ${ structure-directory }/temporary ]
                                                                 then
@@ -231,24 +315,11 @@
                                                                       -type d \
                                                                       -exec ${ pkgs.writeShellScript "directory" ( strip.lib { } directory ) } {} \;
                                                                   fi
-                                                                fi
+                                                                fi &&
+								${ pkgs.coreutils }/bin/echo ${ pkgs.coreutils }/bin/nice --adjustment 19 ${ pkgs.writeShellScript "delock-temporary" ( strip.lib { } delock-temporary ) } | ${ at } now 2> ${ knull }
                                                               '' ;
                                                             in pkgs.writeShellScript "delete" ( strip.lib { } script ) ;
-                                                        directory =
-                                                          let
-                                                            script =
-                                                              ''
-                                                                if [ -d ${ structure-directory }/temporary ]
-                                                                then
-                                                                  exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
-                                                                  ${ pkgs.flock }/bin/flock ${ local.numbers.structure-directory } &&
-                                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/temporary -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-                                                                  ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/temporary
-                                                                fi
-                                                              '' ;
-                                                            in pkgs.writeShellScript "directory" ( strip.lib { } script ) ;
                                                       } ;
-                                                  } ;
                                                 uuid = local.uuid ;
                                               } ;
                                           in fun ( script local ) program track.simple-name ;
