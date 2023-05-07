@@ -20,6 +20,7 @@
                   bash-variable = bash-variable ;
                   flake-utils = flake-utils ;
                   nixpkgs = nixpkgs ;
+                  null = "/dev/null" ;
                   scripts = scripts ;
                   strip = strip ;
                   unique = unique ;
@@ -31,7 +32,7 @@
                   hook ,
                   inputs ,
                   nixpkgs ? _.nixpkgs ,
-                  null ? "/dev/null" ,
+                  knull ? _.null ,
                   resources ,
                   scripts ? _.scripts ,
                   strip ? _.strip ,
@@ -54,7 +55,7 @@
                                             unique.lib
                                               { }
                                               {
-                                                numbers = { structure-directory = false ; temporary-directory = false ; temporary-dir = false ; log-dir = false ; } ;
+                                                numbers = { structure-directory = false ; temporary-directory = false ; temporary-dir = false ; log-directory = false ; log-dir = false ; } ;
                                                 uuid = true ;
                                                 variables = { structure-directory = true ; temporary-directory = true ; temporary-dir = true ; log-directory = true ; log-dir = true ; } ;
                                               }
@@ -84,48 +85,119 @@
                                             let
                                               elements =
                                                 {
-                                                  no-temporary =
-                                                    ''
-                                                      # temporary
+                                                  no-log =
+                                                    {
+                                                      no-temporary =
+                                                        ''
+                                                          # structure
+                                                          
+                                                          # temporary
 
-                                                      # log
+                                                          # log
+ 
+                                                          # resource
+                                                        '' ;
+                                                      yes-temporary =
+                                                        ''
+                                                          # structure
+                                                          if [ ! -d ${ structure-directory } ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                          fi &&
+                                                          exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory }
+                                                          
+                                                          # temporary
+                                                          if [ ! -d ${ structure-directory }/temporary ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                          fi &&
+                                                          exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                                                          export ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                          exec ${ local.numbers.temporary-dir }<>${ bash-variable.lib { } local.variables.temporary-dir }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir } &&
 
-                                                      # resource
-                                                    '' ;
-                                                  yes-temporary =
-                                                    ''
-                                                      # temporary
-                                                      if [ ! -d ${ structure-directory } ]
-                                                      then
-                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
-                                                      fi &&
-                                                      exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
-                                                      ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory }
-                                                      if [ ! -d ${ structure-directory }/temporary ]
-                                                      then
-                                                        ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
-                                                      fi &&
-                                                      exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
-                                                      ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-                                                      export ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                                                      exec ${ local.numbers.temporary-dir }<>${ bash-variable.lib { } local.variables.temporary-dir }/lock &&
-                                                      ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir } &&
+                                                         # log
 
-                                                      # log
+                                                         # resource
+                                                       '' ;
+                                                    } ;
+                                                  yes-log =
+                                                    {
+                                                      no-temporary =
+                                                        ''
+                                                          # structure
+                                                          if [ ! -d ${ structure-directory } ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                          fi &&
+                                                          exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory }
 
-                                                      # resource
-                                                    '' ;
+                                                          # temporary
+
+                                                          # log
+                                                          if [ ! -d ${ structure-directory }/log ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                          fi &&
+                                                          exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                                                          export ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                                                          exec ${ local.numbers.log-dir }<>${ bash-variable.lib { } local.variables.log-dir }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ local.numbers.log-dir } &&
+ 
+                                                          # resource
+                                                        '' ;
+                                                      yes-temporary =
+                                                        ''
+                                                          # structure
+                                                          if [ ! -d ${ structure-directory } ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                          fi &&
+                                                          exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory }
+                                                          
+                                                          # temporary
+                                                          if [ ! -d ${ structure-directory }/temporary ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                          fi &&
+                                                          exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                                                          export ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                                                          exec ${ local.numbers.temporary-dir }<>${ bash-variable.lib { } local.variables.temporary-dir }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir } &&
+
+                                                          # log
+                                                          if [ ! -d ${ structure-directory }/log ]
+                                                          then
+                                                            ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                          fi &&
+                                                          exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                          ${ pkgs.flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                                                          export ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                                                          exec ${ local.numbers.log-dir }<>${ bash-variable.lib { } local.variables.log-dir }/lock &&
+                                                          ${ pkgs.flock }/bin/flock ${ local.numbers.log-dir } &&
+
+                                                          # resource
+                                                       '' ;
+                                                    } ;
                                                 } ;
+                                                log = if builtins.replaceStrings [ local.variables.log-dir ] [ "" ] ( script local ) == ( script local ) then "no-log" else "yes-log" ;
                                                 temporary = if builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] ( script local ) == ( script local ) then "no-temporary" else "yes-temporary" ;
-                                              in builtins.getAttr temporary elements ;
+                                              in strip.lib { } ( builtins.getAttr temporary ( builtins.getAttr log elements ) ) ;
                                           structure =
                                             local :
                                               {
                                                 commands = _scripts ( script : program : simple-name : pkgs.writeShellScript simple-name ( strip.lib { } program ) ) global ;
                                                 dev =
                                                   {
-                                                    null = null ;
+                                                    null = knull ;
                                                   } ;
+                                                log = name : ">( ${ pkgs.moreutils }/bin/ts > ${ bash-variable.lib { } local.variables.log-dir }/${ builtins.hashString "sha512" ( builtins.toString name ) } 2> ${ knull } )" ;
                                                 pkgs = pkgs ;
                                                 temporary = bash-variable.lib { } local.variables.temporary-dir ;
                                                 tools =
@@ -153,8 +225,8 @@
                                                                     ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
                                                                     ${ pkgs.findutils }/bin/find \
                                                                       ${ structure-directory }/temporary \
-								      -mindepth 1 \
-								      -maxdepth 1 \
+                                                                      -mindepth 1 \
+                                                                      -maxdepth 1 \
                                                                       -name "????????" \
                                                                       -type d \
                                                                       -exec ${ pkgs.writeShellScript "directory" ( strip.lib { } directory ) } {} \;
@@ -162,19 +234,19 @@
                                                                 fi
                                                               '' ;
                                                             in pkgs.writeShellScript "delete" ( strip.lib { } script ) ;
-						        directory =
-							  let
-							    script =
-							      ''
-							        if [ -d ${ structure-directory }/temporary ]
-								then
-								  exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
-								  ${ pkgs.flock }/bin/flock ${ local.numbers.structure-directory } &&
-								  ${ pkgs.findutils }/bin/find ${ structure-directory }/temporary -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
-								  ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/temporary
-								fi
-							      '' ;
-							    in pkgs.writeShellScript "directory" ( strip.lib { } script ) ;
+                                                        directory =
+                                                          let
+                                                            script =
+                                                              ''
+                                                                if [ -d ${ structure-directory }/temporary ]
+                                                                then
+                                                                  exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                                  ${ pkgs.flock }/bin/flock ${ local.numbers.structure-directory } &&
+                                                                  ${ pkgs.findutils }/bin/find ${ structure-directory }/temporary -type f -exec ${ pkgs.coreutils }/bin/shred --force --remove {} \; &&
+                                                                  ${ pkgs.coreutils }/bin/rm --recursive --force ${ structure-directory }/temporary
+                                                                fi
+                                                              '' ;
+                                                            in pkgs.writeShellScript "directory" ( strip.lib { } script ) ;
                                                       } ;
                                                   } ;
                                                 uuid = local.uuid ;
