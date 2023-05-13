@@ -1,0 +1,1 @@
+input @ { ... } : builtins.trace ( builtins.concatStringsSep " , " ( builtins.attrNames input ) ) true
