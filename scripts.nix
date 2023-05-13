@@ -1,3 +1,7 @@
-scripts : resources : fun : global :
-
-  
+  {
+    entry =
+      { cowsay , dev } :
+        ''
+	  ${ cowsay }/bin/cowsay Hello > ${ dev.null }
+	''
+  }
