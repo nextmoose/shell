@@ -1,6 +1,7 @@
   {
     inputs =
       {
+        bash-variable.url = "/home/emory/projects/5juNXfpb" ;
         flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ;
         nixpkgs.url = "github:nixos/nixpkgs?rev=57eac89459226f3ec743ffa6bbbc1042f5836843"  ;
         strip.url = "/home/emory/projects/0TFnR2fJ" ;
@@ -61,12 +62,12 @@
                                           program =
                                             let
                                               scripts = import ./scripts.nix ;
-                                              in scripts.script { script = script ; strip = strip ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
+                                              in scripts.structure.scripts.main { script = script ; strip = strip ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name script ;
                                           script = strip ( script-fun local ) ;
                                           script-fun = local : invoke track.reduced ( structure local ) ;
-                                          structure = local : pkgs // { dev = { null = knull ; } ; uuid = local.uuid ; } ;
+                                          structure = local : pkgs // { dev = { null = knull ; } ; temporary = bash-variable local.variables.temporary-dir ; uuid = local.uuid ; } ;
                                           in invoke fun { script = script ; shell-script-bin = shell-script-bin ; } ;
                                     list = track : track.reduced ;
                                     set = track : track.reduced ;
