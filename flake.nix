@@ -9,19 +9,20 @@
         visit.url = "/home/emory/projects/wHpYNJk8" ;
       } ;
     outputs =
-      { flake-utils , nixpkgs , self , strip , unique , visit } :
+      { bash-variable , flake-utils , nixpkgs , self , strip , unique , visit } :
         {
           lib =
             let
               _ =
                 {
+                  bash-variable = bash-variable.lib { } ;
                   nixpkgs = nixpkgs ;
                   strip = strip.lib { } ;
                   unique = unique.lib { } ;
                   visit = visit.lib { } ;
                 } ;
               in
-                { hook ? null , inputs ? null , knull ? "/dev/null" , nixpkgs ? _.nixpkgs , strip ? _.strip , unique ? _.unique , visit ? _.visit } :
+                { bash-variable ? _.bash-variable , hook ? null , inputs ? null , knull ? "/dev/null" , nixpkgs ? _.nixpkgs , strip ? _.strip , structure-directory , unique ? _.unique , visit ? _.visit } :
                   flake-utils.lib.eachDefaultSystem
                     (
                       system :
@@ -45,10 +46,10 @@
                                           local =
                                             unique
                                               {
-					        numbers = { structure-directory = tokenizers.identifier ; temporary-identifier = tokenizers.identifier ; temporary-dir = tokenizers.identifier ; } ;
-					        variables = { temporary-dir = tokenizers.variable ; } ;			    
-					        uuid = tokenizers.uuid ;
-					      }
+                                                numbers = { structure-directory = tokenizers.identifier ; temporary-identifier = tokenizers.identifier ; temporary-dir = tokenizers.identifier ; } ;
+                                                variables = { temporary-dir = tokenizers.variable ; } ;                     
+                                                uuid = tokenizers.uuid ;
+                                              }
                                               script-fun
                                               (
                                                 token :
@@ -61,8 +62,13 @@
                                               ) ;
                                           program =
                                             let
+                                              is =
+                                                {
+                                                  temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script ;
+                                                } ;
                                               scripts = import ./scripts.nix ;
-                                              in scripts.structure.scripts.main { script = script ; strip = strip ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
+                                              structure = scripts.structure.script.structure.yes { coreutils = pkgs.coreutils ; file-descriptor = local.numbers.structure-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; } ;
+                                              in scripts.structure.script.main { script = script ; strip = strip ; structure = structure ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name script ;
                                           script = strip ( script-fun local ) ;
