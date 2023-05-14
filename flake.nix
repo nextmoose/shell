@@ -64,10 +64,12 @@
                                             let
                                               is =
                                                 {
-                                                  temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script ;
+                                                  temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script == script ;
                                                 } ;
                                               scripts = import ./scripts.nix ;
-                                              structure = scripts.structure.script.structure.yes { coreutils = pkgs.coreutils ; file-descriptor = local.numbers.structure-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; } ;
+                                              structure =
+                                                if is.temporary then scripts.structure.script.structure.no { }
+                                                else scripts.structure.script.structure.yes { coreutils = pkgs.coreutils ; file-descriptor = local.numbers.structure-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; } ;
                                               in scripts.structure.script.main { script = script ; strip = strip ; structure = structure ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name script ;
