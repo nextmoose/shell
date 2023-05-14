@@ -12,13 +12,11 @@
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
     script =
-      { script , strip , structure , track , uuid , writeShellScript } :
+      { script , strip , track , uuid , writeShellScript } :
         ''
           # ${ uuid }
           # ${ builtins.toString track.index }
           # ${ builtins.toString track.qualified-name }
-
-	  ${ structure } &&
 
           exec ${ writeShellScript track.simple-name ( strip script ) }
         '' ;

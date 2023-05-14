@@ -61,7 +61,7 @@
                                           program =
                                             let
                                               scripts = import ./scripts.nix ;
-                                              in scripts.script { script = script ; strip = strip ; track = track ; writeShellScript = pkgs.writeShellScript ; } ;
+                                              in scripts.script { script = script ; strip = strip ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name script ;
                                           script = strip ( script-fun local ) ;
