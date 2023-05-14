@@ -44,7 +44,7 @@
                                           local =
                                             unique
                                               {
-					        numbers = { structure-directory = tokenizers.number ; temporary-directory = tokenizers.number ; temporary-dir = tokenizers.number ; } ;
+					        numbers = { structure-directory = tokenizers.identifier ; temporary-identifier = tokenizers.identifier ; temporary-dir = tokenizers.identifier ; } ;
 					        variables = { temporary-dir = tokenizers.variable ; } ;			    
 					        uuid = tokenizers.uuid ;
 					      }
