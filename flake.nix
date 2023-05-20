@@ -110,16 +110,6 @@
                                                       scripts = import ./scripts.nix ;
                                                       in init ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
-						  repair =
-						    uuid : message :
-						      pkgs.writeShellScript
-						        "repair"
-							''
-							  ${ pkgs.coreutils }/bin/echo >> ${ structure-directory }/repair &&
-							  ${ pkgs.coreutils }/bin/date >> ${ structure-directory }/repair &&
-							  ${ pkgs.coreutils }/bin/echo '${ builtins.toString uuid }' >> ${ structure-directory }/repair &&
-							  ${ pkgs.coreutils }/bin/echo '${ builtins.toString message }' >> ${ structure-directory }/repair 
-							'' ;
                                                   resources =
                                                     let
                                                       lambda =
