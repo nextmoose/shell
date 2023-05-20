@@ -10,6 +10,12 @@
           ${ coreutils }/bin/echo FILE BASED RESOURCE ${ resources.identity } &&
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
+    beta =
+      { coreutils , release } :
+        ''
+          ${ coreutils }/bin/echo Hello &&
+	  ${ release.temporary }
+        '' ;
     entry =
       { cowsay , dev } :
         ''
@@ -34,6 +40,32 @@
       } ;
     structure =
       {
+        release =
+          {
+            temporary =
+              {
+                dir =
+                  { bash-variable , coreutils , file-descriptor-dir , flock } :
+                    ''
+                      if [ -d ${ bash-variable 1 } ]
+                      then
+                        exec ${ file-descriptor-dir }<>${ bash-variable 1 }/lock &&
+                        ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
+                        ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
+                      fi
+                    '' ;
+                directory =
+                  { bash-variable , coreutils , dir , file-descriptor-directory , findutils , flock , structure-directory } :
+                    ''
+                      if [ -d ${ structure-directory }/temporary ]
+                      then
+                        exec ${ file-descriptor-directory }<>${ structure-directory }/temporary/lock &&
+                        ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ dir } {} \;
+                      fi
+                    '' ;
+              } ;
+          } ;
         resource =
           {
             show =
@@ -65,6 +97,8 @@
                   then
                     ${ init }
                   fi &&
+                  ${ coreutils }/bin/echo ${ bash-variable "PID" } > $( ${ coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
+                  ${ coreutils }/bin/echo ${ bash-variable "SALT" } > $( ${ coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
                   ${ strip show }
                 '' ;
           } ;

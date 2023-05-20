@@ -110,6 +110,16 @@
                                                       scripts = import ./scripts.nix ;
                                                       in init ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
+                                                  release =
+                                                    let
+                                                      scripts = import ./scripts.nix ;
+                                                      in
+                                                        {
+                                                          temporary =
+                                                            let
+                                                              dir = scripts.structure.release.temporary.dir { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-dir = local.numbers.temporary-dir ; flock = pkgs.flock ; } ;
+                                                              in scripts.structure.release.temporary.directory { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; dir = pkgs.writeShellScript "dir" ( strip dir ) ; file-descriptor-directory = local.numbers.temporary-directory ; findutils = pkgs.findutils ; flock = pkgs.flock ; structure-directory = structure-directory ; } ;
+                                                        } ;
                                                   resources =
                                                     let
                                                       lambda =
