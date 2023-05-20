@@ -6,8 +6,8 @@
           ${ coreutils }/bin/date > ${ temporary }/date &&
           ${ coreutils }/bin/date > ${ log "test" } &&
           ${ coreutils }/bin/echo uuid=${ uuid } &&
+          ${ coreutils }/bin/echo OUTPUT BASED RESOURCE ${ resources.name } &&
           ${ coreutils }/bin/echo FILE BASED RESOURCE ${ resources.identity } &&
-          # ${ coreutils }/bin/echo OUTPUT BASED RESOURCE ${ resources.name } &&
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
     entry =
