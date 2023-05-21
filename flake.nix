@@ -189,7 +189,7 @@
                                                       init = strip ( scripts.structure.script.init { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; process = local.variables.parent.process ; salt = local.variables.parent.salt ; timestamp = local.variables.parent.timestamp ; } ) ;
                                                       scripts = import ./scripts.nix ;
                                                       in init ;
-                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
+                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
                                                   release =
                                                     let
                                                       scripts = import ./scripts.nix ;

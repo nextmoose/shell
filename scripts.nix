@@ -11,7 +11,7 @@
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
     beta =
-      { coreutils , release } :
+      { coreutils , release , resources } :
         ''
           ${ coreutils }/bin/echo Hello &&
           ${ release.temporary } &&
@@ -60,6 +60,7 @@
             log =
               { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , findutils , flock , gnused , resources , structure-directory } :
                 ''
+		  export TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
                   exec 200<>${ resources.log.lock } &&
                   ${ flock }/bin/flock 200 &&
                   if [ -d ${ structure-directory }/log ]
@@ -78,7 +79,7 @@
                         EXTENSION=${ bash-variable "FILE##*." } &&
 			${ coreutils }/bin/echo "-" >> ${ resources.log.file } &&
                         ${ coreutils }/bin/echo "  ${ bash-variable "EXTENSION" }:" >> ${ resources.log.file } &&
-                        ${ gnused }/bin/sed -e 's#^\([0-9]*\) \(.*\)$#    -\n      timestamp: \1\n      value: >\n        \2#' ${ bash-variable "FILE" } >> ${ resources.log.file }
+                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#    -\n      timestamp: \1\n      value: >\n        \2#' ${ bash-variable "FILE" } >> ${ resources.log.file }
 			${ coreutils }/bin/true
                       done &&
                       ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
@@ -122,6 +123,7 @@
                   TIMESTAMP=${ bash-variable 1 } &&
                   PID=${ bash-variable 2 } &&
                   SALT=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
+		  ${ coreutils }/bin/echo '${ pre-salt }' - '${ salt }' - ${ bash-variable "TIMESTAMP" } - ${ bash-variable "SALT" } >> /tmp/repair &&
                   if [ ! -d ${ structure-directory }/resource/${ bash-variable "SALT" } ]
                   then
                     ${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "SALT" }
