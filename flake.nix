@@ -218,7 +218,7 @@
                                 {
                                   identifier = seed : builtins.toString ( seed + 3 ) ;
                                   uuid = index : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed index ] ) ) ;
-                                  variable = name : track : seed : builtins.concatStringsSep "_" [ "VARIABLE" name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed 0 ] ) ) ) ] ;
+                                  variable = name : track : seed : builtins.concatStringsSep "_" [ "VARIABLE" name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
                                 } ;
                               in pkgs.mkShell ( buildInputs // shellHook ) ;
                         }
