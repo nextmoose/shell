@@ -14,13 +14,23 @@
       { coreutils , release } :
         ''
           ${ coreutils }/bin/echo Hello &&
-	  ${ release.temporary }
+          ${ release.temporary } &&
+          ${ release.log }
         '' ;
     entry =
       { cowsay , dev } :
         ''
           # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
+        '' ;
+    gamma =
+      { coreutils , flock , release , resources } :
+        ''
+          ${ coreutils }/bin/echo HELLO &&
+          ${ release.log } &&
+	  exec 200<>${ resources.log.lock } &&
+	  ${ flock }/bin/flock -s 200 &&
+	  ${ coreutils }/bin/echo ${ resources.log.file }
         '' ;
     name =
       { init , git , strip } :
@@ -38,33 +48,58 @@
               ${ coreutils }/bin/chmod 0400 ${ bash-variable 1 }
             '' ;
       } ;
+    touch =
+      { bash-variable , coreutils } :
+        ''
+          ${ coreutils }/bin/touch ${ bash-variable 1 }
+        '' ;
     structure =
       {
         release =
           {
+            log =
+              { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , findutils , flock , gnused , resources , structure-directory } :
+                ''
+                  exec 200<>${ resources.log.lock } &&
+                  ${ flock }/bin/flock 200 &&
+                  if [ -d ${ structure-directory }/log ]
+                  then
+                    exec ${ file-descriptor-directory }<>${ structure-directory }/log/lock &&
+                    ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
+                    ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d | while read DIR
+                    do
+                      exec ${ file-descriptor-dir }<>${ bash-variable "DIR" }/lock &&
+                      ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
+                      ${ findutils }/bin/find ${ bash-variable "DIR" } -mindepth 1 -maxdepth 1 -type f -name "*.*" | while read FILE
+                      do
+                        ${ coreutils }/bin/stat --format "%W %n" ${ bash-variable "FILE" }
+                      done | ${ coreutils }/bin/sort --key 1 --numeric | ${ coreutils }/bin/cut --delimiter " " --fields 2 | while read FILE
+                      do
+                        EXTENSION=${ bash-variable "FILE##*." } &&
+			${ coreutils }/bin/echo "-" >> ${ resources.log.file } &&
+                        ${ coreutils }/bin/echo "  ${ bash-variable "EXTENSION" }:" >> ${ resources.log.file } &&
+                        ${ gnused }/bin/sed -e 's#^\([0-9]*\) \(.*\)$#    -\n      timestamp: \1\n      value: >\n        \2#' ${ bash-variable "FILE" } >> ${ resources.log.file }
+			${ coreutils }/bin/true
+                      done &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
+                    done
+                  fi
+                '' ;
             temporary =
-              {
-                dir =
-                  { bash-variable , coreutils , file-descriptor-dir , flock } :
-                    ''
-                      if [ -d ${ bash-variable 1 } ]
-                      then
-                        exec ${ file-descriptor-dir }<>${ bash-variable 1 }/lock &&
-                        ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
-                        ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
-                      fi
-                    '' ;
-                directory =
-                  { bash-variable , coreutils , dir , file-descriptor-directory , findutils , flock , structure-directory } :
-                    ''
-                      if [ -d ${ structure-directory }/temporary ]
-                      then
-                        exec ${ file-descriptor-directory }<>${ structure-directory }/temporary/lock &&
-                        ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ dir } {} \;
-                      fi
-                    '' ;
-              } ;
+              { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , findutils , flock , structure-directory } :
+                ''
+                  if [ -d ${ structure-directory }/temporary ]
+                  then
+                    exec ${ file-descriptor-directory }<>${ structure-directory }/temporary/lock &&
+                    ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
+                    ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d | while read DIR
+                    do
+                      exec ${ file-descriptor-dir }<>${ bash-variable "DIR" }/lock &&
+                      ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
+                    done
+                  fi
+                '' ;
           } ;
         resource =
           {
@@ -82,7 +117,7 @@
                     '' ;
               } ;
             main =
-              { bash-variable , coreutils , file-descriptor-dir , flock , init , pre-salt , salt , show , strip , structure-directory } :
+              { bash-variable , coreutils , file-descriptor-dir , flock , init , permissions , pre-salt , salt , show , strip , structure-directory } :
                 ''
                   TIMESTAMP=${ bash-variable 1 } &&
                   PID=${ bash-variable 2 } &&
@@ -95,7 +130,8 @@
                   ${ flock }/bin/flock ${ file-descriptor-dir } &&
                   if [ ! -s ${ structure-directory }/resource/${ bash-variable "SALT" }/resource ]
                   then
-                    ${ init }
+                    ${ init } &&
+                    ${ coreutils }/bin/chmod ${ permissions } ${ structure-directory }/resource/${ bash-variable "SALT" }/resource
                   fi &&
                   ${ coreutils }/bin/echo ${ bash-variable "PID" } > $( ${ coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
                   ${ coreutils }/bin/echo ${ bash-variable "SALT" } > $( ${ coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
