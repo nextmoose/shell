@@ -163,7 +163,7 @@
                   export ${ timestamp }=${ bash-variable 3 }
                 '' ;
              log =
-              { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , flock , structure-directory , temporary-dir } :
+              { bash-variable , coreutils , flock , structure-directory , temporary-dir } :
                 ''
                   # LOG
                   if [ ! -d ${ structure-directory }/log ]
