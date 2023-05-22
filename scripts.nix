@@ -18,7 +18,7 @@
           ${ release.log }
         '' ;
     entry =
-      { cowsay , dev } :
+      { shell-scripts , cowsay , dev } :
         ''
           # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
@@ -55,6 +55,18 @@
         '' ;
     structure =
       {
+        at =
+	  { at , bash-variable , dev , coreutils } :
+	    ''
+	      ${ coreutils }/bin/echo ${ coreutils }/bin/nice --adjustment 19 ${ bash-variable "@" } | ${ at } now 2> ${ dev.null }
+	    '' ;
+        cron =
+	  { bash-variable , coreutils , dev } :
+            ''
+	      CRON=$( ${ dev.sudo } { coreutils }/bin/mktemp ${ dev.cron }/XXXXXXXX ) &&
+	      ${ coreutils }/echo ${ bash-variable 1 } ${ bash-variable 2 } > ${ bash-variable "CRON" } &&
+	      ${ coreutils }/bin/echo ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
+	    '' ;
         release =
           {
             log =

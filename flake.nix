@@ -22,7 +22,19 @@
                   visit = visit.lib { } ;
                 } ;
               in
-                { bash-variable ? _.bash-variable , hook ? null , inputs ? null , knull ? "/dev/null" , nixpkgs ? _.nixpkgs , strip ? _.strip , structure-directory , unique ? _.unique , visit ? _.visit } :
+                {
+		  bash-variable ? _.bash-variable ,
+		  hook ? null ,
+		  cron ? "/etc/cron.d" ,
+		  inputs ? null ,
+		  knull ? "/dev/null" ,
+		  nixpkgs ? _.nixpkgs ,
+		  strip ? _.strip ,
+		  structure-directory ,
+		  sudo ? "/usr/bin/sudo" ,
+		  unique ? _.unique ,
+		  visit ? _.visit
+		} :
                   flake-utils.lib.eachDefaultSystem
                     (
                       system :
@@ -183,7 +195,7 @@
                                               pkgs //
                                                 {
                                                   bash-variable = bash-variable ;
-                                                  dev = { null = knull ; } ;
+                                                  dev = { cron = cron ; null = knull ; sudo = sudo ; } ;
                                                   init =
                                                     let
                                                       init = strip ( scripts.structure.script.init { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; process = local.variables.parent.process ; salt = local.variables.parent.salt ; timestamp = local.variables.parent.timestamp ; } ) ;
@@ -199,6 +211,7 @@
                                                           temporary = strip ( scripts.structure.release.temporary { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-directory = local.numbers.temporary-directory ; file-descriptor-dir = local.numbers.temporary-dir ; findutils = pkgs.findutils ; flock = pkgs.flock ; structure-directory = structure-directory ; } ) ;
                                                         } ;
                                                   resources = resources local ;
+						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
                                                   strip = strip ;
                                                   temporary = bash-variable local.variables.temporary-dir ;
                                                   uuid = local.uuid ;
