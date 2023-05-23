@@ -165,10 +165,9 @@
              log =
 	       {
 	         no =
-                  { } :
-                    ''
-                      # NO LOG
-                    '' ;
+                  ''
+                    # NO LOG
+                  '' ;
 		 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''
@@ -204,10 +203,9 @@
             resource =
 	      {
 	         no =
-                  { } :
-                    ''
-                      # NO RESOURCE
-                    '' ;
+                  ''
+                    # NO RESOURCE
+                  '' ;
 		 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''         
@@ -224,10 +222,9 @@
             structure =
 	      {
 	         no =
-                  { } :
-                    ''
-                      # NO STRUCTURE
-                    '' ;
+                  ''
+                    # NO STRUCTURE
+                  '' ;
 		 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''         
