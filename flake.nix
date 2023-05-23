@@ -49,7 +49,6 @@
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
                               invoke = fun : args : fun ( builtins.intersectAttrs ( builtins.functionArgs fun ) args ) ;
                               pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-			      _scripts = scripts ;
                               scripts =
                                 fun :
                                   let
@@ -93,12 +92,12 @@
                                                   temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script != script ;
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
-                                              log = strip ( if is.log then scripts.structure.script.log.yes else scripts.structure.script.log.no ) ;
-					      main = scripts.structure.script.main ;
-                                              resource = strip ( if is.resource then scripts.structure.script.resource.yes else scripts.structure.script.resource.no ) ;
-					      scripts = _scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
-                                              structure = strip ( if is.temporary || is.log || is.resource then scripts.structure.script.structure.yes else scripts.structure.script.structure.no ) ;
-                                              temporary = strip ( if is.temporary then scripts.structure.script.temporary.yes else scripts.structure.script.temporary.no ) ;
+                                              log = strip ( if is.log then _scripts.structure.script.log.yes else _scripts.structure.script.log.no ) ;
+					      main = _scripts.structure.script.main ;
+                                              resource = strip ( if is.resource then _scripts.structure.script.resource.yes else _scripts.structure.script.resource.no ) ;
+					      _scripts = scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
+                                              structure = strip ( if is.temporary || is.log || is.resource then _scripts.structure.script.structure.yes else _scripts.structure.script.structure.no ) ;
+                                              temporary = strip ( if is.temporary then _scripts.structure.script.temporary.yes else _scripts.structure.script.temporary.no ) ;
                                               in main ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;
@@ -199,12 +198,11 @@
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
                                                   release =
                                                     let
-						      _ = _scripts ( { script } : script ) ;
-                                                      scripts = import ./scripts.nix ;
+						      _scripts = scripts ( { script } : script ) ;
                                                       in
                                                         {
-							  log = strip ( _.structure.release.log ) ;
-							  temporary = ( _.structure.release.temporary ) ;
+							  log = strip ( _scripts.structure.release.log ) ;
+							  temporary = ( _scripts.structure.release.temporary ) ;
                                                         } ;
                                                   resources = resources local ;
 						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
