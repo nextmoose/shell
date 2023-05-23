@@ -227,16 +227,24 @@
                     '' ;
 		} ;
             structure =
-              { coreutils , file-descriptor , flock , structure-directory } :
-                ''
-                  # STRUCTURE
-                  if [ ! -d ${ structure-directory } ]
-                  then
-                    ${ coreutils }/bin/mkdir ${ structure-directory }
-                  fi &&
-                  exec ${ file-descriptor }<>${ structure-directory }/lock &&
-                  ${ flock }/bin/flock -s ${ file-descriptor }
-                '' ;
+	      {
+	         no =
+                  { } :
+                    ''
+                      # NO STRUCTURE
+                    '' ;
+		 yes =
+                  { bash-variable , coreutils , flock , local , structure-directory } :
+                    ''         
+                      # YES STRUCTURE
+                      if [ ! -d ${ structure-directory } ]
+                      then
+                        ${ coreutils }/bin/mkdir ${ structure-directory }
+                      fi &&
+                      exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                      ${ flock }/bin/flock -s ${ local.numbers.structure-directory }
+                    '' ;
+		} ;
              temporary =
 	       {
 	         no =
