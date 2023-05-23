@@ -54,7 +54,7 @@
                                 fun :
                                   let
 				    appraisal =
-                                      track :
+                                      track : reduced :
                                         let
                                           local =
                                             unique
@@ -183,7 +183,7 @@
                                                 undefined = track : track.throw "21628eb5-e712-4e11-a756-f23ff8efaa03" ;
                                                 in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
                                           script = strip ( script-fun local ) ;
-                                          script-fun = local : invoke track.reduced ( structure local ) ;
+                                          script-fun = local : invoke reduced ( structure local ) ;
                                           structure =
                                             local :
                                               pkgs //
@@ -216,7 +216,7 @@
                                           in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
 				    value =
 				      let
-                                        lambda = track : appraisal track ;
+                                        lambda = track : appraisal track track.reduced ;
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
 	    			        string = track : track.throw "x" ;
