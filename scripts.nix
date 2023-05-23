@@ -201,11 +201,6 @@
 
                   exec ${ writeShellScript track.simple-name local.scripts.script } ${ bash-variable "@" }
                 '' ;
-            no =
-              { label } :
-                ''
-                  # ${ label }
-                '' ;
             resource =
 	      {
 	         no =
@@ -247,11 +242,10 @@
 		} ;
              temporary =
 	       {
-	         no =
-                  { } :
-                    ''
-                      # NO TEMPORARY
-                    '' ;
+	         no = { } :
+                  ''
+                    # 1 NO TEMPORARY
+                  '' ;
 		 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''

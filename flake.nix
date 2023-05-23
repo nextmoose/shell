@@ -216,8 +216,9 @@
                                           in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
                                     list = track : track.reduced ;
                                     set = track : track.reduced ;
+				    string = track : track.throw "x" ;
                                     undefined = track : track.throw "dd277420-6b62-4375-bda8-93dc2326d3bf" ;
-                                    in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./scripts.nix ) ;
+                                    in visit { lambda = lambda ; list = list ; set = set ; string = string ; undefined = undefined ; } ( import ./scripts.nix ) ;
                               shellHook =
                                 let
                                   lambda = track : { shellHook = track.reduced ( scripts ( { script } : script ) ) ; } ;
