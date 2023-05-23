@@ -94,19 +94,13 @@
                                                   temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script != script ;
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
-                                              log =
-                                                if is.log then _.structure.script.log
-                                                else scripts.structure.script.no { label = "NO LOGS" ; } ;
-                                              resource =
-                                                if is.resource then scripts.structure.script.resource { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-directory = local.numbers.resource-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; timestamp = local.variables.timestamp ; }
-                                                else scripts.structure.script.no { label = "NO RESOURCES" ; } ;
+                                              log = if is.log then _.structure.script.log.yes else _.structure.script.log.no ;
+                                              resource = if is.resource then _.structure.script.resource.yes else _.structure.script.resource.no ;
                                               scripts = import ./scripts.nix ;
                                               structure =
                                                 if is.temporary || is.log || is.resource then scripts.structure.script.structure { coreutils = pkgs.coreutils ; file-descriptor = local.numbers.structure-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; }
                                                 else scripts.structure.script.no { label = "NO STRUCTURES" ; } ;
-                                              temporary =
-                                                if is.temporary then scripts.structure.script.temporary { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; directory = "temporary" ; file-descriptor-directory = local.numbers.temporary-directory ; file-descriptor-dir = local.numbers.temporary-dir ; flock = pkgs.flock ; label = "TEMPORARY" ; structure-directory = structure-directory ; temporary-dir = local.variables.temporary-dir ; }
-                                                else scripts.structure.script.no { label = "TEMPORARY" ; } ;
+                                              temporary = if is.temporary then _.structure.script.temporary.yes else _.structure.script.temporary.no ;
                                               in scripts.structure.script.main { bash-variable = bash-variable ; log = log ; resource = resource ; script = script ; strip = strip ; structure = structure ; temporary = temporary ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;

@@ -163,19 +163,27 @@
                   export ${ timestamp }=${ bash-variable 3 }
                 '' ;
              log =
-              { bash-variable , coreutils , flock , local , structure-directory } :
-                ''
-                  # LOG
-                  if [ ! -d ${ structure-directory }/log ]
-                  then
-                    ${ coreutils }/bin/mkdir ${ structure-directory }/log
-                  fi &&
-                  exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
-                  ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                  export ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
-                  exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
-                  ${ flock }/bin/flock ${ local.numbers.log-dir }
-                '' ;
+	       {
+	         no =
+                  { } :
+                    ''
+                      # NO LOG
+                    '' ;
+		 yes =
+                  { bash-variable , coreutils , flock , local , structure-directory } :
+                    ''
+                      # YES LOG
+                      if [ ! -d ${ structure-directory }/log ]
+                      then
+                        ${ coreutils }/bin/mkdir ${ structure-directory }/log
+                      fi &&
+                      exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                      ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                      export ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                      exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
+                      ${ flock }/bin/flock ${ local.numbers.log-dir }
+                    '' ;
+	      } ;
             main =
               { bash-variable , log , resource , script , strip , structure , track , temporary , uuid , writeShellScript } :
                 ''
@@ -199,17 +207,25 @@
                   # ${ label }
                 '' ;
             resource =
-              { bash-variable , coreutils , file-descriptor-directory , flock , structure-directory , timestamp } :
-                ''         
-                  # RESOURCE
-                  if [ ! -d ${ structure-directory }/resource ]
-                  then
-                    ${ coreutils }/bin/mkdir ${ structure-directory }/resource
-                  fi &&
-                  exec ${ file-descriptor-directory }<>${ structure-directory }/resource/lock &&
-                  ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
-                  export ${ timestamp }=$( ${ coreutils }/bin/date +%s )
-                '' ;
+	      {
+	         no =
+                  { } :
+                    ''
+                      # NO RESOURCE
+                    '' ;
+		 yes =
+                  { bash-variable , coreutils , flock , local , structure-directory } :
+                    ''         
+                      # RESOURCE
+                      if [ ! -d ${ structure-directory }/resource ]
+                      then
+                        ${ coreutils }/bin/mkdir ${ structure-directory }/resource
+                      fi &&
+                      exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                      ${ flock }/bin/flock -s ${ local.numbers.resource-directory } &&
+                      export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s )
+                    '' ;
+		} ;
             structure =
               { coreutils , file-descriptor , flock , structure-directory } :
                 ''
@@ -221,20 +237,37 @@
                   exec ${ file-descriptor }<>${ structure-directory }/lock &&
                   ${ flock }/bin/flock -s ${ file-descriptor }
                 '' ;
-            temporary =
-              { bash-variable , coreutils , directory , file-descriptor-directory , file-descriptor-dir , flock , label , structure-directory , temporary-dir } :
-                ''
-                  # ${ label }
-                  if [ ! -d ${ structure-directory }/${ directory } ]
-                  then
-                    ${ coreutils }/bin/mkdir ${ structure-directory }/${ directory }
-                  fi &&
-                  exec ${ file-descriptor-directory }<>${ structure-directory }/${ directory }/lock &&
-                  ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
-                  export ${ temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/${ directory }/XXXXXXXX ) &&
-                  exec ${ file-descriptor-dir }<>${ bash-variable temporary-dir }/lock &&
-                  ${ flock }/bin/flock ${ file-descriptor-dir }
-                '' ;
+             temporary =
+	       {
+	         no =
+                  { } :
+                    ''
+                      # NO TEMPORARY
+                    '' ;
+		 yes =
+                  { bash-variable , coreutils , flock , local , structure-directory } :
+                    ''
+                      # YES TEMPORARY
+                      if [ ! -d ${ structure-directory }/temporary ]
+                      then
+                        ${ coreutils }/bin/mkdir ${ structure-directory }/temporary
+                      fi &&
+                      exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                      ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                      export ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+                      exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
+                      ${ flock }/bin/flock ${ local.numbers.temporary-dir }
+                    '' ;
+	      } ;
           } ;
+      } ;
+    test =
+      {
+        delay =
+	  { bash-variable , coreutils } :
+	    ''
+	      ${ coreutils }/bin/sleep 10s &&
+	      ${ coreutils }/bin/touch ${ bash-variable 1 }
+	    '' ;
       } ;
   }

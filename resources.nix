@@ -7,4 +7,7 @@
         lock = resource : resource { file = scripts : scripts.touch ; salt = 60 * 60 * 24 * 7 ; show = false ; permissions = 0600 ; } ;
       } ;
     name = resource : resource { output = scripts : scripts.name ; show = true ; } ;
+    test =
+      {
+      } ;
   }
