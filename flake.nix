@@ -229,6 +229,7 @@
                                   identifier =
 				    track : seed :
 				      let
+					abs = value : if value > 0 then value else - value ;
 				        hash =
 				          dividend :
 					    let
@@ -253,7 +254,7 @@
 						  else if i == "f" then 15
 						  else builtins.throw "c36268d8-3c14-4d8b-9d0c-610ff94ca496" ;
 					      string = builtins.hashString "sha512" ( builtins.toString dividend ) ;
-					      in builtins.foldl' ( previous : current : previous * 16 + current ) 0 ( builtins.map mapper list ) ;
+					      in builtins.foldl' ( previous : current : abs ( previous * 16 + current ) ) 0 ( builtins.map mapper list ) ;
 				        modulus =
 				          dividend : divisor :
 					    let
