@@ -185,21 +185,21 @@
                     '' ;
 	      } ;
             main =
-              { bash-variable , log , resource , script , strip , structure , track , temporary , uuid , writeShellScript } :
+              { bash-variable , local , track , temporary , uuid , writeShellScript } :
                 ''
                   # ${ uuid }
                   # ${ builtins.toString track.index }
                   # ${ builtins.toString track.qualified-name }
 
-                  ${ strip structure } &&
+                  ${ local.scripts.structure } &&
 
-                  ${ strip temporary } &&
+                  ${ local.scripts.temporary } &&
 
-                  ${ strip log } &&
+                  ${ local.scripts.log } &&
 
-                  ${ strip resource } &&
+                  ${ local.scripts.resource } &&
 
-                  exec ${ writeShellScript track.simple-name ( strip script ) } ${ bash-variable "@" }
+                  exec ${ writeShellScript track.simple-name local.scripts.script } ${ bash-variable "@" }
                 '' ;
             no =
               { label } :

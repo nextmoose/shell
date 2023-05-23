@@ -87,19 +87,19 @@
                                               ) ;
                                           program =
                                             let
-					      _ = _scripts ( { script-fun } : script-fun local ) ;
+					      _ = _scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
                                               is =
                                                 {
                                                   log = builtins.replaceStrings [ local.variables.log-dir ] [ "" ] script != script ;
                                                   temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script != script ;
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
-                                              log = if is.log then _.structure.script.log.yes else _.structure.script.log.no ;
-                                              resource = if is.resource then _.structure.script.resource.yes else _.structure.script.resource.no ;
-                                              scripts = import ./scripts.nix ;
-                                              structure = if is.temporary || is.log || is.resource then _.structure.script.structure.yes else _.structure.script.structure.no ;
-                                              temporary = if is.temporary then _.structure.script.temporary.yes else _.structure.script.temporary.no ;
-                                              in scripts.structure.script.main { bash-variable = bash-variable ; log = log ; resource = resource ; script = script ; strip = strip ; structure = structure ; temporary = temporary ; track = track ; uuid = local.uuid ; writeShellScript = pkgs.writeShellScript ; } ;
+                                              log = strip ( if is.log then _.structure.script.log.yes else _.structure.script.log.no ) ;
+					      main = _.structure.script.main ;
+                                              resource = strip ( if is.resource then _.structure.script.resource.yes else _.structure.script.resource.no ) ;
+                                              structure = strip ( if is.temporary || is.log || is.resource then _.structure.script.structure.yes else _.structure.script.structure.no ) ;
+                                              temporary = strip ( if is.temporary then _.structure.script.temporary.yes else _.structure.script.temporary.no ) ;
+                                              in main ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;
                                           resources =
@@ -210,6 +210,7 @@
                                                   strip = strip ;
 						  structure-directory = structure-directory ;
                                                   temporary = bash-variable local.variables.temporary-dir ;
+						  track = track ;
                                                   uuid = local.uuid ;
                                                 } ;
                                           in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
