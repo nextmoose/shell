@@ -70,19 +70,19 @@
         release =
           {
             log =
-              { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , findutils , flock , gnused , resources , structure-directory } :
+              { bash-variable , coreutils , findutils , flock , gnused , local , resources , structure-directory } :
                 ''
 		  export TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
                   exec 200<>${ resources.log.lock } &&
                   ${ flock }/bin/flock 200 &&
                   if [ -d ${ structure-directory }/log ]
                   then
-                    exec ${ file-descriptor-directory }<>${ structure-directory }/log/lock &&
-                    ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
+                    exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                    ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
                     ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d | while read DIR
                     do
-                      exec ${ file-descriptor-dir }<>${ bash-variable "DIR" }/lock &&
-                      ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
+                      exec ${ local.numbers.log-dir }<>${ bash-variable "DIR" }/lock &&
+                      ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
                       ${ findutils }/bin/find ${ bash-variable "DIR" } -mindepth 1 -maxdepth 1 -type f -name "*.*" | while read FILE
                       do
                         ${ coreutils }/bin/stat --format "%W %n" ${ bash-variable "FILE" }
@@ -99,16 +99,16 @@
                   fi
                 '' ;
             temporary =
-              { bash-variable , coreutils , file-descriptor-directory , file-descriptor-dir , findutils , flock , structure-directory } :
+              { bash-variable , coreutils , findutils , flock , local , structure-directory } :
                 ''
                   if [ -d ${ structure-directory }/temporary ]
                   then
-                    exec ${ file-descriptor-directory }<>${ structure-directory }/temporary/lock &&
-                    ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
+                    exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                    ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
                     ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d | while read DIR
                     do
-                      exec ${ file-descriptor-dir }<>${ bash-variable "DIR" }/lock &&
-                      ${ flock }/bin/flock -n ${ file-descriptor-dir } &&
+                      exec ${ local.numbers.temporary-dir }<>${ bash-variable "DIR" }/lock &&
+                      ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
                       ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
                     done
                   fi

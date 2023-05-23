@@ -199,11 +199,12 @@
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
                                                   release =
                                                     let
+						      _ = _scripts ( { script } : script ) ;
                                                       scripts = import ./scripts.nix ;
                                                       in
                                                         {
-                                                          log = strip ( scripts.structure.release.log { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-directory = local.numbers.log-directory ; file-descriptor-dir = local.numbers.log-dir ; findutils = pkgs.findutils ; flock = pkgs.flock ; gnused = pkgs.gnused ; resources = resources local ; structure-directory = structure-directory ; } ) ;
-                                                          temporary = strip ( scripts.structure.release.temporary { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-directory = local.numbers.temporary-directory ; file-descriptor-dir = local.numbers.temporary-dir ; findutils = pkgs.findutils ; flock = pkgs.flock ; structure-directory = structure-directory ; } ) ;
+							  log = strip ( _.structure.release.log ) ;
+							  temporary = ( _.structure.release.temporary ) ;
                                                         } ;
                                                   resources = resources local ;
 						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
