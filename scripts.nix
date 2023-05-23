@@ -262,11 +262,47 @@
       } ;
     test =
       {
+        alpha =
+	  { coreutils , temporary } :
+	    ''
+	      ${ coreutils }/bin/echo 0ce67836-04aa-4046-a14d-ba91d2677eb4 > ${ temporary }/f82a3997-0970-479e-ab5f-faf2e1b22854
+	    '' ;
         delay =
-	  { bash-variable , coreutils } :
+	  { coreutils } :
 	    ''
 	      ${ coreutils }/bin/sleep 10s &&
-	      ${ coreutils }/bin/touch ${ bash-variable 1 }
+	      ${ coreutils }/bin/2800dd15-d6c8-495e-94c1-bc0adb1118d7
+	    '' ;
+	entry =
+	  { cowsay , dev } :
+	    ''
+	      ${ cowsay }/bin/cowsay TESTING 2> ${ dev.null }
+	    '' ;
+	file =
+	  { bash-variable , coreutils } :
+	    ''
+	      ${ coreutils }/bin/echo 7eaa6251-82e0-47c7-b492-7ababc3e709b > ${ bash-variable 1 }
+	    '' ;
+        output =
+	  { coreutils } :
+	    ''
+	      ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
+	    '' ;
+        testing =
+	  { shell-scripts , coreutils , dev , findutils , flock , release , resources , structure-directory } :
+	    ''
+	      exec 200<>${ resources.test.lock } &&
+	      ${ flock }/bin/flock 200 &&
+	      ${ release.temporary }
+	      ${ shell-scripts.test.alpha } &&
+	      if [ $( ${ findutils }/bin/find ${ structure-directory }/temporary -name f82a3997-0970-479e-ab5f-faf2e1b22854 | ${ coreutils }/bin/wc --lines ) != 1 ]
+	      then
+	        ${ coreutils }/bin/echo We were expecting to find exactly one temporary file. &&
+		exit 64
+	      else
+	        ${ coreutils }/bin/echo We found exactly one temporary file.
+	      fi &&
+	      ${ release.temporary }
 	    '' ;
       } ;
   }
