@@ -163,18 +163,18 @@
                   export ${ timestamp }=${ bash-variable 3 }
                 '' ;
              log =
-              { bash-variable , coreutils , flock , structure-directory , temporary-dir } :
+              { bash-variable , coreutils , flock , local , structure-directory } :
                 ''
                   # LOG
                   if [ ! -d ${ structure-directory }/log ]
                   then
                     ${ coreutils }/bin/mkdir ${ structure-directory }/log
                   fi &&
-                  exec ${ file-descriptor-directory }<>${ structure-directory }/log/lock &&
-                  ${ flock }/bin/flock -s ${ file-descriptor-directory } &&
-                  export ${ temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
-                  exec ${ file-descriptor-dir }<>${ bash-variable temporary-dir }/lock &&
-                  ${ flock }/bin/flock ${ file-descriptor-dir }
+                  exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                  ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                  export ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+                  exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
+                  ${ flock }/bin/flock ${ local.numbers.log-dir }
                 '' ;
             main =
               { bash-variable , log , resource , script , strip , structure , track , temporary , uuid , writeShellScript } :

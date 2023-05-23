@@ -49,6 +49,7 @@
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
                               invoke = fun : args : fun ( builtins.intersectAttrs ( builtins.functionArgs fun ) args ) ;
                               pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
+			      _scripts = scripts ;
                               scripts =
                                 fun :
                                   let
@@ -86,6 +87,7 @@
                                               ) ;
                                           program =
                                             let
+					      _ = _scripts ( { script-fun } : script-fun local ) ;
                                               is =
                                                 {
                                                   log = builtins.replaceStrings [ local.variables.log-dir ] [ "" ] script != script ;
@@ -93,7 +95,7 @@
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
                                               log =
-                                                if is.log then scripts.structure.script.temporary { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; directory = "log" ; file-descriptor-directory = local.numbers.log-directory ; file-descriptor-dir = local.numbers.log-dir ; flock = pkgs.flock ; label = "LOG" ; structure-directory = structure-directory ; temporary-dir = local.variables.log-dir ; }
+                                                if is.log then _.structure.script.log
                                                 else scripts.structure.script.no { label = "NO LOGS" ; } ;
                                               resource =
                                                 if is.resource then scripts.structure.script.resource { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-directory = local.numbers.resource-directory ; flock = pkgs.flock ; structure-directory = structure-directory ; timestamp = local.variables.timestamp ; }
@@ -201,6 +203,7 @@
                                                       init = strip ( scripts.structure.script.init { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; process = local.variables.parent.process ; salt = local.variables.parent.salt ; timestamp = local.variables.parent.timestamp ; } ) ;
                                                       scripts = import ./scripts.nix ;
                                                       in init ;
+						  local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
                                                   release =
                                                     let
@@ -213,10 +216,11 @@
                                                   resources = resources local ;
 						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
                                                   strip = strip ;
+						  structure-directory = structure-directory ;
                                                   temporary = bash-variable local.variables.temporary-dir ;
                                                   uuid = local.uuid ;
                                                 } ;
-                                          in invoke fun { script = script ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
+                                          in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
                                     list = track : track.reduced ;
                                     set = track : track.reduced ;
                                     undefined = track : track.throw "dd277420-6b62-4375-bda8-93dc2326d3bf" ;
