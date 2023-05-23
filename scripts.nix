@@ -242,7 +242,7 @@
 		} ;
              temporary =
 	       {
-	         no = { } :
+	         no =
                   ''
                     # 1 NO TEMPORARY
                   '' ;

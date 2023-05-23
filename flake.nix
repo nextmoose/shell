@@ -219,7 +219,7 @@
                                         lambda = track : appraisal track track.reduced ;
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
-	    			        string = track : track.throw "x" ;
+	    			        string = track : appraisal track ( { } : track.reduced ) ;
                                         undefined = track : track.throw "dd277420-6b62-4375-bda8-93dc2326d3bf" ;
                                         in visit { lambda = lambda ; list = list ; set = set ; string = string ; undefined = undefined ; } ( import ./scripts.nix ) ;
 				    in value ;
