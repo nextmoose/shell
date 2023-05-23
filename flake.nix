@@ -59,7 +59,7 @@
                                           local =
                                             unique
                                               {
-                                                numbers = { structure-directory = tokenizers.identifier ; temporary-directory = tokenizers.identifier ; temporary-dir = tokenizers.identifier ; log-directory = tokenizers.identifier ; log-dir = tokenizers.identifier ; resource-directory = tokenizers.identifier ; resource-dir = tokenizers.identifier ; } ;
+                                                numbers = { structure-directory = tokenizers.identifier track ; temporary-directory = tokenizers.identifier track ; temporary-dir = tokenizers.identifier track ; log-directory = tokenizers.identifier track ; log-dir = tokenizers.identifier track ; resource-directory = tokenizers.identifier track ; resource-dir = tokenizers.identifier track ; } ;
                                                 variables =
                                                   {
                                                     temporary-dir = tokenizers.variable "TEMPORARY" track ;
@@ -73,7 +73,7 @@
                                                         salt = tokenizers.variable "PARENTSALT" track ;
                                                       } ;
                                                   } ;
-                                                uuid = tokenizers.uuid track.index ;
+                                                uuid = tokenizers.uuid track ;
                                               }
                                               script-fun
                                               (
@@ -226,8 +226,41 @@
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } hook ;
                               tokenizers =
                                 {
-                                  identifier = seed : builtins.toString ( seed + 3 ) ;
-                                  uuid = index : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed index ] ) ) ;
+                                  identifier =
+				    track : seed :
+				      let
+				        hash =
+				          dividend :
+					    let
+					      list = builtins.genList ( i : builtins.substring i 1 string ) ( builtins.stringLength string ) ;
+					      mapper =
+					        i :
+						  if i == "0" then 0
+						  else if i == "1" then 1
+						  else if i == "2" then 2
+						  else if i == "3" then 3
+						  else if i == "4" then 4
+						  else if i == "5" then 5
+						  else if i == "6" then 6
+						  else if i == "7" then 7
+						  else if i == "8" then 8
+						  else if i == "9" then 9
+						  else if i == "a" then 10
+						  else if i == "b" then 11
+						  else if i == "c" then 12
+						  else if i == "d" then 13
+						  else if i == "e" then 14
+						  else if i == "f" then 15
+						  else builtins.throw "c36268d8-3c14-4d8b-9d0c-610ff94ca496" ;
+					      string = builtins.hashString "sha512" ( builtins.toString dividend ) ;
+					      in builtins.foldl' ( previous : current : previous * 16 + current ) 0 ( builtins.map mapper list ) ;
+				        modulus =
+				          dividend : divisor :
+					    let
+					      quotient = dividend / divisor ;
+					      in dividend - quotient * divisor ;
+				        in builtins.toString ( 3 + modulus ( hash ( seed + track.index ) ) ( 256 - 3 ) ) ;
+                                  uuid = track : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ;
                                   variable = name : track : seed : builtins.concatStringsSep "_" [ "VARIABLE" name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
                                 } ;
                               in pkgs.mkShell ( buildInputs // shellHook ) ;
