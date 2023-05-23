@@ -87,18 +87,18 @@
                                               ) ;
                                           program =
                                             let
-					      _ = _scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
                                               is =
                                                 {
                                                   log = builtins.replaceStrings [ local.variables.log-dir ] [ "" ] script != script ;
                                                   temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script != script ;
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
-                                              log = strip ( if is.log then _.structure.script.log.yes else _.structure.script.log.no ) ;
-					      main = _.structure.script.main ;
-                                              resource = strip ( if is.resource then _.structure.script.resource.yes else _.structure.script.resource.no ) ;
-                                              structure = strip ( if is.temporary || is.log || is.resource then _.structure.script.structure.yes else _.structure.script.structure.no ) ;
-                                              temporary = strip ( if is.temporary then _.structure.script.temporary.yes else _.structure.script.temporary.no ) ;
+                                              log = strip ( if is.log then scripts.structure.script.log.yes else scripts.structure.script.log.no ) ;
+					      main = scripts.structure.script.main ;
+                                              resource = strip ( if is.resource then scripts.structure.script.resource.yes else scripts.structure.script.resource.no ) ;
+					      scripts = _scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
+                                              structure = strip ( if is.temporary || is.log || is.resource then scripts.structure.script.structure.yes else scripts.structure.script.structure.no ) ;
+                                              temporary = strip ( if is.temporary then scripts.structure.script.temporary.yes else scripts.structure.script.temporary.no ) ;
                                               in main ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;
