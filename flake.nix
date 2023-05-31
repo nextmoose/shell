@@ -58,7 +58,7 @@
                                           local =
                                             unique
                                               {
-                                                numbers = { structure-directory = tokenizers.identifier track ; temporary-directory = tokenizers.identifier track ; temporary-dir = tokenizers.identifier track ; log-directory = tokenizers.identifier track ; log-dir = tokenizers.identifier track ; resource-directory = tokenizers.identifier track ; resource-dir = tokenizers.identifier track ; } ;
+                                                numbers = { structure-directory = tokenizers.identifier track ; temporary-directory = tokenizers.identifier track ; temporary-dir = tokenizers.identifier track ; log-directory = tokenizers.identifier track ; log-dir = tokenizers.identifier track ; resource-directory = tokenizers.identifier track ; resource-dir = tokenizers.identifier track ; test = tokenizers.identifier track ; } ;
                                                 variables =
                                                   {
                                                     temporary-dir = tokenizers.variable "TEMPORARY" track ;
@@ -196,14 +196,6 @@
                                                       in init ;
 						  local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
-                                                  release =
-                                                    let
-						      _scripts = scripts ( { script } : script ) ;
-                                                      in
-                                                        {
-							  log = strip ( _scripts.structure.release.log ) ;
-							  temporary = ( _scripts.structure.release.temporary ) ;
-                                                        } ;
                                                   resources = resources local ;
 						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
                                                   strip = strip ;

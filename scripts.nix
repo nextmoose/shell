@@ -28,9 +28,9 @@
         ''
           ${ coreutils }/bin/echo HELLO &&
           ${ release.log } &&
-	  exec 200<>${ resources.log.lock } &&
-	  ${ flock }/bin/flock -s 200 &&
-	  ${ coreutils }/bin/echo ${ resources.log.file }
+          exec 200<>${ resources.log.lock } &&
+          ${ flock }/bin/flock -s 200 &&
+          ${ coreutils }/bin/echo ${ resources.log.file }
         '' ;
     name =
       { init , git , strip } :
@@ -56,23 +56,23 @@
     structure =
       {
         at =
-	  { at , bash-variable , dev , coreutils } :
-	    ''
-	      ${ coreutils }/bin/echo ${ coreutils }/bin/nice --adjustment 19 ${ bash-variable "@" } | ${ at } now 2> ${ dev.null }
-	    '' ;
-        cron =
-	  { bash-variable , coreutils , dev } :
+          { at , bash-variable , dev , coreutils } :
             ''
-	      CRON=$( ${ dev.sudo } { coreutils }/bin/mktemp ${ dev.cron }/XXXXXXXX ) &&
-	      ${ coreutils }/echo ${ bash-variable 1 } ${ bash-variable 2 } > ${ bash-variable "CRON" } &&
-	      ${ coreutils }/bin/echo ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
-	    '' ;
+              ${ coreutils }/bin/echo ${ coreutils }/bin/nice --adjustment 19 ${ bash-variable "@" } | ${ at } now 2> ${ dev.null }
+            '' ;
+        cron =
+          { bash-variable , coreutils , dev } :
+            ''
+              CRON=$( ${ dev.sudo } { coreutils }/bin/mktemp ${ dev.cron }/XXXXXXXX ) &&
+              ${ coreutils }/echo ${ bash-variable 1 } ${ bash-variable 2 } > ${ bash-variable "CRON" } &&
+              ${ coreutils }/bin/echo ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
+            '' ;
         release =
           {
             log =
               { bash-variable , coreutils , findutils , flock , gnused , local , resources , structure-directory } :
                 ''
-		  export TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
+                  export TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
                   exec 200<>${ resources.log.lock } &&
                   ${ flock }/bin/flock 200 &&
                   if [ -d ${ structure-directory }/log ]
@@ -89,30 +89,42 @@
                       done | ${ coreutils }/bin/sort --key 1 --numeric | ${ coreutils }/bin/cut --delimiter " " --fields 2 | while read FILE
                       do
                         EXTENSION=${ bash-variable "FILE##*." } &&
-			${ coreutils }/bin/echo "-" >> ${ resources.log.file } &&
+                        ${ coreutils }/bin/echo "-" >> ${ resources.log.file } &&
                         ${ coreutils }/bin/echo "  ${ bash-variable "EXTENSION" }:" >> ${ resources.log.file } &&
                         ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#    -\n      timestamp: \1\n      value: >\n        \2#' ${ bash-variable "FILE" } >> ${ resources.log.file }
-			${ coreutils }/bin/true
+                        ${ coreutils }/bin/true
                       done &&
                       ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
                     done
                   fi
                 '' ;
             temporary =
-              { bash-variable , coreutils , findutils , flock , local , structure-directory } :
-                ''
-                  if [ -d ${ structure-directory }/temporary ]
-                  then
-                    exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
-                    ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-                    ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d | while read DIR
-                    do
-                      exec ${ local.numbers.temporary-dir }<>${ bash-variable "DIR" }/lock &&
-                      ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
-                    done
-                  fi
-                '' ;
+	      {
+	        directory =
+                  { bash-variable , coreutils , findutils , flock , local , shell-scripts , structure-directory } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY &&
+                      if [ -d ${ structure-directory }/temporary ]
+                      then
+                        exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                        ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY &&
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \;
+	    	        ${ coreutils }/bin/echo END RELEASE TEMPORARY
+                      fi &&
+                      ${ coreutils }/bin/echo END RELEASE TEMPORARY
+                    '' ;
+    	        dir =
+	          { bash-variable , coreutils , flock , local } :
+	            ''
+		      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY ${ bash-variable 1 } &&
+		      exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
+		      ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
+		      ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/echo END RELEASE TEMPORARY ${ bash-variable 1 }
+		    '' ;
+	      } ;
           } ;
         resource =
           {
@@ -135,7 +147,7 @@
                   TIMESTAMP=${ bash-variable 1 } &&
                   PID=${ bash-variable 2 } &&
                   SALT=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
-		  ${ coreutils }/bin/echo '${ pre-salt }' - '${ salt }' - ${ bash-variable "TIMESTAMP" } - ${ bash-variable "SALT" } >> /tmp/repair &&
+                  ${ coreutils }/bin/echo '${ pre-salt }' - '${ salt }' - ${ bash-variable "TIMESTAMP" } - ${ bash-variable "SALT" } >> /tmp/repair &&
                   if [ ! -d ${ structure-directory }/resource/${ bash-variable "SALT" } ]
                   then
                     ${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "SALT" }
@@ -163,12 +175,12 @@
                   export ${ timestamp }=${ bash-variable 3 }
                 '' ;
              log =
-	       {
-	         no =
+               {
+                 no =
                   ''
                     # NO LOG
                   '' ;
-		 yes =
+                 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''
                       # YES LOG
@@ -182,7 +194,7 @@
                       exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
                       ${ flock }/bin/flock ${ local.numbers.log-dir }
                     '' ;
-	      } ;
+              } ;
             main =
               { bash-variable , local , track , temporary , uuid , writeShellScript } :
                 ''
@@ -201,12 +213,12 @@
                   exec ${ writeShellScript track.simple-name local.scripts.script } ${ bash-variable "@" }
                 '' ;
             resource =
-	      {
-	         no =
+              {
+                 no =
                   ''
                     # NO RESOURCE
                   '' ;
-		 yes =
+                 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''         
                       # RESOURCE
@@ -218,14 +230,14 @@
                       ${ flock }/bin/flock -s ${ local.numbers.resource-directory } &&
                       export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s )
                     '' ;
-		} ;
+                } ;
             structure =
-	      {
-	         no =
+              {
+                 no =
                   ''
                     # NO STRUCTURE
                   '' ;
-		 yes =
+                 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''         
                       # YES STRUCTURE
@@ -236,14 +248,14 @@
                       exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
                       ${ flock }/bin/flock -s ${ local.numbers.structure-directory }
                     '' ;
-		} ;
+                } ;
              temporary =
-	       {
-	         no =
+               {
+                 no =
                   ''
                     # 1 NO TEMPORARY
                   '' ;
-		 yes =
+                 yes =
                   { bash-variable , coreutils , flock , local , structure-directory } :
                     ''
                       # YES TEMPORARY
@@ -257,52 +269,93 @@
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
                       ${ flock }/bin/flock ${ local.numbers.temporary-dir }
                     '' ;
-	      } ;
-          } ;
+              } ;
+           } ;
       } ;
     test =
       {
-        alpha =
-	  { coreutils , temporary } :
-	    ''
-	      ${ coreutils }/bin/echo 0ce67836-04aa-4046-a14d-ba91d2677eb4 > ${ temporary }/f82a3997-0970-479e-ab5f-faf2e1b22854
-	    '' ;
         delay =
-	  { coreutils } :
-	    ''
-	      ${ coreutils }/bin/sleep 10s &&
-	      ${ coreutils }/bin/2800dd15-d6c8-495e-94c1-bc0adb1118d7
-	    '' ;
-	entry =
-	  { cowsay , dev } :
-	    ''
-	      ${ cowsay }/bin/cowsay TESTING 2> ${ dev.null }
-	    '' ;
-	file =
-	  { bash-variable , coreutils } :
-	    ''
-	      ${ coreutils }/bin/echo 7eaa6251-82e0-47c7-b492-7ababc3e709b > ${ bash-variable 1 }
-	    '' ;
+          { coreutils } :
+            ''
+              ${ coreutils }/bin/sleep 10s &&
+              ${ coreutils }/bin/2800dd15-d6c8-495e-94c1-bc0adb1118d7
+            '' ;
+        create-log-file =
+          { bash-variable , coreutils , log } :
+            ''
+              ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ log ( bash-variable 2 ) }
+            '' ;
+        create-temporary-file =
+          { bash-variable , coreutils , temporary } :
+            ''
+              ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ temporary }/f82a3997-0970-479e-ab5f-faf2e1b22854
+            '' ;
+        entry =
+          { cowsay , dev } :
+            ''
+              ${ cowsay }/bin/cowsay TESTING 2> ${ dev.null }
+            '' ;
+        file =
+          { bash-variable , coreutils } :
+            ''
+              ${ coreutils }/bin/echo 7eaa6251-82e0-47c7-b492-7ababc3e709b > ${ bash-variable 1 }
+            '' ;
         output =
-	  { coreutils } :
-	    ''
-	      ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
-	    '' ;
-        testing =
-	  { shell-scripts , coreutils , dev , findutils , flock , release , resources , structure-directory } :
-	    ''
-	      exec 200<>${ resources.test.lock } &&
-	      ${ flock }/bin/flock 200 &&
-	      ${ release.temporary }
-	      ${ shell-scripts.test.alpha } &&
-	      if [ $( ${ findutils }/bin/find ${ structure-directory }/temporary -name f82a3997-0970-479e-ab5f-faf2e1b22854 | ${ coreutils }/bin/wc --lines ) != 1 ]
+          { coreutils } :
+            ''
+              ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
+            '' ;
+        query-log =
+          { flock , release , resource } :
+            ''
+            '' ;
+        test-log =
+          { findutils , flock , release , resources , shell-scripts } :
+            ''
+              exec 200<>${ resources.test.lock } &&
+              ${ flock }/bin/flock 200 &&
+              ${ release.log } &&
+            '' ;
+        testing-temporary =
+          { bash-variable , coreutils , dev , findutils , flock , local , resources , shell-scripts , structure-directory , temporary } :
+            ''
+              exec ${ local.numbers.test }<>${ resources.test.lock } &&
+              ${ flock }/bin/flock ${ local.numbers.test } &&
+              ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/11 2> ${ temporary }/12 &&
+	      if [ -s ${ temporary }/12 ]
 	      then
-	        ${ coreutils }/bin/echo We were expecting to find exactly one temporary file. &&
+	        ${ coreutils }/bin/echo The temporary release errors &&
 		exit 64
-	      else
-	        ${ coreutils }/bin/echo We found exactly one temporary file.
 	      fi &&
-	      ${ release.temporary }
-	    '' ;
+	      BEFORE=$( ${ coreutils }/bin/wc ${ temporary }/11 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
+	      if [ ${ bash-variable "BEFORE" } -lt 5 ]
+	      then
+	        ${ coreutils }/bin/echo We were expecting 5 or more lines. &&
+		exit 64
+	      fi &&
+              ${ shell-scripts.test.create-temporary-file } 392b09d7-aa33-4908-9156-e91d191d9d70 &&
+              if [ $( ${ findutils }/bin/find ${ structure-directory }/temporary -name f82a3997-0970-479e-ab5f-faf2e1b22854 | ${ coreutils }/bin/wc --lines ) != 1 ]
+              then
+                ${ coreutils }/bin/echo We were expecting to find exactly one temporary file. &&
+                exit 64
+              elif [ $( ${ findutils }/bin/find ${ structure-directory }/temporary -name f82a3997-0970-479e-ab5f-faf2e1b22854 -exec ${ coreutils }/bin/cat {} \; ) != "392b09d7-aa33-4908-9156-e91d191d9d70" ]
+              then
+                ${ coreutils }/bin/echo We found one file but the content did not match expected.
+              else
+                ${ coreutils }/bin/echo The temporary file works
+              fi &&
+              ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/21 2> ${ temporary }/22 &&
+	      if [ -s ${ temporary }/22 ]
+	      then
+	        ${ coreutils }/bin/echo The temporary release errors &&
+		exit 64
+	      fi &&
+	      AFTER=$( ${ coreutils }/bin/wc ${ temporary }/21 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
+	      if [ ${ bash-variable "AFTER" } -lt 5 ]
+	      then
+	        ${ coreutils }/bin/echo We were expecting 5 or more lines. &&
+		exit 64
+	      fi
+            '' ;
       } ;
   }
