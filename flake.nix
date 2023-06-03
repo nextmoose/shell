@@ -89,7 +89,7 @@
                                               is =
                                                 {
                                                   log = builtins.replaceStrings [ local.variables.log-dir ] [ "" ] script != script ;
-                                                  temporary = builtins.replaceStrings [ local.variables.temporary-dir ] [ "" ] script != script ;
+                                                  temporary = builtins.any ( key : key == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                   resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
                                                 } ;
                                               log = strip ( if is.log then _scripts.structure.script.log.yes else _scripts.structure.script.log.no ) ;
@@ -200,7 +200,7 @@
 						  shell-scripts = scripts ( { shell-script } : shell-script ) ;
                                                   strip = strip ;
 						  structure-directory = structure-directory ;
-                                                  temporary = bash-variable local.variables.temporary-dir ;
+                                                  temporary = "${ bash-variable local.variables.temporary-dir }/temporary" ;
 						  track = track ;
                                                   uuid = local.uuid ;
                                                 } ;

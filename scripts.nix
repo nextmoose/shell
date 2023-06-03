@@ -70,37 +70,44 @@
         release =
           {
             log =
-              { bash-variable , coreutils , findutils , flock , gnused , local , resources , structure-directory } :
-                ''
-                  export TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
-                  exec 200<>${ resources.log.lock } &&
-                  ${ flock }/bin/flock 200 &&
-                  if [ -d ${ structure-directory }/log ]
-                  then
-                    exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
-                    ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                    ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d | while read DIR
-                    do
-                      exec ${ local.numbers.log-dir }<>${ bash-variable "DIR" }/lock &&
-                      ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
-                      ${ findutils }/bin/find ${ bash-variable "DIR" } -mindepth 1 -maxdepth 1 -type f -name "*.*" | while read FILE
-                      do
-                        ${ coreutils }/bin/stat --format "%W %n" ${ bash-variable "FILE" }
-                      done | ${ coreutils }/bin/sort --key 1 --numeric | ${ coreutils }/bin/cut --delimiter " " --fields 2 | while read FILE
-                      do
-                        EXTENSION=${ bash-variable "FILE##*." } &&
-                        ${ coreutils }/bin/echo "-" >> ${ resources.log.file } &&
-                        ${ coreutils }/bin/echo "  ${ bash-variable "EXTENSION" }:" >> ${ resources.log.file } &&
-                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#    -\n      timestamp: \1\n      value: >\n        \2#' ${ bash-variable "FILE" } >> ${ resources.log.file }
-                        ${ coreutils }/bin/true
-                      done &&
-                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable "DIR" }
-                    done
-                  fi
-                '' ;
+              {
+                directory =
+                  { bash-variable , coreutils , findutils , flock , gnused , local , shell-scripts , structure-directory } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE LOG >> ${ bash-variable 2 } &&
+                      if [ -d ${ structure-directory }/log ]
+                      then
+                        exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG >> ${ bash-variable 2 } &&
+                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} ${ bash-variable 1 } ${ bash-variable 2 } \;
+                        fi &&
+                      ${ coreutils }/bin/echo END RELEASE LOG >> ${ bash-variable 2 }
+                    '' ;
+                dir =
+                 { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
+                   ''
+                     ${ coreutils }/bin/echo BEGIN RELEASE LOG ${ bash-variable 1 } >> ${ bash-variable 3 } &&
+                     exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
+                     ${ flock }/bin/flock ${ local.numbers.log-dir } &&
+                     ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG ${ bash-variable 1 } >> ${ bash-variable 3 } &&
+                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 2 } ${ bash-variable 3 } \; &&
+                     ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+                     ${ coreutils }/bin/echo END RELEASE LOG ${ bash-variable 1 } >> ${ bash-variable 3 }
+                   '' ;
+                 file =
+                   { bash-variable , coreutils , gnused } :
+                     ''
+                       ${ coreutils }/bin/echo BEGIN RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 } &&
+                       EXTENSION=${ bash-variable "1##*." } &&
+                       ${ coreutils }/bin/echo "${ bash-variable "EXTENSION" }:" >> ${ bash-variable 2 } &&
+                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  -\n    timestamp: \1\n    value: >\n      \2#' ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                       ${ coreutils }/bin/rm ${ bash-variable 1 } &&
+                       ${ coreutils }/bin/echo END RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 }
+                     '' ;
+              } ;
             temporary =
-	      {
-	        directory =
+              {
+                directory =
                   { bash-variable , coreutils , findutils , flock , local , shell-scripts , structure-directory } :
                     ''
                       ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY &&
@@ -110,21 +117,21 @@
                         ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \;
-	    	        ${ coreutils }/bin/echo END RELEASE TEMPORARY
+                        ${ coreutils }/bin/echo END RELEASE TEMPORARY
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE TEMPORARY
                     '' ;
-    	        dir =
-	          { bash-variable , coreutils , flock , local } :
-	            ''
-		      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY ${ bash-variable 1 } &&
-		      exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
-		      ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-		      ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY ${ bash-variable 1 } &&
-		      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
-		      ${ coreutils }/bin/echo END RELEASE TEMPORARY ${ bash-variable 1 }
-		    '' ;
-	      } ;
+                dir =
+                  { bash-variable , coreutils , flock , local } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY ${ bash-variable 1 } &&
+                      exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
+                      ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
+                      ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY ${ bash-variable 1 } &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+                      ${ coreutils }/bin/echo END RELEASE TEMPORARY ${ bash-variable 1 }
+                    '' ;
+              } ;
           } ;
         resource =
           {
@@ -267,7 +274,8 @@
                       ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
                       export ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
-                      ${ flock }/bin/flock ${ local.numbers.temporary-dir }
+                      ${ flock }/bin/flock ${ local.numbers.temporary-dir } &&
+                      ${ coreutils }/bin/mkdir ${ bash-variable local.variables.temporary-dir }/temporary
                     '' ;
               } ;
            } ;
@@ -283,7 +291,7 @@
         create-log-file =
           { bash-variable , coreutils , log } :
             ''
-              ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ log ( bash-variable 2 ) }
+              ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ log "a450f15b-9891-441c-b066-29a21a245d39" }
             '' ;
         create-temporary-file =
           { bash-variable , coreutils , temporary } :
@@ -316,23 +324,96 @@
               ${ flock }/bin/flock 200 &&
               ${ release.log } &&
             '' ;
+        testing-log =
+          { bash-variable , coreutils , findutils , flock , gnused , local , log , resources , shell-scripts , structure-directory , temporary , yq } :
+            ''
+              exec ${ local.numbers.test }<>${ resources.test.lock } &&
+              ${ flock }/bin/flock ${ local.numbers.test } &&
+              ${ shell-scripts.structure.release.log.directory } ${ temporary }/211 ${ temporary }/212 > ${ temporary }/213 2> ${ temporary }/214 &&
+              ${ coreutils }/bin/echo We do not test 211 because we do not know how it will end up &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/212 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
+              then
+                ${ coreutils }/bin/echo We were expecting two or more lines of output &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo Regardless of initial conditions we expect at least two lines of output.
+              fi &&
+              if [ -s ${ temporary }/213 ]
+              then
+                ${ coreutils }/bin/echo release outputed &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any output
+              fi &&
+              if [ -s ${ temporary }/214 ]
+              then
+                ${ coreutils }/bin/echo release errored &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any error
+              fi &&
+              ${ shell-scripts.test.create-log-file } 310aaf17-13f2-4919-9edb-60d3bc3af35b &&
+              LOGGED=$( ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d ) &&
+              ${ coreutils }/bin/echo We have the following LOG DIRECTORIES ${ bash-variable "LOGGED" } &&
+              ${ shell-scripts.structure.release.log.directory } ${ temporary }/221 ${ temporary }/222 > ${ temporary }/223 2> ${ temporary }/224 &&
+              OBSERVED=$( ${ coreutils }/bin/cat ${ temporary }/221 | ${ yq }/bin/yq --raw-output '.${ builtins.hashString "sha512" "a450f15b-9891-441c-b066-29a21a245d39" }[ 0 ].value' ) &&
+              if [ "310aaf17-13f2-4919-9edb-60d3bc3af35b" != ${ bash-variable "OBSERVED" } ]
+              then
+                ${ coreutils }/bin/echo We did not observed the expected value &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo OBSERVED is as EXPECTED
+              fi &&
+              for LOG in ${ bash-variable "LOGGED" }
+              do
+                if [ -d ${ bash-variable "LOG" } ]
+                then
+                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "LOG" } to be released &&
+                  exit 64
+                else
+                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "LOG" } has been release
+                fi
+              done &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/222 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 8 ]
+              then
+                ${ coreutils }/bin/echo We were expecting two or more lines of output &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo Regardless of initial conditions we created at least one log record so we expect at least eight lines of output
+              fi &&
+              if [ -s ${ temporary }/223 ]
+              then
+                ${ coreutils }/bin/echo release outputed &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any output
+              fi &&
+              if [ -s ${ temporary }/224 ]
+              then
+                ${ coreutils }/bin/echo release errored &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any error
+              fi &&
+              ${ coreutils }/bin/echo The log functionality appears to work
+            '' ;
         testing-temporary =
           { bash-variable , coreutils , dev , findutils , flock , local , resources , shell-scripts , structure-directory , temporary } :
             ''
               exec ${ local.numbers.test }<>${ resources.test.lock } &&
               ${ flock }/bin/flock ${ local.numbers.test } &&
               ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/11 2> ${ temporary }/12 &&
-	      if [ -s ${ temporary }/12 ]
-	      then
-	        ${ coreutils }/bin/echo The temporary release errors &&
-		exit 64
-	      fi &&
-	      BEFORE=$( ${ coreutils }/bin/wc ${ temporary }/11 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
-	      if [ ${ bash-variable "BEFORE" } -lt 5 ]
-	      then
-	        ${ coreutils }/bin/echo We were expecting 5 or more lines. &&
-		exit 64
-	      fi &&
+              if [ -s ${ temporary }/12 ]
+              then
+                ${ coreutils }/bin/echo The temporary release errors &&
+                exit 64
+              fi &&
+              BEFORE=$( ${ coreutils }/bin/wc ${ temporary }/11 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
+              if [ ${ bash-variable "BEFORE" } -lt 5 ]
+              then
+                ${ coreutils }/bin/echo We were expecting 5 or more lines. &&
+                exit 64
+              fi &&
               ${ shell-scripts.test.create-temporary-file } 392b09d7-aa33-4908-9156-e91d191d9d70 &&
               if [ $( ${ findutils }/bin/find ${ structure-directory }/temporary -name f82a3997-0970-479e-ab5f-faf2e1b22854 | ${ coreutils }/bin/wc --lines ) != 1 ]
               then
@@ -345,17 +426,17 @@
                 ${ coreutils }/bin/echo The temporary file works
               fi &&
               ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/21 2> ${ temporary }/22 &&
-	      if [ -s ${ temporary }/22 ]
-	      then
-	        ${ coreutils }/bin/echo The temporary release errors &&
-		exit 64
-	      fi &&
-	      AFTER=$( ${ coreutils }/bin/wc ${ temporary }/21 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
-	      if [ ${ bash-variable "AFTER" } -lt 5 ]
-	      then
-	        ${ coreutils }/bin/echo We were expecting 5 or more lines. &&
-		exit 64
-	      fi
+              if [ -s ${ temporary }/22 ]
+              then
+                ${ coreutils }/bin/echo The temporary release errors &&
+                exit 64
+              fi &&
+              AFTER=$( ${ coreutils }/bin/wc ${ temporary }/21 --lines | ${ coreutils }/bin/cut --delimiter " " --fields 1 ) &&
+              if [ ${ bash-variable "AFTER" } -eq 6 ]
+              then
+                ${ coreutils }/bin/echo We were expecting exactly 6 lines. &&
+                exit 64
+              fi
             '' ;
       } ;
   }
