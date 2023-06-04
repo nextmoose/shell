@@ -133,6 +133,34 @@
                     '' ;
               } ;
           } ;
+        _resource =
+          {
+            cat =
+              { coreutils , resource } :
+                ''
+                  ${ coreutils }/bin/cat ${ resource }
+                '' ;
+            echo =
+              { coreutils , resource } :
+                ''
+                  ${ coreutils }/bin/echo ${ resource }
+                '' ;
+            main =
+              { bash-variable , structure-directory } :
+                ''
+                  PARENT_TIMESTAMP=${ bash-variable 1 } &&
+                  PARENT_PROCESS=${ bash-variable 2 } &&
+                  PARENT_SALT=${ bash-variable 3 } &&
+                  HASH=$( ${ bash-variable 4 } ${ bash-variable "PARENT_TIMESTAMP" } )&&
+                  INIT=${ bash-variable 5 } &&
+                  SHOW=${ bash-variable 6 } &&
+                  if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
+                  then
+                    ${ bash-variable "INIT" }
+                  fi &&
+                  ${ bash-variable "SHOW" }
+                '' ;
+          } ;
         resource =
           {
             show =
@@ -397,19 +425,27 @@
               fi &&
               ${ coreutils }/bin/echo The log functionality appears to work
             '' ;
+        testing-resource =
+          { coreutils , hashes} :
+            ''
+              PARENT_TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
+              ${ coreutils }/bin/echo '${ hashes }' &&
+              ${ coreutils }/bin/echo &&
+              ${ coreutils }/bin/echo ${ hashes }
+            '' ;
         testing-temporary =
           { bash-variable , coreutils , dev , findutils , flock , local , resources , shell-scripts , structure-directory , temporary } :
             ''
               exec ${ local.numbers.test }<>${ resources.test.lock } &&
               ${ flock }/bin/flock ${ local.numbers.test } &&
-	      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/111 > ${ temporary }/112 2> ${ temporary }/113 &&
-	      if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/111 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-	      then
-	        ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-		exit 64
-	      else
-	        ${ coreutils }/bin/echo The release output was at least two lines long
-	      fi &&
+              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/111 > ${ temporary }/112 2> ${ temporary }/113 &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/111 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
+              then
+                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo The release output was at least two lines long
+              fi &&
               if [ -s ${ temporary }/112 ]
               then
                 ${ coreutils }/bin/echo release outputed &&
@@ -424,30 +460,30 @@
               else
                 ${ coreutils }/bin/echo We never expect any error
               fi &&
-	      ${ shell-scripts.test.create-temporary-file } 13ae4498-57cb-4beb-aa19-77691bfc44af 3fbd5509-1227-48c5-9818-80f0ab91f996 &&
-	      TEMPED=$( ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d ) &&
-	      ${ coreutils }/bin/echo We have the following temp directories ${ bash-variable "TEMPED" } &&
-	      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/121 > ${ temporary }/122 2> ${ temporary }/123 &&
-	      for TEMP in ${ bash-variable "TEMPED" }
-	      do
-	        if [ ${ bash-variable "TEMP" }/temporary == ${ temporary } ]
-		then
-		  ${ coreutils }/bin/echo We do not expect ${ temporary } to be released
-	        elif [ -d ${ bash-variable "TEMP" } ]
-		then
-		  ${ coreutils }/bin/echo We were expecting ${ bash-variable "TEMP" } to be released &&
-		  exit 64
-		else
-		  ${ coreutils }/bin/echo Thankfully ${ bash-variable "TEMP" } was released
-		fi
-	      done &&
-	      if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/121 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-	      then
-	        ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-		exit 64
-	      else
-	        ${ coreutils }/bin/echo The release output was at least two lines long
-	      fi &&
+              ${ shell-scripts.test.create-temporary-file } 13ae4498-57cb-4beb-aa19-77691bfc44af 3fbd5509-1227-48c5-9818-80f0ab91f996 &&
+              TEMPED=$( ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d ) &&
+              ${ coreutils }/bin/echo We have the following temp directories ${ bash-variable "TEMPED" } &&
+              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/121 > ${ temporary }/122 2> ${ temporary }/123 &&
+              for TEMP in ${ bash-variable "TEMPED" }
+              do
+                if [ ${ bash-variable "TEMP" }/temporary == ${ temporary } ]
+                then
+                  ${ coreutils }/bin/echo We do not expect ${ temporary } to be released
+                elif [ -d ${ bash-variable "TEMP" } ]
+                then
+                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "TEMP" } to be released &&
+                  exit 64
+                else
+                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "TEMP" } was released
+                fi
+              done &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/121 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
+              then
+                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo The release output was at least two lines long
+              fi &&
               if [ -s ${ temporary }/122 ]
               then
                 ${ coreutils }/bin/echo release outputed &&
@@ -462,7 +498,7 @@
               else
                 ${ coreutils }/bin/echo We never expect any error
               fi &&
-	      ${ coreutils }/bin/echo The temporary functionality appears to work
+              ${ coreutils }/bin/echo The temporary functionality appears to work
             '' ;
       } ;
   }
