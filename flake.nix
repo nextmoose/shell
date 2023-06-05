@@ -53,7 +53,7 @@
                                 fun :
                                   let
                                     appraisal =
-                                      track : reduced :
+                                      global : track : reduced :
                                         let
                                           local =
                                             unique
@@ -263,12 +263,13 @@
                                                   uuid = local.uuid ;
                                                 } ;
                                           in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
+			            global = null ;
                                     value =
                                       let
-                                        lambda = track : appraisal track track.reduced ;
+                                        lambda = track : appraisal global track track.reduced ;
                                         list = track : track.reduced ;
                                         set = track : track.reduced ;
-                                        string = track : appraisal track ( { } : track.reduced ) ;
+                                        string = track : appraisal global track ( { } : track.reduced ) ;
                                         undefined = track : track.throw "dd277420-6b62-4375-bda8-93dc2326d3bf" ;
                                         in visit { lambda = lambda ; list = list ; set = set ; string = string ; undefined = undefined ; } ( import ./scripts.nix ) ;
                                     in value ;
