@@ -135,16 +135,6 @@
           } ;
         _resource =
           {
-            cat =
-              { coreutils , resource } :
-                ''
-                  ${ coreutils }/bin/cat ${ resource }
-                '' ;
-            echo =
-              { coreutils , resource } :
-                ''
-                  ${ coreutils }/bin/echo ${ resource }
-                '' ;
             main =
               { bash-variable , structure-directory } :
                 ''
@@ -158,45 +148,7 @@
                   then
                     ${ bash-variable "INIT" }
                   fi &&
-                  ${ bash-variable "SHOW" }
-                '' ;
-          } ;
-        resource =
-          {
-            show =
-              {
-                cat =
-                  { coreutils , resource } :
-                    ''
-                      ${ coreutils }/bin/cat ${ resource }
-                    '' ;
-                echo =
-                  { coreutils , resource } :
-                    ''
-                      ${ coreutils }/bin/echo ${ resource }
-                    '' ;
-              } ;
-            main =
-              { bash-variable , coreutils , file-descriptor-dir , flock , init , permissions , pre-salt , salt , show , strip , structure-directory } :
-                ''
-                  TIMESTAMP=${ bash-variable 1 } &&
-                  PID=${ bash-variable 2 } &&
-                  SALT=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
-                  ${ coreutils }/bin/echo '${ pre-salt }' - '${ salt }' - ${ bash-variable "TIMESTAMP" } - ${ bash-variable "SALT" } >> /tmp/repair &&
-                  if [ ! -d ${ structure-directory }/resource/${ bash-variable "SALT" } ]
-                  then
-                    ${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "SALT" }
-                  fi &&
-                  exec ${ file-descriptor-dir }<>${ structure-directory }/resource/${ bash-variable "SALT" }/lock &&
-                  ${ flock }/bin/flock ${ file-descriptor-dir } &&
-                  if [ ! -s ${ structure-directory }/resource/${ bash-variable "SALT" }/resource ]
-                  then
-                    ${ init } &&
-                    ${ coreutils }/bin/chmod ${ permissions } ${ structure-directory }/resource/${ bash-variable "SALT" }/resource
-                  fi &&
-                  ${ coreutils }/bin/echo ${ bash-variable "PID" } > $( ${ coreutils }/bin/mktemp --suffix ".pid" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
-                  ${ coreutils }/bin/echo ${ bash-variable "SALT" } > $( ${ coreutils }/bin/mktemp --suffix ".salt" ${ structure-directory }/resource/${ bash-variable "SALT" }/XXXXXXXX ) &&
-                  ${ strip show }
+                  ${ bash-variable "SHOW" } ${ structure-directory }/structure/${ bash-variable "HASH" }
                 '' ;
           } ;
         script =

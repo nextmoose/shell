@@ -146,93 +146,13 @@
                                                               {
                                                                 show =
                                                                   let
-                                                                    bool = track : if track.reduced then shell-scripts.structure._resource.cat else shell-scripts.structure._resource.echo ;
-                                                                    null = track : shell-scripts.structure._resource.cat ;
+                                                                    bool = track : "${ pkgs.coreutils }/bin/${ if track.reduced then "cat" else "echo" }" ;
+                                                                    null = track : "${ pkgs.coreutils }/bin/cat" ;
                                                                     in visit { bool = bool ; null = null ; undefined = undefined ; } show ;
                                                               } ;
-                                                            in invoke fun { hash = hash ; } ;
+                                                            in invoke fun { hash = hash ; script = script ; } ;
                                                       in track.reduced resource ;
                                                 undefined = track : track.throw "90ae8007-6137-4823-8923-89726347d15b" ;
-                                                in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
-                                          resources =
-                                            local :
-                                              let
-                                                lambda =
-                                                  track :
-                                                    let
-                                                      resource =
-                                                        { directory ? null , file ? null , release ? null , output ? null , permissions ? null , salt ? null , show ? null } :
-                                                          let
-                                                            init =
-                                                              let
-                                                                filtered = builtins.filter ( init : builtins.typeOf init == "string" ) [ salted.file salted.output ] ;
-                                                                in if builtins.length filtered == 1 then builtins.head filtered else builtins.throw "1ee526eb-da65-4dbd-bfef-17c848eb4943" ;
-                                                            pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
-                                                            salted =
-                                                              {
-                                                                file =
-                                                                  let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } ${ structure-directory }/resource/${ bash-variable "SALT" }/resource" ;
-                                                                    null = track : false ;
-                                                                    undefined = track : track.throw "5c1a0b42-4ed7-482a-b951-2fb5e26aa023" ;
-                                                                    in visit { lambda = lambda ; null = null ; undefined = undefined ; } file ;
-                                                                output =
-                                                                  let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } > ${ structure-directory }/resource/${ bash-variable "SALT" }/resource" ;
-                                                                    null = track : false ;
-                                                                    undefined = track : track.throw "d9d41488-1973-41e6-a62e-9431d4317b52" ;
-                                                                    in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
-                                                                permissions =
-                                                                  let
-                                                                    float = track : builtins.substring 1 4 ( builtins.toString ( track.reduced + 10000 ) ) ;
-                                                                    int = track : builtins.substring 1 4 ( builtins.toString ( track.reduced + 10000 ) ) ;
-                                                                    null = track : "0400" ;
-                                                                    string = track : track.reduced ;
-                                                                    undefined = track : track.throw "76ba61d8-d74e-4e33-927d-9c1a224ed5d6" ;
-                                                                    in visit { float = float ; int = int ; null = null ; string = string ; undefined = undefined ; } permissions ;
-                                                               release =
-                                                                 let
-                                                                   lambda = track : track.reduced ( scripts ( { shell-script } : shell-script ) ) ;
-                                                                   null = track : "" ;
-                                                                   undefined = track : track.throw "e322c462-0ce7-4a8a-bdb6-8b40268b2317" ;
-                                                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } release ;
-                                                                 salt =
-                                                                   let
-                                                                     float = track : "$(( ${ bash-variable "TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                     int = track : "$(( ${ bash-variable "TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                     lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } ${ bash-variable "TIMESTAMP" }" ;
-                                                                     null = track : "$(( ${ bash-variable "TIMESTAMP" } / ${ builtins.toString ( 60 * 60 ) } ))" ;
-                                                                     undefined = track : track.throw "9c8cfa72-abd4-4e93-8579-a9c3e7255d95" ;
-                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
-                                                              } ;
-                                                            script =
-                                                              let
-                                                                scripts = import ./scripts.nix ;
-                                                                in scripts.structure.resource.main { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; file-descriptor-dir = local.numbers.resource-dir ; flock = pkgs.flock ; init = init ; permissions = salted.permissions ; pre-salt = pre-salt ; salt = salted.salt ; show = unsalted.show ; strip = strip ; structure-directory = structure-directory ; } ;
-                                                            unsalted =
-                                                              {
-                                                                show =
-                                                                  let
-                                                                    bool =
-                                                                      track :
-                                                                        let
-                                                                          resource = { coreutils = pkgs.coreutils ; resource = "${ structure-directory }/resource/${ bash-variable "SALT" }/resource" ; } ;
-                                                                          scripts = import ./scripts.nix ;
-                                                                          in if track.reduced then scripts.structure.resource.show.cat resource else scripts.structure.resource.show.echo resource ;
-                                                                    null =
-                                                                      track :
-                                                                        let
-                                                                          resource = { coreutils = pkgs.coreutils ; resource = "${ structure-directory }/resource/${ bash-variable "SALT" }/resource" ; } ;
-                                                                          scripts = import ./scripts.nix ;
-                                                                          in scripts.structure.resource.show.cat resource ;
-                                                                    undefined = track : track.throw "757955e3-5be4-40a7-81af-abaa59972c91" ;
-                                                                    in visit { bool = bool ; null = null ; undefined = undefined ; } show ;
-                                                              } ;
-                                                            in "$( ${ pkgs.writeShellScript track.simple-name ( strip script ) } ${ bash-variable local.variables.timestamp } ${ bash-variable "$" } )" ;
-                                                      in track.reduced resource ;
-                                                list = track : track.reduced ;
-                                                set = track : track.reduced ;
-                                                undefined = track : track.throw "21628eb5-e712-4e11-a756-f23ff8efaa03" ;
                                                 in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
                                           script = strip ( script-fun local ) ;
                                           script-fun = local : invoke reduced ( structure local ) ;
@@ -255,7 +175,7 @@
                                                       in init ;
                                                   local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
-                                                  resources = resources local ;
+                                                  resources = _resources ( { script } : script ) ( track : track.reduced ) ( track : track.reduced ) ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) ;
                                                   strip = strip ;
                                                   structure-directory = structure-directory ;
