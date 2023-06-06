@@ -43,7 +43,7 @@
                             let
                               buildInputs =
                                 let
-                                  lambda = track : { buildInputs = track.reduced ( scripts ( { shell-script-bin } : shell-script-bin ) ) ; } ;
+                                  lambda = track : { buildInputs = track.reduced ( scripts ( { shell-script-bin } : shell-script-bin ) global ) ; } ;
                                   null = track : { } ;
                                   undefined = track : track.throw "11d8d120-d631-4fec-9229-a5162062352b" ;
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
@@ -51,7 +51,7 @@
                               invoke = fun : args : fun ( builtins.intersectAttrs ( builtins.functionArgs fun ) args ) ;
                               pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                               scripts =
-                                fun :
+                                fun : global :
                                   let
                                     appraisal =
                                       track : reduced :
@@ -96,7 +96,7 @@
                                               log = strip ( if is.log then _scripts.structure.script.log.yes else _scripts.structure.script.log.no ) ;
                                               main = _scripts.structure.script.main ;
                                               resource = strip ( if is.resource then _scripts.structure.script.resource.yes else _scripts.structure.script.resource.no ) ;
-                                              _scripts = scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) ;
+                                              _scripts = scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) global ;
                                               structure = strip ( if is.temporary || is.log || is.resource then _scripts.structure.script.structure.yes else _scripts.structure.script.structure.no ) ;
                                               temporary = strip ( if is.temporary then _scripts.structure.script.temporary.yes else _scripts.structure.script.temporary.no ) ;
                                               in main ;
@@ -121,13 +121,13 @@
                                                               {
                                                                 file =
                                                                   let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } ${ bash-variable "TIMESTAMP" }" ;
+                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "TIMESTAMP" }" ;
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "67effc1b-0e46-4f9b-91ee-5d648dedad4c" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } file ;
                                                                 output =
                                                                   let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } ${ bash-variable "TIMESTAMP" }" ;
+                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "TIMESTAMP" }" ;
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "1ea15780-74da-454b-9012-a733620d5248" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
@@ -135,13 +135,13 @@
                                                                   let
                                                                     float = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
                                                                     int = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) ) } ${ bash-variable "PARENT_TIMESTAMP" }" ;
+                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "PARENT_TIMESTAMP" }" ;
                                                                     null = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString ( 60 * 60 ) } ))" ;
                                                                     undefined = track : track.throw "9c8cfa72-abd4-4e93-8579-a9c3e7255d95" ;
                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
                                                               } ;
                                                             script = "${ shell-scripts.structure._resource.main } ${ bash-variable "PARENT_TIMESTAMP" } ${ bash-variable "$" } ${ bash-variable "PARENT_SALT" } ${ hash } ${ init } ${ unsalted.show }" ;
-                                                            shell-scripts = scripts ( { shell-script } : shell-script ) ;
+                                                            shell-scripts = scripts ( { shell-script } : shell-script ) global ;
                                                             unsalted =
                                                               {
                                                                 show =
@@ -176,7 +176,7 @@
                                                   local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
                                                   resources = _resources ( { script } : script ) ( track : track.reduced ) ( track : track.reduced ) ;
-                                                  shell-scripts = scripts ( { shell-script } : shell-script ) ;
+                                                  shell-scripts = scripts ( { shell-script } : shell-script ) global ;
                                                   strip = strip ;
                                                   structure-directory = structure-directory ;
                                                   temporary = "${ bash-variable local.variables.temporary-dir }/temporary" ;
@@ -195,7 +195,7 @@
                                     in value ;
                               shellHook =
                                 let
-                                  lambda = track : { shellHook = track.reduced ( scripts ( { script } : script ) ) ; } ;
+                                  lambda = track : { shellHook = track.reduced ( scripts ( { script } : script ) global ) ; } ;
                                   null = track : { } ;
                                   undefined = track : track.throw "d301ebaa-b1b0-4cad-b56a-361852956a42" ;
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } hook ;
