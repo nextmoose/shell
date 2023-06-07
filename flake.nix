@@ -49,7 +49,7 @@
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
                               global =
                                 unique
-                                  { timestamp = tokenizers.variable ; uuid = tokenizers.uuid ; }
+                                  { timestamp = tokenizers.variable null ; uuid = tokenizers.uuid null ; }
                                   ( scripts ( { script } : script ) )
                                   (
                                     token :
@@ -83,18 +83,18 @@
                                                   } ;
                                                 variables =
                                                   {
-                                                    temporary-dir = tokenizers.variable ;
-                                                    log-dir = tokenizers.variable ;
-                                                    salt = tokenizers.variable ;
-                                                    timestamp = tokenizers.variable ;
+                                                    temporary-dir = tokenizers.variable track.index ;
+                                                    log-dir = tokenizers.variable track.index ;
+                                                    salt = tokenizers.variable track.index ;
+                                                    timestamp = tokenizers.variable track.index ;
                                                     parent =
                                                       {
-                                                        timestamp = tokenizers.variable ;
-                                                        process = tokenizers.variable ;
-                                                        salt = tokenizers.variable ;
+                                                        timestamp = tokenizers.variable track.index ;
+                                                        process = tokenizers.variable track.index ;
+                                                        salt = tokenizers.variable track.index ;
                                                       } ;
                                                   } ;
-                                                uuid = tokenizers.uuid ;
+                                                uuid = tokenizers.uuid track.index ;
                                               }
                                               script-fun
                                               (
@@ -112,7 +112,11 @@
                                               in
                                                 strip
                                                   ''
-                                                    ${ _scripts.structure.script }
+                                                    # ${ global.uuid }
+                                                    # ${ local.uuid }
+                                                    # ${ track.qualified-name }
+                                                    # ${ track.simple-name }
+                                                    # ${ builtins.toString track.index }
 
                                                     ${ script }
                                                   '' ;
@@ -157,10 +161,10 @@
                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
                                                               } ;
                                                             script =
-							      strip
-							        ''
-								  $( ${ shell-scripts.structure._resource.main } ${ bash-variable global.timestamp } ${ bash-variable "$" } ${ salted.salt } ${ hash } ${ init } ${ unsalted.show } )
-								'' ;
+                                                              strip
+                                                                ''
+                                                                  $( ${ shell-scripts.structure._resource.main } ${ bash-variable global.timestamp } ${ bash-variable "$" } ${ salted.salt } ${ hash } ${ init } ${ unsalted.show } )
+                                                                '' ;
                                                             shell-scripts = scripts ( { shell-script } : shell-script ) global ;
                                                             unsalted =
                                                               {
@@ -182,7 +186,7 @@
                                                 {
                                                   bash-variable = bash-variable ;
                                                   dev = { cron = cron ; null = knull ; sudo = sudo ; } ;
-						  foobar = true ;
+                                                  foobar = true ;
                                                   hashes =
                                                     let
                                                       fun = { hash } : [ hash ] ;
@@ -331,8 +335,8 @@
                                               quotient = dividend / divisor ;
                                               in dividend - quotient * divisor ;
                                         in builtins.toString ( 3 + modulus ( hash ( seed + track.index ) ) ( 256 - 3 ) ) ;
-                                  uuid = track : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ;
-                                  variable = track : seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
+                                  uuid = id : track : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed id track.index ] ) ) ;
+                                  variable = id : track : seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed id track.index ] ) ) ) ] ;
                                 } ;
                               in pkgs.mkShell ( buildInputs // shellHook ) ;
                         }
