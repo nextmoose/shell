@@ -47,7 +47,19 @@
                                   null = track : { } ;
                                   undefined = track : track.throw "11d8d120-d631-4fec-9229-a5162062352b" ;
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
-		              global = null ;
+                              global =
+                                unique
+                                  { timestamp = tokenizers.variable ; uuid = tokenizers.uuid ; }
+                                  ( scripts ( { script } : script ) )
+                                  (
+                                    token :
+                                      let
+                                        list = track : builtins.all ( i : i ) track.reduced ;
+                                        set = track : builtins.all ( i : i ) ( builtins.attrValues track.reduced ) ;
+                                        string = track : builtins.replaceStrings [ token ] [ "" ] track.reduced == track.reduced ;
+                                        undefined = track : track.throw "2c056c9a-24f4-4a7d-a8f0-c470423ee332" ;
+                                        in visit { list = list ; set = set ; string = string ; undefined = undefined ; }
+                                  ) ;
                               invoke = fun : args : fun ( builtins.intersectAttrs ( builtins.functionArgs fun ) args ) ;
                               pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                               scripts =
@@ -59,21 +71,30 @@
                                           local =
                                             unique
                                               {
-                                                numbers = { structure-directory = tokenizers.identifier track ; temporary-directory = tokenizers.identifier track ; temporary-dir = tokenizers.identifier track ; log-directory = tokenizers.identifier track ; log-dir = tokenizers.identifier track ; resource-directory = tokenizers.identifier track ; resource-dir = tokenizers.identifier track ; test = tokenizers.identifier track ; } ;
+                                                numbers =
+                                                  {
+                                                    structure-directory = tokenizers.identifier ;
+                                                    temporary-directory = tokenizers.identifier ;
+                                                    temporary-dir = tokenizers.identifier ;
+                                                    log-directory = tokenizers.identifier ;
+                                                    log-dir = tokenizers.identifier ;
+                                                    resource-directory = tokenizers.identifier ;
+                                                    resource-dir = tokenizers.identifier ; test = tokenizers.identifier ;
+                                                  } ;
                                                 variables =
                                                   {
-                                                    temporary-dir = tokenizers.variable "TEMPORARY" track ;
-                                                    log-dir = tokenizers.variable "LOG" track ;
-                                                    salt = tokenizers.variable "SALT" track ;
-                                                    timestamp = tokenizers.variable "TIMESTAMP" track ;
+                                                    temporary-dir = tokenizers.variable ;
+                                                    log-dir = tokenizers.variable ;
+                                                    salt = tokenizers.variable ;
+                                                    timestamp = tokenizers.variable ;
                                                     parent =
                                                       {
-                                                        timestamp = tokenizers.variable "PARENTTIMESTAMP" track ;
-                                                        process = tokenizers.variable "PARENTPROCESS" track ;
-                                                        salt = tokenizers.variable "PARENTSALT" track ;
+                                                        timestamp = tokenizers.variable ;
+                                                        process = tokenizers.variable ;
+                                                        salt = tokenizers.variable ;
                                                       } ;
                                                   } ;
-                                                uuid = tokenizers.uuid track ;
+                                                uuid = tokenizers.uuid ;
                                               }
                                               script-fun
                                               (
@@ -87,19 +108,8 @@
                                               ) ;
                                           program =
                                             let
-                                              is =
-                                                {
-                                                  log = builtins.replaceStrings [ local.variables.log-dir ] [ "" ] script != script ;
-                                                  temporary = builtins.any ( key : key == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
-                                                  resource = builtins.any ( key : key == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) ;
-                                                } ;
-                                              log = strip ( if is.log then _scripts.structure.script.log.yes else _scripts.structure.script.log.no ) ;
-                                              main = _scripts.structure.script.main ;
-                                              resource = strip ( if is.resource then _scripts.structure.script.resource.yes else _scripts.structure.script.resource.no ) ;
-                                              _scripts = scripts ( { script-fun } : script-fun ( local // { scripts = { log = log ; script = script ; resource = resource ; structure = structure ; temporary = temporary ; } ; } ) ) global ;
-                                              structure = strip ( if is.temporary || is.log || is.resource then _scripts.structure.script.structure.yes else _scripts.structure.script.structure.no ) ;
-                                              temporary = strip ( if is.temporary then _scripts.structure.script.temporary.yes else _scripts.structure.script.temporary.no ) ;
-                                              in main ;
+                                              _scripts = scripts ( { script } : script ) global ;
+                                              in _scripts.structure.script ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;
                                           _resources =
@@ -168,16 +178,91 @@
                                                       list = track : builtins.concatLists ( track.reduced ) ;
                                                       set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                                       in builtins.concatStringsSep " " ( _resources fun list set ) ;
-                                                  init =
-                                                    let
-                                                      init = strip ( scripts.structure.script.init { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; process = local.variables.parent.process ; salt = local.variables.parent.salt ; timestamp = local.variables.parent.timestamp ; } ) ;
-                                                      scripts = import ./scripts.nix ;
-                                                      in init ;
-                                                  local = local ;
-                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )";
+						  local = local ;
+                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { script } : script ) ( track : track.reduced ) ( track : track.reduced ) ;
+                                                  scripting =
+                                                    {
+                                                      exec = "script" ;
+                                                      log =
+                                                        if builtins.any ( functionArg : functionArg == "log" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
+                                                          strip
+                                                            ''
+                                                              # log
+                                                              if [ ! -d ${ structure-directory }/log ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/log
+                                                              fi &&
+                                                              exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                                                              ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log ) &&
+                                                              exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
+                                                              ${ pkgs.flock }/bin/flock ${ local.numbers.log-dir }
+                                                            ''
+                                                        else
+                                                          strip
+                                                            ''
+                                                              # NO log
+                                                            '' ;
+                                                      resource =
+                                                        if builtins.any ( functionArg : functionArg == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
+                                                          strip
+                                                            ''
+                                                              # resource
+                                                              if [ ! -d ${ structure-directory }/resource ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/resource
+                                                              fi &&
+                                                              exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ local.numbers.resource-directory } &&
+                                                              export ${ global.timestamp }=$( ${ pkgs.coreutils }/bin/date +s )
+                                                            ''
+                                                        else
+                                                          strip
+                                                            ''
+                                                              # NO resource
+                                                            '' ;
+                                                      structure =
+                                                        if builtins.any ( functionArg : builtins.any ( name : functionArg == name ) [ "log" "resources" "temporary" ] ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
+                                                          strip
+                                                            ''
+                                                              # structure
+                                                              if [ ! -d ${ structure-directory } ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }
+                                                              fi &&
+                                                              exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ local.numbers.structure-directory }
+                                                            ''
+                                                        else
+                                                          strip
+                                                            ''
+                                                              # NO structure
+                                                            '' ;
+                                                      temporary =
+                                                        if builtins.any ( functionArg : functionArg == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
+                                                          strip
+                                                            ''
+                                                              # temporary
+                                                              if [ ! -d ${ structure-directory }/temporary ]
+                                                              then
+                                                                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                                                              fi &&
+                                                              exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                                                              ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                                                              ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary ) &&
+                                                              exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
+                                                              ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir }
+                                                            ''
+                                                        else
+                                                          strip
+                                                            ''
+                                                              # NO temporary
+                                                            '' ;
+                                                      track = track ;
+                                                      uuid = { global = global.uuid ; local = local.uuid ; } ;
+                                                    } ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) global ;
-                                                  strip = strip ;
                                                   structure-directory = structure-directory ;
                                                   temporary = "${ bash-variable local.variables.temporary-dir }/temporary" ;
                                                   track = track ;
@@ -237,7 +322,7 @@
                                               in dividend - quotient * divisor ;
                                         in builtins.toString ( 3 + modulus ( hash ( seed + track.index ) ) ( 256 - 3 ) ) ;
                                   uuid = track : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ;
-                                  variable = name : track : seed : builtins.concatStringsSep "_" [ "VARIABLE" name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
+                                  variable = track : seed : builtins.concatStringsSep "_" [ "VARIABLE" track.simple-name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
                                 } ;
                               in pkgs.mkShell ( buildInputs // shellHook ) ;
                         }

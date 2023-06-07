@@ -10,32 +10,15 @@
           ${ coreutils }/bin/echo FILE BASED RESOURCE ${ resources.identity } &&
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
-    beta =
-      { coreutils , release , resources } :
-        ''
-          ${ coreutils }/bin/echo Hello &&
-          ${ release.temporary } &&
-          ${ release.log }
-        '' ;
     entry =
       { shell-scripts , cowsay , dev } :
         ''
           # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
-    gamma =
-      { coreutils , flock , release , resources } :
-        ''
-          ${ coreutils }/bin/echo HELLO &&
-          ${ release.log } &&
-          exec 200<>${ resources.log.lock } &&
-          ${ flock }/bin/flock -s 200 &&
-          ${ coreutils }/bin/echo ${ resources.log.file }
-        '' ;
     name =
-      { init , git , strip } :
+      { git } :
         ''
-          ${ strip init } &&
           ${ git }/bin/git config user.name
         '' ;
     ssh =
@@ -55,18 +38,6 @@
         '' ;
     structure =
       {
-        at =
-          { at , bash-variable , dev , coreutils } :
-            ''
-              ${ coreutils }/bin/echo ${ coreutils }/bin/nice --adjustment 19 ${ bash-variable "@" } | ${ at } now 2> ${ dev.null }
-            '' ;
-        cron =
-          { bash-variable , coreutils , dev } :
-            ''
-              CRON=$( ${ dev.sudo } { coreutils }/bin/mktemp ${ dev.cron }/XXXXXXXX ) &&
-              ${ coreutils }/echo ${ bash-variable 1 } ${ bash-variable 2 } > ${ bash-variable "CRON" } &&
-              ${ coreutils }/bin/echo ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
-            '' ;
         release =
           {
             log =
@@ -152,113 +123,23 @@
                 '' ;
           } ;
         script =
-          {
-            init =
-              { bash-variable , coreutils , process , salt , timestamp } :
-                ''         
-                  # INIT
-                  export ${ salt }=${ bash-variable 1 }
-                  export ${ process }=${ bash-variable 2 }
-                  export ${ timestamp }=${ bash-variable 3 }
-                '' ;
-             log =
-               {
-                 no =
-                  ''
-                    # NO LOG
-                  '' ;
-                 yes =
-                  { bash-variable , coreutils , flock , local , structure-directory } :
-                    ''
-                      # YES LOG
-                      if [ ! -d ${ structure-directory }/log ]
-                      then
-                        ${ coreutils }/bin/mkdir ${ structure-directory }/log
-                      fi &&
-                      exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
-                      ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                      export ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
-                      exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
-                      ${ flock }/bin/flock ${ local.numbers.log-dir }
-                    '' ;
-              } ;
-            main =
-              { bash-variable , local , track , temporary , uuid , writeShellScript } :
-                ''
-                  # ${ uuid }
-                  # ${ builtins.toString track.index }
-                  # ${ builtins.toString track.qualified-name }
+          { bash-variable , scripting , temporary , writeShellScript } :
+            ''
+              # ${ scripting.uuid.global }
+              # ${ scripting.uuid.local }
+              # ${ builtins.toString scripting.track.index }
+              # ${ builtins.toString scripting.track.qualified-name }
 
-                  ${ local.scripts.structure } &&
+              ${ scripting.structure } &&
 
-                  ${ local.scripts.temporary } &&
+              ${ scripting.temporary } &&
 
-                  ${ local.scripts.log } &&
+              ${ scripting.log } &&
 
-                  ${ local.scripts.resource } &&
+              ${ scripting.resource } &&
 
-                  exec ${ writeShellScript track.simple-name local.scripts.script } ${ bash-variable "@" }
-                '' ;
-            resource =
-              {
-                 no =
-                  ''
-                    # NO RESOURCE
-                  '' ;
-                 yes =
-                  { bash-variable , coreutils , flock , local , structure-directory } :
-                    ''         
-                      # RESOURCE
-                      if [ ! -d ${ structure-directory }/resource ]
-                      then
-                        ${ coreutils }/bin/mkdir ${ structure-directory }/resource
-                      fi &&
-                      exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
-                      ${ flock }/bin/flock -s ${ local.numbers.resource-directory } &&
-                      export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s )
-                    '' ;
-                } ;
-            structure =
-              {
-                 no =
-                  ''
-                    # NO STRUCTURE
-                  '' ;
-                 yes =
-                  { bash-variable , coreutils , flock , local , structure-directory } :
-                    ''         
-                      # YES STRUCTURE
-                      if [ ! -d ${ structure-directory } ]
-                      then
-                        ${ coreutils }/bin/mkdir ${ structure-directory }
-                      fi &&
-                      exec ${ local.numbers.structure-directory }<>${ structure-directory }/lock &&
-                      ${ flock }/bin/flock -s ${ local.numbers.structure-directory }
-                    '' ;
-                } ;
-             temporary =
-               {
-                 no =
-                  ''
-                    # 1 NO TEMPORARY
-                  '' ;
-                 yes =
-                  { bash-variable , coreutils , flock , local , structure-directory } :
-                    ''
-                      # YES TEMPORARY
-                      if [ ! -d ${ structure-directory }/temporary ]
-                      then
-                        ${ coreutils }/bin/mkdir ${ structure-directory }/temporary
-                      fi &&
-                      exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
-                      ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-                      export ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
-                      exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
-                      ${ flock }/bin/flock ${ local.numbers.temporary-dir } &&
-                      ${ coreutils }/bin/mkdir ${ bash-variable local.variables.temporary-dir }/temporary
-                    '' ;
-              } ;
-           } ;
+              ${ scripting.exec }
+            '' ;
       } ;
     test =
       {
@@ -292,17 +173,6 @@
           { coreutils } :
             ''
               ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
-            '' ;
-        query-log =
-          { flock , release , resource } :
-            ''
-            '' ;
-        test-log =
-          { findutils , flock , release , resources , shell-scripts } :
-            ''
-              exec 200<>${ resources.test.lock } &&
-              ${ flock }/bin/flock 200 &&
-              ${ release.log } &&
             '' ;
         testing-log =
           { bash-variable , coreutils , findutils , flock , gnused , local , log , resources , shell-scripts , structure-directory , temporary , yq } :
