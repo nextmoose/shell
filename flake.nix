@@ -137,26 +137,30 @@
                                                               {
                                                                 file =
                                                                   let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "TIMESTAMP" }" ;
+                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable global.timestamp }" ;
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "67effc1b-0e46-4f9b-91ee-5d648dedad4c" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } file ;
                                                                 output =
                                                                   let
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "TIMESTAMP" }" ;
+                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable global.timestamp }" ;
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "1ea15780-74da-454b-9012-a733620d5248" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
                                                                 salt =
                                                                   let
-                                                                    float = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                    int = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString track.reduced } ))" ;
-                                                                    lambda = track : "${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable "PARENT_TIMESTAMP" }" ;
-                                                                    null = track : "$(( ${ bash-variable "PARENT_TIMESTAMP" } / ${ builtins.toString ( 60 * 60 ) } ))" ;
+                                                                    float = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString track.reduced } ))" ;
+                                                                    int = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString track.reduced } ))" ;
+                                                                    lambda = track : "$( ${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable global.timestamp } )" ;
+                                                                    null = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString ( 60 * 60 ) } ))" ;
                                                                     undefined = track : track.throw "9c8cfa72-abd4-4e93-8579-a9c3e7255d95" ;
                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
                                                               } ;
-                                                            script = "${ shell-scripts.structure._resource.main } ${ bash-variable "PARENT_TIMESTAMP" } ${ bash-variable "$" } ${ bash-variable "PARENT_SALT" } ${ hash } ${ init } ${ unsalted.show }" ;
+                                                            script =
+							      strip
+							        ''
+								  $( ${ shell-scripts.structure._resource.main } ${ bash-variable global.timestamp } ${ bash-variable "$" } ${ salted.salt } ${ hash } ${ init } ${ unsalted.show } )
+								'' ;
                                                             shell-scripts = scripts ( { shell-script } : shell-script ) global ;
                                                             unsalted =
                                                               {
@@ -178,6 +182,7 @@
                                                 {
                                                   bash-variable = bash-variable ;
                                                   dev = { cron = cron ; null = knull ; sudo = sudo ; } ;
+						  foobar = true ;
                                                   hashes =
                                                     let
                                                       fun = { hash } : [ hash ] ;
@@ -200,7 +205,7 @@
                                                               fi &&
                                                               exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                                                               ${ pkgs.flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                                                              ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log ) &&
+                                                              ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
                                                               exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
                                                               ${ pkgs.flock }/bin/flock ${ local.numbers.log-dir }
                                                             ''
@@ -225,7 +230,7 @@
                                                         else
                                                           strip
                                                             ''
-                                                              # NO resource
+                                                              # NO resource ${ builtins.concatStringsSep " , " ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) }
                                                             '' ;
                                                       structure =
                                                         if builtins.any ( functionArg : builtins.any ( name : functionArg == name ) [ "log" "resources" "temporary" ] ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
@@ -255,7 +260,7 @@
                                                               fi &&
                                                               exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                                                               ${ pkgs.flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-                                                              ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary ) &&
+                                                              ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
                                                               exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
                                                               ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir }
                                                             ''
@@ -327,7 +332,7 @@
                                               in dividend - quotient * divisor ;
                                         in builtins.toString ( 3 + modulus ( hash ( seed + track.index ) ) ( 256 - 3 ) ) ;
                                   uuid = track : seed : builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ;
-                                  variable = track : seed : builtins.concatStringsSep "_" [ "VARIABLE" track.simple-name ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
+                                  variable = track : seed : builtins.concatStringsSep "_" [ "VARIABLE" ( builtins.hashString "md5" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ seed track.index ] ) ) ) ] ;
                                 } ;
                               in pkgs.mkShell ( buildInputs // shellHook ) ;
                         }

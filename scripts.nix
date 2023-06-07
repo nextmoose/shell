@@ -123,7 +123,7 @@
                 '' ;
           } ;
         script =
-          { bash-variable , scripting , temporary , writeShellScript } :
+          { bash-variable , foobar , resources , scripting , temporary , writeShellScript } :
             ''
               # ${ scripting.uuid.global }
               # ${ scripting.uuid.local }
