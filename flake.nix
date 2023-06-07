@@ -109,7 +109,13 @@
                                           program =
                                             let
                                               _scripts = scripts ( { script } : script ) global ;
-                                              in _scripts.structure.script ;
+                                              in
+                                                strip
+                                                  ''
+                                                    ${ _scripts.structure.script }
+
+                                                    ${ script }
+                                                  '' ;
                                           shell-script-bin = pkgs.writeShellScriptBin track.simple-name program ;
                                           shell-script = pkgs.writeShellScript track.simple-name program ;
                                           _resources =
@@ -178,12 +184,11 @@
                                                       list = track : builtins.concatLists ( track.reduced ) ;
                                                       set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                                       in builtins.concatStringsSep " " ( _resources fun list set ) ;
-						  local = local ;
+                                                  local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { script } : script ) ( track : track.reduced ) ( track : track.reduced ) ;
                                                   scripting =
                                                     {
-                                                      exec = "script" ;
                                                       log =
                                                         if builtins.any ( functionArg : functionArg == "log" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then
                                                           strip

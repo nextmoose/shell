@@ -137,8 +137,6 @@
               ${ scripting.log } &&
 
               ${ scripting.resource } &&
-
-              ${ scripting.exec }
             '' ;
       } ;
     test =
