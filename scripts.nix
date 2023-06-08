@@ -122,22 +122,6 @@
                   ${ bash-variable "SHOW" } ${ structure-directory }/structure/${ bash-variable "HASH" }
                 '' ;
           } ;
-        script =
-          { bash-variable , foobar , resources , scripting , temporary , writeShellScript } :
-            ''
-              # ${ scripting.uuid.global }
-              # ${ scripting.uuid.local }
-              # ${ builtins.toString scripting.track.index }
-              # ${ builtins.toString scripting.track.qualified-name }
-
-              ${ scripting.structure } &&
-
-              ${ scripting.temporary } &&
-
-              ${ scripting.log } &&
-
-              ${ scripting.resource } &&
-            '' ;
       } ;
     test =
       {
