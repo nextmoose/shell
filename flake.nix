@@ -169,13 +169,18 @@
 								    bash-variable = bash-variable ;
 								    coreutils = pkgs.coreutils ;
 								    flock = pkgs.flock ;
-								    init = init ;
 								    global = global ;
+								    init = init ;
+								    make-directory = false ;
 								    permissions = salted.permissions ;
 								    pre-salt = pre-salt ;
 								    salt = salted.salt ;
 								    show = unsalted.show ;
 								    structure-directory = structure-directory ;
+								    type =
+								      if builtins.typeOf salted.file == "string" then "file"
+								      else if builtins.typeOf salted.output == "string" then "output"
+								      else builtins.throw "665da9aa-555d-4b51-ad26-79d3c392f675" ;
 								  } ;
 								in "$( ${ pkgs.writeShellScript "init" ( import ./resource.nix arguments ) } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;

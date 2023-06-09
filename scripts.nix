@@ -34,7 +34,7 @@
     touch =
       { bash-variable , coreutils } :
         ''
-          ${ coreutils }/bin/touch ${ bash-variable 1 }
+          ${ coreutils }/bin/touch ${ bash-variable 2 }
         '' ;
     structure =
       {

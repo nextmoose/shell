@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , init , structure-directory , permissions , pre-salt , salt , show } :
+{ bash-variable , coreutils , flock , global , init , make-directory , permissions , structure-directory , pre-salt , salt , show , type } :
   ''
     HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
@@ -9,11 +9,13 @@
     ${ flock }/bin/flock ${ global.numbers.test } &&
     if [ ! -f ${ structure-directory }/resource/${ bash-variable "HASH" }/exists ]
     then
-      ${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "HASH" }/temporary &&
-      cd ${ structure-directory }/resource/${ bash-variable "HASH" }/temporary &&
+      # This is a ${ type }
+      ${ if make-directory then "${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "HASH" }/resource" else "# NO NEED TO MAKE DIRECTORY" } &&
+      ${ if make-directory then "cd ${ structure-directory }/resource/${ bash-variable "HASH" }/resource" else "# NO NEED TO cd" } &&
       ${ init } &&
+      ${ coreutils }/bin/chmod ${ permissions } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource &&
       ${ coreutils }/bin/touch ${ structure-directory }/resource/${ bash-variable "HASH" }/exists &&
-      ${ coreutils }/bin/chmod ${ permissions } ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
+      ${ coreutils }/bin/chmod 0400 ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
     fi &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''
