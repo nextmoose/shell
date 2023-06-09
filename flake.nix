@@ -108,25 +108,29 @@
                                               ) ;
                                           program =
                                             let
-					      scripting =
-					        let
-						  set = track : track.reduced ;
-						  string = track : strip track.reduced ;
-						  undefined = track : track.throw "" ;
-						  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./script.nix { coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = local ; structure-directory = structure-directory ; } ) ;
+                                              log = if builtins.any ( functionArg : functionArg == "log" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.log.yes else scripting.log.no ;
+                                              scripting =
+                                                let
+                                                  set = track : track.reduced ;
+                                                  string = track : strip track.reduced ;
+                                                  undefined = track : track.throw "" ;
+                                                  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./scripting.nix { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = local ; structure-directory = structure-directory ; } ) ;
+                                              structure = if builtins.any ( functionArg : builtins.any ( dir : functionArg == dir ) [ "log" "resources" "temporary" ] ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.structure.yes else scripting.structure.no ;
+                                              resource = if builtins.any ( functionArg : functionArg == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.resource.yes else scripting.resource.no ;
+                                              temporary = if builtins.any ( functionArg : functionArg == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.temporary.yes else scripting.temporary.no ;
                                               in
                                                 strip
                                                   ''
                                                     # ${ local.uuid }
                                                     # ${ track.qualified-name }
  
-                                                    ${ scripting.structure } &&
+                                                    ${ structure } &&
 
-                                                    ${ scripting.temporary } &&
+                                                    ${ temporary } &&
 
-                                                    ${ scripting.log } &&
+                                                    ${ log } &&
 
-                                                    ${ scripting.resource } &&
+                                                    ${ resource } &&
 
                                                     ${ script }
                                                   '' ;
@@ -142,11 +146,11 @@
                                                         { directory ? null , file ? null , release ? null , output ? null , permissions ? null , salt ? null , show ? null } :
                                                           let
                                                             hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;
-							    init =
-							      if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-							      else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-							      else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9" ;
-							    invocation = "$( ${ pkgs.writeShellScript "init" ( ( builtins.import ./resource.nix ) bash-variable local.numbers.resource-dir pkgs.coreutils pkgs.flock structure-directory pre-salt salted.salt init unsalted.show ) } )" ;
+                                                            init =
+                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9" ;
+                                                            invocation = "$( ${ pkgs.writeShellScript "init" ( ( builtins.import ./resource.nix ) bash-variable local.numbers.resource-dir pkgs.coreutils pkgs.flock structure-directory pre-salt salted.salt init unsalted.show ) } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
                                                             salted =
                                                               {

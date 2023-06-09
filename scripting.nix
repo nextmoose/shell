@@ -1,4 +1,4 @@
-  { coreutils, flock , global , local , structure-directory }  :
+  { bash-variable , coreutils, flock , global , local , structure-directory }  :
     {
       log =
         {
@@ -15,7 +15,7 @@
               fi &&
               exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
               ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-              ${ local.variables.log-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
+              ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
               exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
               ${ flock }/bin/flock ${ local.numbers.log-dir }
 	    '' ;
@@ -66,13 +66,13 @@
               # temporary
               if [ ! -d ${ structure-directory }/temporary ]
               then
-                ${ pkgs.coreutils }/bin/mkdir ${ structure-directory }/temporary
+                ${ coreutils }/bin/mkdir ${ structure-directory }/temporary
               fi &&
               exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
               ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-              ${ local.variables.temporary-dir }=$( ${ pkgs.coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
+              ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
               exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
-              ${ pkgs.flock }/bin/flock ${ local.numbers.temporary-dir } &&
+              ${ flock }/bin/flock ${ local.numbers.temporary-dir } &&
 	      ${ coreutils }/bin/mkdir ${ bash-variable local.variables.temporary-dir }/temporary
 	    '' ;
 	} ;
