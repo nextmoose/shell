@@ -35,7 +35,7 @@
               fi &&
               exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
               ${ flock }/bin/flock -s ${ local.numbers.resource-directory } &&
-              export ${ global.timestamp }=$( ${ coreutils }/bin/date +%s )
+              export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s )
 	    '' ;
 	} ;
       structure =

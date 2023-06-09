@@ -49,7 +49,26 @@
                                   in visit { lambda = lambda ; null = null ; undefined = undefined ; } inputs ;
                               global =
                                 unique
-                                  { timestamp = tokenizers.variable null ; uuid = tokenizers.uuid null ; }
+				  {
+                                    numbers =
+                                      {
+                                        structure-directory = tokenizers.identifier ;
+                                        temporary-directory = tokenizers.identifier ;
+                                        temporary-dir = tokenizers.identifier ;
+                                        log-directory = tokenizers.identifier ;
+                                        log-dir = tokenizers.identifier ;
+                                        resource-directory = tokenizers.identifier ;
+                                        resource-dir = tokenizers.identifier ;
+					test = tokenizers.identifier ;
+                                      } ;
+                                    variables =
+                                      {
+                                        temporary-dir = tokenizers.variable null ;
+                                        log-dir = tokenizers.variable null ;
+					timestamp = tokenizers.variable null ;
+                                      } ;
+                                      uuid = tokenizers.uuid null ;
+				  }
                                   ( scripts ( { script } : script ) )
                                   (
                                     token :
@@ -85,14 +104,6 @@
                                                   {
                                                     temporary-dir = tokenizers.variable track.index ;
                                                     log-dir = tokenizers.variable track.index ;
-                                                    salt = tokenizers.variable track.index ;
-                                                    timestamp = tokenizers.variable track.index ;
-                                                    parent =
-                                                      {
-                                                        timestamp = tokenizers.variable track.index ;
-                                                        process = tokenizers.variable track.index ;
-                                                        salt = tokenizers.variable track.index ;
-                                                      } ;
                                                   } ;
                                                 uuid = tokenizers.uuid track.index ;
                                               }
@@ -114,14 +125,15 @@
                                                   set = track : track.reduced ;
                                                   string = track : strip track.reduced ;
                                                   undefined = track : track.throw "" ;
-                                                  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./scripting.nix { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = local ; structure-directory = structure-directory ; } ) ;
+                                                  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./scripting.nix { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = global ; structure-directory = structure-directory ; } ) ;
                                               structure = if builtins.any ( functionArg : builtins.any ( dir : functionArg == dir ) [ "log" "resources" "temporary" ] ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.structure.yes else scripting.structure.no ;
                                               resource = if builtins.any ( functionArg : functionArg == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.resource.yes else scripting.resource.no ;
                                               temporary = if builtins.any ( functionArg : functionArg == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.temporary.yes else scripting.temporary.no ;
                                               in
                                                 strip
                                                   ''
-                                                    # ${ local.uuid }
+                                                    # ${ global.variables.timestamp }
+                                                    # ${ global.uuid }
                                                     # ${ track.qualified-name }
  
                                                     ${ structure } &&
@@ -145,12 +157,12 @@
                                                       resource =
                                                         { directory ? null , file ? null , release ? null , output ? null , permissions ? null , salt ? null , show ? null } :
                                                           let
-                                                            hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;
+                                                            hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;	
                                                             init =
-                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-                                                              else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9" ;
-                                                            invocation = "$( ${ pkgs.writeShellScript "init" ( ( builtins.import ./resource.nix ) bash-variable local.numbers.resource-dir pkgs.coreutils pkgs.flock structure-directory pre-salt salted.salt init unsalted.show ) } )" ;
+                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.variables.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.variables.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
+                                                            invocation = "$( ${ pkgs.writeShellScript "init" ( ( builtins.import ./resource.nix ) bash-variable global.numbers.resource-dir pkgs.coreutils pkgs.flock structure-directory pre-salt salted.salt init unsalted.show ) } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
                                                             salted =
                                                               {
@@ -168,10 +180,10 @@
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
                                                                 salt =
                                                                   let
-                                                                    float = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString track.reduced } ))" ;
-                                                                    int = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString track.reduced } ))" ;
-                                                                    lambda = track : "$( ${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable global.timestamp } )" ;
-                                                                    null = track : "$(( ${ bash-variable global.timestamp } / ${ builtins.toString ( 60 * 60 ) } ))" ;
+                                                                    float = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString track.reduced } ))" ;
+                                                                    int = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString track.reduced } ))" ;
+                                                                    lambda = track : "$( ${ track.reduced ( scripts ( { shell-script } : shell-script ) global ) } ${ bash-variable global.variables.timestamp } )" ;
+                                                                    null = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString ( 60 * 60 ) } ))" ;
                                                                     undefined = track : track.throw "9c8cfa72-abd4-4e93-8579-a9c3e7255d95" ;
                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
                                                               } ;
@@ -187,8 +199,8 @@
                                                       in track.reduced resource ;
                                                 undefined = track : track.throw "90ae8007-6137-4823-8923-89726347d15b" ;
                                                 in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
-                                          script = strip ( script-fun local ) ;
-                                          script-fun = local : invoke reduced ( structure local ) ;
+                                          script = strip ( script-fun global ) ;
+                                          script-fun = local : invoke reduced ( structure global ) ;
                                           structure =
                                             local :
                                               pkgs //
@@ -211,7 +223,7 @@
                                                   track = track ;
                                                   uuid = local.uuid ;
                                                 } ;
-                                          in invoke fun { script = script ; script-fun = script-fun ; shell-script = shell-script ; shell-script-bin = shell-script-bin ; } ;
+                                          in invoke fun { script = script ; script-fun = script-fun ; shell-script = "${ shell-script }" ; shell-script-bin = "${ shell-script-bin }" ; } ;
                                     value =
                                       let
                                         lambda = track : appraisal track track.reduced ;
