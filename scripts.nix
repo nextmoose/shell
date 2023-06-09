@@ -304,5 +304,70 @@
               fi &&
               ${ coreutils }/bin/echo The temporary functionality appears to work
             '' ;
+        testing-temporary-2 =
+          { bash-variable , coreutils , dev , findutils , flock , local , shell-scripts , structure-directory , temporary } :
+            ''
+              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/111 > ${ temporary }/112 2> ${ temporary }/113 &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/111 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
+              then
+                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo The release output was at least two lines long
+              fi &&
+              if [ -s ${ temporary }/112 ]
+              then
+                ${ coreutils }/bin/echo release outputed &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any output
+              fi &&
+              if [ -s ${ temporary }/113 ]
+              then
+                ${ coreutils }/bin/echo release errored &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any error
+              fi &&
+              ${ shell-scripts.test.create-temporary-file } 13ae4498-57cb-4beb-aa19-77691bfc44af 3fbd5509-1227-48c5-9818-80f0ab91f996 &&
+              TEMPED=$( ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d ) &&
+              ${ coreutils }/bin/echo We have the following temp directories ${ bash-variable "TEMPED" } &&
+              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/121 > ${ temporary }/122 2> ${ temporary }/123 &&
+              for TEMP in ${ bash-variable "TEMPED" }
+              do
+                if [ ${ bash-variable "TEMP" }/temporary == ${ temporary } ]
+                then
+                  ${ coreutils }/bin/echo We do not expect ${ temporary } to be released
+                elif [ -d ${ bash-variable "TEMP" } ]
+                then
+                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "TEMP" } to be released &&
+                  exit 64
+                else
+                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "TEMP" } was released
+                fi
+              done &&
+              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/121 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
+              then
+                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo The release output was at least two lines long
+              fi &&
+              if [ -s ${ temporary }/122 ]
+              then
+                ${ coreutils }/bin/echo release outputed &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any output
+              fi &&
+              if [ -s ${ temporary }/123 ]
+              then
+                ${ coreutils }/bin/echo release errored &&
+                exit 64
+              else
+                ${ coreutils }/bin/echo We never expect any error
+              fi &&
+              ${ coreutils }/bin/echo The temporary functionality appears to work
+            '' ;
       } ;
   }

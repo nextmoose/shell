@@ -15,5 +15,5 @@ bash-variable : file-descriptor : structure-directory : coreutils : flock : pre-
       ${ coreutils }/bin/touch ${ structure-directory }/resource/${ bash-variable "HASH" }/exists &&
       ${ coreutils }/bin/chmod ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
     fi &&
-    ${ show } ${ structure-directory }/resource/${ bash-variable "HASH"
+    ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }
   ''
