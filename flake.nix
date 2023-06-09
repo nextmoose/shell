@@ -162,7 +162,22 @@
                                                               if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.variables.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.variables.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
-                                                            invocation = "$( ${ pkgs.writeShellScript "init" ( ( builtins.import ./resource.nix ) bash-variable global.numbers.resource-dir pkgs.coreutils pkgs.flock structure-directory pre-salt salted.salt init unsalted.show ) } )" ;
+                                                            invocation =
+							      let
+							        arguments =
+								  {
+								    bash-variable = bash-variable ;
+								    coreutils = pkgs.coreutils ;
+								    flock = pkgs.flock ;
+								    init = init ;
+								    global = global ;
+								    permissions = salted.permissions ;
+								    pre-salt = pre-salt ;
+								    salt = salted.salt ;
+								    show = unsalted.show ;
+								    structure-directory = structure-directory ;
+								  } ;
+								in "$( ${ pkgs.writeShellScript "init" ( import ./resource.nix arguments ) } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
                                                             salted =
                                                               {
@@ -178,6 +193,12 @@
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "1ea15780-74da-454b-9012-a733620d5248" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
+								permissions =
+								  let
+								    int = track : builtins.substring 1 4 ( builtins.toString ( 90000 + track.reduced ) ) ;
+								    null = track : "0400" ;
+								    undefined = track : track.throw "1fc17baf-8d68-4a40-b926-425dd331caad" ;
+								    in visit { int = int ; null = null ; undefined = undefined ; } permissions ;
                                                                 salt =
                                                                   let
                                                                     float = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString track.reduced } ))" ;
