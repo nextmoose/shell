@@ -186,7 +186,7 @@
                 ${ coreutils }/bin/echo We never expect any error
               fi &&
               ${ shell-scripts.test.create-log-file } 310aaf17-13f2-4919-9edb-60d3bc3af35b &&
-	      ${ coreutils }/bin/sleep 10s &&
+	      ${ coreutils }/bin/sleep 1s &&
               LOGGED=$( ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d ) &&
               ${ coreutils }/bin/echo We have the following LOG DIRECTORIES ${ bash-variable "LOGGED" } &&
               ${ shell-scripts.structure.release.log.directory } ${ temporary }/221 ${ temporary }/222 > ${ temporary }/223 2> ${ temporary }/224 &&
