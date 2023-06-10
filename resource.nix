@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , hash-files , init , jq , make-directory , permissions , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , hash-files , init , jq , make-directory , permissions , release , structure-directory , pre-salt , salt , show , type } :
   ''
     HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
@@ -27,5 +27,6 @@
     PARENT_PID_FILE=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
     ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ bash-variable "PARENT_PID_FILE" } &&
     ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID_FILE" } &&
+    ${ if builtins.typeOf release == "bool" then "# NO RELEASE" else "${ coreutils }/bin/ln --symbolic ${ release } ${ structure-directory }/resource/${ bash-variable "HASH" }/release.sh" } &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''

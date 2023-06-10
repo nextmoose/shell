@@ -184,6 +184,7 @@
 								    make-directory = false ;
 								    permissions = salted.permissions ;
 								    pre-salt = pre-salt ;
+								    release = salted.release ;
 								    salt = salted.salt ;
 								    show = unsalted.show ;
 								    structure-directory = structure-directory ;
@@ -214,6 +215,12 @@
 								    null = track : "0400" ;
 								    undefined = track : track.throw "1fc17baf-8d68-4a40-b926-425dd331caad" ;
 								    in visit { int = int ; null = null ; undefined = undefined ; } permissions ;
+								release =
+								  let
+								    lambda = track : track.reduced ( scripts ( { shell-script } : shell-script ) global ) ;
+								    null = track : false ;
+								    undefined = track : track.throw "41f580df-ef28-4658-9056-10ba7a11e49f" ;
+								    in visit { lambda = lambda ; null = null ; undefined = undefined ; } release ;
                                                                 salt =
                                                                   let
                                                                     float = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString track.reduced } ))" ;
