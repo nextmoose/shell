@@ -155,7 +155,7 @@
                                                   track :
                                                     let
                                                       resource =
-                                                        { directory ? null , file ? null , release ? null , output ? null , permissions ? null , salt ? null , show ? null } :
+                                                        { directory ? null , file ? null , output ? null , permissions ? null , release ? null , salt ? null , show ? null } :
                                                           let
 							    init-file =
 							      if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output }"
