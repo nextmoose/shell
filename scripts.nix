@@ -184,6 +184,20 @@
 			  ${ coreutils }/bin/echo b20bea8c-7d56-4651-8dff-7d9e3d7ff760 > ${ log "4e0b16d2-c013-4b1c-9f51-d35ccda0f91d" }
 			'' ;
 		  } ;
+	        gamma =
+	          {
+		    init =
+		      { bash-variable , coreutils , log } :
+		        ''
+		          ${ coreutils }/bin/echo 15da2f30-9dd2-4007-b4a4-6dc0cc905388 > ${ bash-variable 1 } &&
+		          ${ coreutils }/bin/echo 53ccb708-202b-4ac2-97d2-8df55bc7dc74 > ${ log "f75af278-e2ca-4602-ad20-4805fb312679" }
+		        '' ;
+		    release =
+		      { coreutils , log } :
+		        ''
+			  ${ coreutils }/bin/echo c6148348-3fb5-4b98-ad1f-a9ebde0b3bc6 > ${ log "dbda32dc-cbb6-4bf2-bfa9-9bf79ccb5de7" }
+			'' ;
+		  } ;
 	      } ;
 	    test-resource =
 	      { bash-variable , coreutils , resources , shell-scripts } :
@@ -194,6 +208,20 @@
 		    ${ coreutils }/bin/echo GOOD:  The alpha resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a
 		  else
 		    ${ coreutils }/bin/echo BAD:  The alpha resource is ${ resources.test.alpha } not 3adc7adf-4fdf-4b75-95fb-88cf58b4416a &&
+		    exit 64
+		  fi &&
+		  if [ ${ resources.test.beta } == "a8ee32f1-584d-44cf-82a0-5605b6c3c8ca" ]
+		  then
+		    ${ coreutils }/bin/echo GOOD:  The beta resource matches a8ee32f1-584d-44cf-82a0-5605b6c3c8ca
+		  else
+		    ${ coreutils }/bin/echo BAD:  The beta resource is ${ resources.test.beta } not a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
+		    exit 64
+		  fi &&
+		  if [ ${ resources.test.gamma } == "15da2f30-9dd2-4007-b4a4-6dc0cc905388" ]
+		  then
+		    ${ coreutils }/bin/echo GOOD:  The gamma resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a
+		  else
+		    ${ coreutils }/bin/echo BAD:  The gamma resource is ${ resources.test.gamma } not 15da2f30-9dd2-4007-b4a4-6dc0cc905388 &&
 		    exit 64
 		  fi
 		'' ;

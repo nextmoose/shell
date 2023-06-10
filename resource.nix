@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , init , make-directory , permissions , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , hash-files , init , jq , make-directory , permissions , structure-directory , pre-salt , salt , show , type } :
   ''
     HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
@@ -17,8 +17,15 @@
       ${ coreutils }/bin/touch ${ structure-directory }/resource/${ bash-variable "HASH" }/exists &&
       ${ coreutils }/bin/chmod 0400 ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
     fi &&
-    PARENT_PID=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
-    ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ bash-variable "PARENT_PID" } &&
-    ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID" } &&
+    ${ jq }/bin/jq --null-input --raw-output '${ hash-files } | map(select(.file=="${ bash-variable 2 }")) | map(.hash) | .[]' | while read PARENT_HASH_EXPRESSION
+    do
+      PARENT_HASH=$( ${ bash-variable "PARENT_HASH_EXPRESSION" } ) &&
+      PARENT_HASH_FILE=$( ${ coreutils }/bin/mktemp --suffix .hash ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
+      ${ coreutils }/bin/echo ${ bash-variable "PARENT_HASH" } > ${ bash-variable "PARENT_HASH_FILE" }
+      ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_HASH_FILE" }
+    done &&
+    PARENT_PID_FILE=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
+    ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ bash-variable "PARENT_PID_FILE" } &&
+    ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID_FILE" } &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''

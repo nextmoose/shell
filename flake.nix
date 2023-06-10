@@ -157,10 +157,15 @@
                                                       resource =
                                                         { directory ? null , file ? null , release ? null , output ? null , permissions ? null , salt ? null , show ? null } :
                                                           let
-                                                            hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;	
+							    init-file =
+							      if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output }"
+							      else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file }"
+                                                              else builtins.throw "2cba842d-5b9c-4e14-8f09-0caa5496bc92 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
+                                                            hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;
+							    hash-files = [ { file = init-file ; hash = hash ; } ] ;
                                                             init =
-                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ init-file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ init-file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
                                                             invocation =
 							      let
@@ -170,7 +175,12 @@
 								    coreutils = pkgs.coreutils ;
 								    flock = pkgs.flock ;
 								    global = global ;
+								    hash-files =
+								      let
+								        nix = _resources ( { hash-files } : hash-files ) ( track : builtins.concatLists track.reduced ) ( track : builtins.concatLists ( builtins.attrValues track.reduced ) ) ;
+									in builtins.toJSON nix ;
 								    init = init ;
+								    jq = pkgs.jq ;
 								    make-directory = false ;
 								    permissions = salted.permissions ;
 								    pre-salt = pre-salt ;
@@ -221,7 +231,7 @@
                                                                     null = track : "cat" ;
                                                                     in visit { bool = bool ; null = null ; undefined = undefined ; } show ;
                                                               } ;
-                                                            in invoke fun { hash = hash ; invocation = invocation ; } ;
+                                                            in invoke fun { hash = hash ; hash-files = hash-files ; invocation = invocation ; } ;
                                                       in track.reduced resource ;
                                                 undefined = track : track.throw "90ae8007-6137-4823-8923-89726347d15b" ;
                                                 in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
