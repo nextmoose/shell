@@ -49,6 +49,7 @@
                       if [ -d ${ structure-directory }/log ]
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
+			${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG >> ${ bash-variable 2 } &&
                         ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} ${ bash-variable 1 } ${ bash-variable 2 } \;
                         fi &&
@@ -59,7 +60,7 @@
                    ''
                      ${ coreutils }/bin/echo BEGIN RELEASE LOG ${ bash-variable 1 } >> ${ bash-variable 3 } &&
                      exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
-                     ${ flock }/bin/flock ${ local.numbers.log-dir } &&
+                     ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
                      ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG ${ bash-variable 1 } >> ${ bash-variable 3 } &&
                      ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 2 } ${ bash-variable 3 } \; &&
                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
@@ -157,7 +158,7 @@
               ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
             '' ;
         testing-log =
-          { bash-variable , coreutils , findutils , flock , gnused , local , log , resources , shell-scripts , structure-directory , temporary , yq } :
+          { bash-variable , coreutils , findutils , flock , gnused , local , resources , shell-scripts , structure-directory , temporary , yq } :
             ''
               exec ${ local.numbers.test }<>${ resources.test.lock } &&
               ${ flock }/bin/flock ${ local.numbers.test } &&
@@ -185,6 +186,7 @@
                 ${ coreutils }/bin/echo We never expect any error
               fi &&
               ${ shell-scripts.test.create-log-file } 310aaf17-13f2-4919-9edb-60d3bc3af35b &&
+	      ${ coreutils }/bin/sleep 10s &&
               LOGGED=$( ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d ) &&
               ${ coreutils }/bin/echo We have the following LOG DIRECTORIES ${ bash-variable "LOGGED" } &&
               ${ shell-scripts.structure.release.log.directory } ${ temporary }/221 ${ temporary }/222 > ${ temporary }/223 2> ${ temporary }/224 &&
