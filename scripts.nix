@@ -192,6 +192,12 @@
 		          ${ coreutils }/bin/echo 15da2f30-9dd2-4007-b4a4-6dc0cc905388 > ${ bash-variable 1 } &&
 		          ${ coreutils }/bin/echo 53ccb708-202b-4ac2-97d2-8df55bc7dc74 > ${ log "f75af278-e2ca-4602-ad20-4805fb312679" }
 		        '' ;
+		    init-man =
+		      { bash-variable , coreutils , log , resources } :
+		        ''
+			  ${ coreutils }/bin/echo ${ resources.test.alpha } > ${ bash-variable 1 } &&
+		          ${ coreutils }/bin/echo 53ccb708-202b-4ac2-97d2-8df55bc7dc74 > ${ log "f75af278-e2ca-4602-ad20-4805fb312679" }
+		        '' ;
 		    release =
 		      { coreutils , log } :
 		        ''
