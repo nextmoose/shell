@@ -34,7 +34,7 @@
     touch =
       { bash-variable , coreutils } :
         ''
-          ${ coreutils }/bin/touch ${ bash-variable 2 }
+          ${ coreutils }/bin/touch ${ bash-variable 1 }
         '' ;
     structure =
       {
@@ -152,6 +152,52 @@
             ''
               ${ coreutils }/bin/echo 7eaa6251-82e0-47c7-b492-7ababc3e709b > ${ bash-variable 1 }
             '' ;
+	log =
+	  {
+	    resources =
+	      {
+	        alpha =
+	          {
+		    init =
+		      { bash-variable , coreutils , log } :
+		        ''
+		          ${ coreutils }/bin/echo 3adc7adf-4fdf-4b75-95fb-88cf58b4416a > ${ bash-variable 1 } &&
+		          ${ coreutils }/bin/echo a11b9044-ab5b-49c2-9912-58a42a5c62c9 > ${ log "94adb774-a511-4edc-a183-31d1737dbfa5" }
+		        '' ;
+		    release =
+		      { coreutils , log } :
+		        ''
+			  ${ coreutils }/bin/echo eff5a9ea-ceb3-4d55-981a-2388e2ece252 > ${ log "7723d148-ec94-45b3-afe1-3a8c2a0c9d1c" }
+			'' ;
+		  } ;
+	        beta =
+	          {
+		    init =
+		      { bash-variable , coreutils , log } :
+		        ''
+		          ${ coreutils }/bin/echo a8ee32f1-584d-44cf-82a0-5605b6c3c8ca > ${ bash-variable 1 } &&
+		          ${ coreutils }/bin/echo a8054783-bfe3-4efd-86bd-6de45f0e84a1 > ${ log "58f4e333-19f2-49f4-bbbf-c0ba880b5c4f" }
+		        '' ;
+		    release =
+		      { coreutils , log } :
+		        ''
+			  ${ coreutils }/bin/echo b20bea8c-7d56-4651-8dff-7d9e3d7ff760 > ${ log "4e0b16d2-c013-4b1c-9f51-d35ccda0f91d" }
+			'' ;
+		  } ;
+	      } ;
+	    test-resource =
+	      { bash-variable , coreutils , resources , shell-scripts } :
+	        ''
+		  ${ shell-scripts.test.util.sleep } &&
+		  if [ ${ resources.test.alpha } == "3adc7adf-4fdf-4b75-95fb-88cf58b4416a" ]
+		  then
+		    ${ coreutils }/bin/echo GOOD:  The alpha resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a
+		  else
+		    ${ coreutils }/bin/echo BAD:  The alpha resource is ${ resources.test.alpha } not 3adc7adf-4fdf-4b75-95fb-88cf58b4416a &&
+		    exit 64
+		  fi
+		'' ;
+	  } ;
         output =
           { coreutils } :
             ''
@@ -371,5 +417,21 @@
               fi &&
               ${ coreutils }/bin/echo The temporary functionality appears to work
             '' ;
+        util =
+	  {
+	    sleep =
+	      { bash-variable , coreutils } :
+	        ''
+		  NOW=$( ${ coreutils }/bin/date +%s ) &&
+		  START=$(( 6 * ( ${ bash-variable "NOW" } / 6 ) )) &&
+		  FINISH=$(( ${ bash-variable "START" } + 6 )) &&
+		  SLEEP=$(( ${ bash-variable "FINISH" } - ${ bash-variable "NOW" } )) &&
+		  ${ coreutils }/bin/echo START=$( ${ coreutils }/bin/date --date @${ bash-variable "START" } ) &&
+		  ${ coreutils }/bin/echo NOW=$( ${ coreutils }/bin/date --date @${ bash-variable "NOW" } ) &&
+		  ${ coreutils }/bin/echo FINISH=$( ${ coreutils }/bin/date --date @${ bash-variable "FINISH" } ) &&
+		  ${ coreutils }/bin/echo SLEEP=${ bash-variable "SLEEP" } &&
+		  ${ coreutils }/bin/sleep ${ bash-variable "SLEEP" }
+		'' ;
+	  } ;
       } ;
   }

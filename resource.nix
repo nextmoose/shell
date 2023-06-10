@@ -17,5 +17,8 @@
       ${ coreutils }/bin/touch ${ structure-directory }/resource/${ bash-variable "HASH" }/exists &&
       ${ coreutils }/bin/chmod 0400 ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
     fi &&
+    PARENT_PID=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
+    ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ bash-variable "PARENT_PID" } &&
+    ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID" } &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''

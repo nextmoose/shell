@@ -159,8 +159,8 @@
                                                           let
                                                             hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;	
                                                             init =
-                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ bash-variable global.variables.timestamp } > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
-                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${bash-variable global.variables.timestamp } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ salted.output } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
+                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ salted.file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
                                                             invocation =
 							      let
@@ -182,7 +182,7 @@
 								      else if builtins.typeOf salted.output == "string" then "output"
 								      else builtins.throw "665da9aa-555d-4b51-ad26-79d3c392f675" ;
 								  } ;
-								in "$( ${ pkgs.writeShellScript "init" ( import ./resource.nix arguments ) } )" ;
+								in "$( ${ pkgs.writeShellScript "init" ( import ./resource.nix arguments ) } ${ bash-variable "?" } ${ bash-variable "0" } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
                                                             salted =
                                                               {
