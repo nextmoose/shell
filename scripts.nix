@@ -80,7 +80,7 @@
             resource =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , hashes , local , structure-directory } :
+                  { bash-variable , coreutils , findutils , flock , local , shell-scripts , structure-directory } :
                     ''
                       ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE >> ${ bash-variable 1 } &&
                       if [ -d ${ structure-directory }/resource ]
@@ -88,11 +88,8 @@
                         exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
                         ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo HASHES >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo ${ hashes } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo FIND >> ${ bash-variable 1 } &&
-			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo PLACEHOLDER >> ${ bash-variable 1 }
+			export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+			${ coreutils }/bin/echo PLACEHOLDER >> ${ bash-variable 1 }
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
