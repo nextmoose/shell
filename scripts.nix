@@ -458,8 +458,8 @@
               { bash-variable , coreutils } :
                 ''
                   NOW=$( ${ coreutils }/bin/date +%s ) &&
-                  START=$(( 6 * ( ${ bash-variable "NOW" } / 6 ) )) &&
-                  FINISH=$(( ${ bash-variable "START" } + 6 )) &&
+                  START=$(( 30 * ( ${ bash-variable "NOW" } / 30 ) )) &&
+                  FINISH=$(( ${ bash-variable "START" } + 30 )) &&
                   SLEEP=$(( ${ bash-variable "FINISH" } - ${ bash-variable "NOW" } )) &&
                   ${ coreutils }/bin/echo START=$( ${ coreutils }/bin/date --date @${ bash-variable "START" } ) &&
                   ${ coreutils }/bin/echo NOW=$( ${ coreutils }/bin/date --date @${ bash-variable "NOW" } ) &&
