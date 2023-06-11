@@ -27,6 +27,5 @@
     PARENT_PID_FILE=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
     ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ bash-variable "PARENT_PID_FILE" } &&
     ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID_FILE" } &&
-    ${ if builtins.typeOf release == "bool" then "# NO RELEASE" else "${ coreutils }/bin/ln --symbolic ${ release } ${ structure-directory }/resource/${ bash-variable "HASH" }/release.sh" } &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''
