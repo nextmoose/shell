@@ -245,7 +245,7 @@
                                                   dev = { cron = cron ; null = knull ; sudo = sudo ; } ;
                                                   hashes =
                                                     let
-                                                      fun = { hash } : [ hash ] ;
+                                                      fun = { hash } : [ "! -name ${ hash }" ] ;
                                                       list = track : builtins.concatLists ( track.reduced ) ;
                                                       set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                                       in builtins.concatStringsSep " " ( _resources fun list set ) ;
