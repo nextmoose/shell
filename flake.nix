@@ -166,7 +166,6 @@
                                                               if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then "${ init-file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource > ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then "${ init-file } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource"
                                                               else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9 ${ builtins.concatStringsSep " , " ( builtins.map builtins.typeOf [ salted.output salted.file ] ) }" ;
-							    init-file-hash = [ { init-file = init-file ; hash = hash ; } ] ;
                                                             invocation =
 							      let
 							        arguments =
@@ -176,8 +175,9 @@
 								    flock = pkgs.flock ;
 								    global = global ;
 								    init = init ;
-								    init-file-hash = _resources ( { init-file-hash } : init-file-hash ) ( track : builtins.concatLists track.reduced ) ( track : builtins.concatLists ( builtins.attrValues track.reduced ) ) ;
-								    jq = pkgs.jq ;
+								    invalidations =
+								      let
+								        in [ ] ;
 								    make-directory = false ;
 								    permissions = salted.permissions ;
 								    pre-salt = pre-salt ;
@@ -235,7 +235,7 @@
                                                                     null = track : "cat" ;
                                                                     in visit { bool = bool ; null = null ; undefined = undefined ; } show ;
                                                               } ;
-                                                            in invoke fun { hash = hash ; init-file-hash = init-file-hash ; invocation = invocation ; } ;
+                                                            in invoke fun { hash = hash ; invocation = invocation ; } ;
                                                       in track.reduced resource ;
                                                 undefined = track : track.throw "90ae8007-6137-4823-8923-89726347d15b" ;
                                                 in visit { lambda = lambda ; list = list ; set = set ; undefined = undefined ; } ( import ./resources.nix ) ;
