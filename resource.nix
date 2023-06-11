@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , init , jq , make-directory , permissions , release , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , init , init-file-hash , jq , make-directory , permissions , release , structure-directory , pre-salt , salt , show , type } :
   ''
     HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
