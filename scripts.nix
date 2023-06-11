@@ -53,7 +53,7 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG >> ${ bash-variable 2 } &&
                         ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} ${ bash-variable 1 } ${ bash-variable 2 } \;
                         fi &&
-                      ${ coreutils }/bin/echo END RELEASE LOG >> ${ bash-variable 2 }
+                      ${ coreutils }/bin/echo END RELEASE LOG >> ${ bash-variable 1 }
                     '' ;
                 dir =
                  { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
@@ -76,6 +76,26 @@
                        ${ coreutils }/bin/rm ${ bash-variable 1 } &&
                        ${ coreutils }/bin/echo END RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 }
                      '' ;
+              } ;
+            resource =
+              {
+                directory =
+                  { bash-variable , coreutils , findutils , flock , hashes , local , structure-directory } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE >> ${ bash-variable 1 } &&
+                      if [ -d ${ structure-directory }/resource ]
+                      then
+                        exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
+                        ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
+                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo HASHES >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo ${ hashes } >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo FIND >> ${ bash-variable 1 } &&
+			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo PLACEHOLDER >> ${ bash-variable 1 }
+                      fi &&
+                      ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
+                    '' ;
               } ;
             temporary =
               {
@@ -195,7 +215,8 @@
                     init =
                       { bash-variable , coreutils , log , resources } :
                         ''
-                          ${ coreutils }/bin/echo ${ resources.test.alpha } ${ resources.test.beta } > ${ bash-variable 1 }
+                          ${ coreutils }/bin/echo ${ resources.test.alpha } ${ resources.test.beta } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo f68e6aea-3723-413c-84ff-07da9c0ee059 > ${ log "5fde8686-8fd1-4ccb-a273-acb040979d02" }
                         '' ;
                     release =
                       { coreutils , log } :
@@ -204,7 +225,7 @@
                         '' ;
                   } ;
               } ;
-            test-resource =
+            before =
               { bash-variable , coreutils , resources , shell-scripts } :
                 ''
                   ${ shell-scripts.test.util.sleep } &&
@@ -229,7 +250,13 @@
                     ${ coreutils }/bin/echo BAD:  The beta resource is ${ resources.test.beta } not a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
                     exit 64
                   fi &&
-                  # ${ shell-scripts.test.util.sleep } &&
+                  ${ coreutils }/bin/sleep 2s
+                '' ;
+            test-resource =
+              { coreutils , shell-scripts , temporary } :
+                ''
+                  ${ shell-scripts.test.log.before } &&
+                  ${ shell-scripts.structure.release.resource.directory } ${ temporary }/311 > ${ temporary }/312 2> ${ temporary }/313 &&
                   ${ coreutils }/bin/echo GOOD:  ALL GOOD
                 '' ;
           } ;
@@ -458,8 +485,8 @@
               { bash-variable , coreutils } :
                 ''
                   NOW=$( ${ coreutils }/bin/date +%s ) &&
-                  START=$(( 30 * ( ${ bash-variable "NOW" } / 30 ) )) &&
-                  FINISH=$(( ${ bash-variable "START" } + 30 )) &&
+                  START=$(( 6 * ( ${ bash-variable "NOW" } / 6 ) )) &&
+                  FINISH=$(( ${ bash-variable "START" } + 6 )) &&
                   SLEEP=$(( ${ bash-variable "FINISH" } - ${ bash-variable "NOW" } )) &&
                   ${ coreutils }/bin/echo START=$( ${ coreutils }/bin/date --date @${ bash-variable "START" } ) &&
                   ${ coreutils }/bin/echo NOW=$( ${ coreutils }/bin/date --date @${ bash-variable "NOW" } ) &&
