@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , init , invalidations , make-directory , permissions , release , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , init , invalidation-token , make-directory , output , permissions , release , structure-directory , pre-salt , salt , show , type } :
   ''
     HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
@@ -12,7 +12,8 @@
       # This is a ${ type }
       ${ if make-directory then "${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "HASH" }/resource" else "# NO NEED TO MAKE DIRECTORY" } &&
       ${ if make-directory then "cd ${ structure-directory }/resource/${ bash-variable "HASH" }/resource" else "# NO NEED TO cd" } &&
-      ${ init } &&
+      ${ coreutils }/bin/ln --symbolic ${ init } ${ structure-directory }/resource/${ bash-variable "HASH" }/init.sh &&
+      ${ init } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource ${ if output then "> ${ structure-directory }/resource/${ bash-variable "HASH" }/resource" else "" } &&
       ${ coreutils }/bin/chmod ${ permissions } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource &&
       ${ coreutils }/bin/touch ${ structure-directory }/resource/${ bash-variable "HASH" }/exists &&
       ${ coreutils }/bin/chmod 0400 ${ structure-directory }/resource/${ bash-variable "HASH" }/exists
@@ -20,6 +21,9 @@
     PARENT_PID_FILE=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
     ${ coreutils }/bin/echo ${ bash-variable 2 } > ${ bash-variable "PARENT_PID_FILE" } &&
     ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID_FILE" } &&
+    INVALIDATION_TOKEN_FILE=$( ${ coreutils }/bin/mktemp --dry-run --suffix .invalidation ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
+    ${ coreutils }/bin/echo ${ invalidation-token } > ${ bash-variable "INVALIDATION_TOKEN_FILE" } &&
+    ${ coreutils }/bin/chmod 0400 ${ bash-variable "INVALIDATION_TOKEN_FILE" } &&
     ${ if builtins.typeOf release == "bool" then "# NO RELEASE" else "${ coreutils }/bin/ln --symbolic ${ release } ${ structure-directory }/resource/${ bash-variable "HASH" }/release.sh" } &&
     ${ coreutils }/bin/${ show } ${ structure-directory }/resource/${ bash-variable "HASH" }/resource
   ''
