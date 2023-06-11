@@ -195,7 +195,7 @@
                     init =
                       { bash-variable , coreutils , log , resources } :
                         ''
-                          ${ coreutils }/bin/echo ${ builtins.typeOf resources.test } > ${ bash-variable 1 }
+                          ${ coreutils }/bin/echo ${ resources.test.alpha } ${ resources.test.beta } > ${ bash-variable 1 }
                         '' ;
                     release =
                       { coreutils , log } :
@@ -208,11 +208,11 @@
               { bash-variable , coreutils , resources , shell-scripts } :
                 ''
                   ${ shell-scripts.test.util.sleep } &&
-                  if [ ${ resources.test.gamma } == "15da2f30-9dd2-4007-b4a4-6dc0cc905388" ]
+                  if [ "${ resources.test.gamma }" == "3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca" ]
                   then
-                    ${ coreutils }/bin/echo GOOD:  The gamma resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a
+                    ${ coreutils }/bin/echo GOOD:  The gamma resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca
                   else
-                    ${ coreutils }/bin/echo BAD:  The gamma resource is ${ resources.test.gamma } not 15da2f30-9dd2-4007-b4a4-6dc0cc905388 &&
+                    ${ coreutils }/bin/echo BAD:  The gamma resource is ${ resources.test.gamma } not 3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
                     exit 64
                   fi &&
                   if [ ${ resources.test.alpha } == "3adc7adf-4fdf-4b75-95fb-88cf58b4416a" ]
