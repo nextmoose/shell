@@ -229,6 +229,7 @@
                     ${ coreutils }/bin/echo BAD:  The beta resource is ${ resources.test.beta } not a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
                     exit 64
                   fi &&
+                  # ${ shell-scripts.test.util.sleep } &&
                   ${ coreutils }/bin/echo GOOD:  ALL GOOD
                 '' ;
           } ;
