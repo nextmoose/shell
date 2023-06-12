@@ -90,20 +90,22 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
 			export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
 			export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-			${ coreutils }/bin/echo local ${ bash-variable local.variables.timestamp } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo global ${ bash-variable global.variables.timestamp } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo '${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes }' >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
-			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
-			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo >> ${ bash-variable 1 }
+			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
+	        dir =
+		  { bash-variable , flock , global , coreutils } :
+		    ''
+		      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+		      if [ -d ${ bash-variable 1 } ]
+		      then
+		        exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
+			${ flock }/bin/flock ${ global.numbers.resource-dir } &&
+			${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 }
+		      fi &&
+		      ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
+		    '' ;
               } ;
             temporary =
               {
@@ -233,6 +235,12 @@
                         '' ;
                   } ;
               } ;
+	    after =
+	      { bash-variable , coreutils , shell-scripts , temporary , yq } :
+	        ''
+		  ${ shell-scripts.structure.release.log.directory } ${ temporary }/output ${ temporary }/log &&
+		  ${ coreutils }/bin/cat ${ temporary }/output | ${ yq }/bin/yq --yaml-output "."	
+		'' ;
             before =
               { bash-variable , coreutils , resources , shell-scripts } :
                 ''
@@ -263,9 +271,11 @@
               { coreutils , shell-scripts , temporary } :
                 ''
                   ${ shell-scripts.test.log.before } &&
-		  ${ coreutils }/bin/echo SLEEP=3 &&
-                  ${ coreutils }/bin/sleep 3s &&
+		  ${ coreutils }/bin/echo SLEEP=2s &&
+                  ${ coreutils }/bin/sleep 2s &&
                   ${ shell-scripts.structure.release.resource.directory } ${ temporary }/311 > ${ temporary }/312 2> ${ temporary }/313 &&
+		  ${ coreutils }/bin/echo GOOD &&
+		  # ${ shell-scripts.test.log.after } &&
                   ${ coreutils }/bin/echo GOOD:  ALL GOOD
                 '' ;
           } ;
