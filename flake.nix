@@ -171,6 +171,7 @@
                                                                     coreutils = pkgs.coreutils ;
                                                                     flock = pkgs.flock ;
                                                                     global = global ;
+								    hash = hash ;
                                                                     init = init ;
                                                                     invalidation-token = invalidation-token ;
                                                                     make-directory = false ;
@@ -196,6 +197,7 @@
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "67effc1b-0e46-4f9b-91ee-5d648dedad4c" ;
                                                                     in visit { lambda = lambda ; null = null ; undefined = undefined ; } file ;
+								index = track.index ;
                                                                 output =
                                                                   let
                                                                     lambda = track : track.reduced ( scripts ( { shell-script } : shell-script ) global ) ;
@@ -249,6 +251,7 @@
                                                       list = track : builtins.concatLists ( track.reduced ) ;
                                                       set = track : builtins.concatLists ( builtins.attrValues track.reduced ) ;
                                                       in builtins.concatStringsSep " " ( _resources fun list set ) ;
+						  global = global ;
                                                   local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { invocation } : invocation) ( track : track.reduced ) ( track : track.reduced ) ;

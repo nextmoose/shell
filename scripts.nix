@@ -80,7 +80,7 @@
             resource =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , hashes , local , shell-scripts , structure-directory } :
+                  { bash-variable , coreutils , findutils , flock , hashes , global , local , shell-scripts , structure-directory } :
                     ''
                       ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE >> ${ bash-variable 1 } &&
                       if [ -d ${ structure-directory }/resource ]
@@ -89,9 +89,18 @@
                         ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
 			export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+			export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+			${ coreutils }/bin/echo local ${ bash-variable local.variables.timestamp } >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo global ${ bash-variable global.variables.timestamp } >> ${ bash-variable 1 } &&
 			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
-			${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
-			${ coreutils }/bin/echo PLACEHOLDER '${ hashes }' >> ${ bash-variable 1 }
+			${ coreutils }/bin/echo '${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes }' >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
+			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo >> ${ bash-variable 1 } &&
+			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
+			${ coreutils }/bin/echo >> ${ bash-variable 1 }
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
@@ -248,13 +257,14 @@
                   else
                     ${ coreutils }/bin/echo BAD:  The beta resource is ${ resources.test.beta } not a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
                     exit 64
-                  fi &&
-                  ${ coreutils }/bin/sleep 2s
+                  fi
                 '' ;
             test-resource =
               { coreutils , shell-scripts , temporary } :
                 ''
                   ${ shell-scripts.test.log.before } &&
+		  ${ coreutils }/bin/echo SLEEP=3 &&
+                  ${ coreutils }/bin/sleep 3s &&
                   ${ shell-scripts.structure.release.resource.directory } ${ temporary }/311 > ${ temporary }/312 2> ${ temporary }/313 &&
                   ${ coreutils }/bin/echo GOOD:  ALL GOOD
                 '' ;
@@ -481,17 +491,17 @@
         util =
           {
             sleep =
-              { bash-variable , coreutils } :
+              { bash-variable , global , coreutils } :
                 ''
-                  NOW=$( ${ coreutils }/bin/date +%s ) &&
-                  START=$(( 6 * ( ${ bash-variable "NOW" } / 6 ) )) &&
-                  FINISH=$(( ${ bash-variable "START" } + 6 )) &&
+                  NOW=${ bash-variable global.variables.timestamp } &&
+                  START=$(( 30 * ( ${ bash-variable "NOW" } / 30 ) )) &&
+                  FINISH=$(( ${ bash-variable "START" } + 30 )) &&
                   SLEEP=$(( ${ bash-variable "FINISH" } - ${ bash-variable "NOW" } )) &&
                   ${ coreutils }/bin/echo START=$( ${ coreutils }/bin/date --date @${ bash-variable "START" } ) &&
                   ${ coreutils }/bin/echo NOW=$( ${ coreutils }/bin/date --date @${ bash-variable "NOW" } ) &&
                   ${ coreutils }/bin/echo FINISH=$( ${ coreutils }/bin/date --date @${ bash-variable "FINISH" } ) &&
                   ${ coreutils }/bin/echo SLEEP=${ bash-variable "SLEEP" } &&
-                  ${ coreutils }/bin/sleep ${ bash-variable "SLEEP" }
+		  ${ coreutils }/bin/echo ${ bash-variable "NOW" }
                 '' ;
           } ;
       } ;

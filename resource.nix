@@ -1,6 +1,6 @@
-{ bash-variable , coreutils , flock , global , init , invalidation-token , make-directory , output , permissions , release , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , hash , init , invalidation-token , make-directory , output , permissions , release , structure-directory , pre-salt , salt , show , type } :
   ''
-    HASH=$( ${ coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ coreutils }/bin/md5sum | ${ coreutils }/bin/cut --bytes -32 ) &&
+    HASH=${ hash } &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
     then
       ${ coreutils }/bin/mkdir ${ structure-directory }/resource/${ bash-variable "HASH" }
