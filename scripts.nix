@@ -95,16 +95,25 @@
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
 	        dir =
-		  { bash-variable , flock , global , coreutils } :
+		  { bash-variable , coreutils , findutils , flock , global , shell-scripts } :
 		    ''
 		      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
 		      if [ -d ${ bash-variable 1 } ]
 		      then
 		        exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
 			${ flock }/bin/flock ${ global.numbers.resource-dir } &&
-			${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 }
+			${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+			${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ coreutils }/bin/cat {} \; >> ${ bash-variable 2 }
 		      fi &&
 		      ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
+		    '' ;
+	        exclusion =
+		  { bash-variable , coreutils , shell-scripts , structure-directory } :
+		    ''
+		      ${ coreutils }/bin/echo BEGIN RELEASE EXCLUSION ${ bash-variable 1 } &&
+		      ${ shell-scripts.structure.release.resource.dir } ${ structure-directory }/release/$( ${ coreutils }/bin/cat ${ bash-variable 1 } ) &&
+		      ${ coreutils }/bin/rm ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/echo END RELEASE EXCLUSION ${ bash-variable 1 }
 		    '' ;
               } ;
             temporary =
