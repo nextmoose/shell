@@ -70,9 +70,10 @@
                    { bash-variable , coreutils , gnused } :
                      ''
                        ${ coreutils }/bin/echo BEGIN RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 } &&
-                       EXTENSION=${ bash-variable "1##*." } &&
-                       ${ coreutils }/bin/echo "${ bash-variable "EXTENSION" }:" >> ${ bash-variable 2 } &&
-                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  -\n    timestamp: \1\n    value: >\n      \2#' ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                       KEY=${ bash-variable "1##*." } &&
+                       ${ coreutils }/bin/echo "-" >> ${ bash-variable 2 } &&
+                       ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" >> ${ bash-variable 2 } &&
+                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n    \2#' ${ bash-variable 1 } >> ${ bash-variable 2 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 } &&
                        ${ coreutils }/bin/echo END RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 }
                      '' ;
@@ -236,14 +237,14 @@
                       { bash-variable , coreutils , log , temporary } :
                         ''
                           ${ coreutils }/bin/echo 6cf25357-b934-48d2-bb32-f24266667c9a > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 299781ba-a761-443f-a256-2e5eb84c1808 > ${ log "b2323076-91b9-48c6-899d-290864fff828" } &&
-                          ${ coreutils }/bin/echo 31d64c0f-777e-480a-88a2-6772fa44e801 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                          ${ coreutils }/bin/echo 31d64c0f-777e-480a-88a2-6772fa44e801 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
+                          ${ coreutils }/bin/echo 299781ba-a761-443f-a256-2e5eb84c1808 > ${ log "b2323076-91b9-48c6-899d-290864fff828" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" } &&
-                          ${ coreutils }/bin/echo 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152    
+                          ${ coreutils }/bin/echo 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152 &&
+                          ${ coreutils }/bin/echo b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" }
                         '' ;
                   } ;
                 beta-1 =
@@ -252,21 +253,21 @@
                       { bash-variable , coreutils , log , temporary } :
                         ''
                           ${ coreutils }/bin/echo 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
-                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
-                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
                         '' ;
                     salt =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
                           ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) ))
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
                         '' ;
                   } ;
                 beta-2 =
@@ -275,21 +276,21 @@
                       { bash-variable , coreutils , log , temporary } :
                         ''
                           ${ coreutils }/bin/echo 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
-                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
-                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
                         '' ;
                     salt =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
                           ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) ))
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
                         '' ;
                   } ;
                 gamma-1 =
@@ -298,21 +299,21 @@
                       { bash-variable , coreutils , log , resources , temporary } :
                         ''
                           ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
-                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                          ${ coreutils }/bin/echo 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
+                          ${ coreutils }/bin/echo 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
-                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                          ${ coreutils }/bin/echo 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
+                          ${ coreutils }/bin/echo a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
                         '' ;
                     salt =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
-                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) ))
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
+                          ${ coreutils }/bin/echo a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
                         '' ;
                   } ;
                 gamma-2 =
@@ -321,21 +322,21 @@
                       { bash-variable , coreutils , log , resources , temporary } :
                         ''
                           ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
-                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                          ${ coreutils }/bin/echo 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
+                          ${ coreutils }/bin/echo 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
-                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                          ${ coreutils }/bin/echo 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
+                          ${ coreutils }/bin/echo a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
                         '' ;
                     salt =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
-                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) ))
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
+                          ${ coreutils }/bin/echo a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
                         '' ;
                   } ;
                 setup =
@@ -344,6 +345,7 @@
                       in
                         ''
                           MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
+                          ${ coreutils }/bin/echo MINUTE ${ bash-variable "MINUTE" } &&
                           if [ "${ resources.test.resources.alpha }" == "6cf25357-b934-48d2-bb32-f24266667c9a" ]
                           then
                             ${ shell-scripts.test.util.spec.good } ALPHA resource matched expected
@@ -352,6 +354,7 @@
                           fi &&
                           if [ ${ bash-variable "MINUTE" } -lt 30 ]
                           then
+                            ${ coreutils }/bin/echo MINUTE LESS THAN 30 &&
                             if [ "${ resources.test.resources.beta-1 }" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
                             then
                               ${ shell-scripts.test.util.spec.good } BETA resource matched expected
@@ -365,6 +368,7 @@
                               ${ shell-scripts.test.util.spec.bad } "GAMMA resource did not match expected \"${ resources.test.resources.gamma-1 }\""
                             fi
                           else
+                            ${ coreutils }/bin/echo MINUTE GREATER THAN OR EQUAL TO 30 &&
                             if [ "${ resources.test.resources.beta-2}" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
                             then
                               ${ shell-scripts.test.util.spec.good } BETA resource matched expected
@@ -379,33 +383,52 @@
                             fi
                           fi
                           ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caa > ${ temporary }/cab 2> ${ temporary }/cac &&
-			  ${ shell-scripts.test.util.spec.good } release temporary is good &&
-			  if [ ! -s ${ temporary }/cab ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary did not out
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary outed
-			  fi &&
-			  if [ ! -s ${ temporary }/cac ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary did not error
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary errored
-			  fi &&
+                          ${ shell-scripts.test.util.spec.good } release temporary is good &&
+                          if [ ! -s ${ temporary }/cab ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } release temporary did not out
+                          else
+                            ${ shell-scripts.test.util.spec.bad } release temporary outed
+                          fi &&
+                          if [ ! -s ${ temporary }/cac ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } release temporary did not error
+                          else
+                            ${ shell-scripts.test.util.spec.bad } release temporary errored
+                          fi &&
 			  ${ shell-scripts.structure.release.log.directory } ${ temporary }/cba ${ temporary }/cbb > ${ temporary }/cbc 2> ${ temporary }/cbd &&
-			  ${ shell-scripts.test.util.spec.good } release log is good &&
-			  if [ ! -s ${ temporary }/cbc ]
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "b2323076-91b9-48c6-899d-290864fff828" } ]
 			  then
-			    ${ shell-scripts.test.util.spec.good } release log did not out
+			    ${ shell-scripts.test.util.spec.good } The first log is the alpha
 			  else
-			    ${ shell-scripts.test.util.spec.bad } release log outed
+			    ${ shell-scripts.test.util.spec.bad } The first log is not the alpha
 			  fi &&
-			  if [ ! -s ${ temporary }/cbd ]
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].value" ${ temporary }/cba ) == 299781ba-a761-443f-a256-2e5eb84c1808 ]
 			  then
-			    ${ shell-scripts.test.util.spec.good } release log did not error
+			    ${ shell-scripts.test.util.spec.good } The first log is the alpha was written correctly
 			  else
-			    ${ shell-scripts.test.util.spec.bad } release log errored
+			    ${ shell-scripts.test.util.spec.bad } The first log was not written correctly
 			  fi &&
+			  
+                          if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/cba ) == 7 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } release log logs 7 times
+                          else
+                            ${ shell-scripts.test.util.spec.bad } release log does not log the right number of times
+                          fi &&
+                          ${ shell-scripts.test.util.spec.good } release log is good &&
+                          if [ ! -s ${ temporary }/cbc ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } release log did not out
+                          else
+                            ${ shell-scripts.test.util.spec.bad } release log outed
+                          fi &&
+                          if [ ! -s ${ temporary }/cbd ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } release log did not error
+                          else
+                            ${ shell-scripts.test.util.spec.bad } release log errored
+                          fi &&
                           ${ coreutils }/bin/true
                         '' ;
               } ;
