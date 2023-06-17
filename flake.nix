@@ -256,6 +256,7 @@
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { invocation } : invocation) ( track : track.reduced ) ( track : track.reduced ) ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) global ;
+						  strip = strip ;
                                                   structure-directory = structure-directory ;
                                                   temporary = "${ bash-variable local.variables.temporary-dir }/temporary" ;
                                                   track = track ;

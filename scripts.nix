@@ -53,7 +53,7 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE LOG >> ${ bash-variable 2 } &&
                         ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} ${ bash-variable 1 } ${ bash-variable 2 } \;
                         fi &&
-                      ${ coreutils }/bin/echo END RELEASE LOG >> ${ bash-variable 1 }
+                      ${ coreutils }/bin/echo END RELEASE LOG >> ${ bash-variable 2 }
                     '' ;
                 dir =
                  { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
@@ -88,31 +88,32 @@
                         exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
                         ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
-			export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-			export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-			${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
+                        export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+                        export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
-	        dir =
-		  { bash-variable , coreutils , findutils , flock , global , shell-scripts } :
-		    ''
-		      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-		      if [ -d ${ bash-variable 1 } ]
-		      then
-		        exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
-			${ flock }/bin/flock ${ global.numbers.resource-dir } &&
-			${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-			${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.exclusion } {} ${ bash-variable 2 } \;
-		      fi &&
-		      ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
-		    '' ;
-	        exclusion =
-		  { bash-variable , coreutils , shell-scripts , structure-directory } :
-		    ''
-		      ${ coreutils }/bin/echo BEGIN RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-		      ${ coreutils }/bin/echo END RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 }
-		    '' ;
+                dir =
+                  { bash-variable , coreutils , findutils , flock , global , shell-scripts } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                      if [ -d ${ bash-variable 1 } ]
+                      then
+                        exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
+                        ${ flock }/bin/flock ${ global.numbers.resource-dir } &&
+                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.exclusion } {} ${ bash-variable 2 } \;
+                      fi &&
+                      ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
+                    '' ;
+                exclusion =
+                  { bash-variable , coreutils , findutils , shell-scripts , structure-directory } :
+                    ''
+                      ${ coreutils }/bin/echo BEGIN RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                      ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 2 -maxdepth 2 -type s -name "init.sh" >> ${ bash-variable 2 } &&
+                      ${ coreutils }/bin/echo END RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 }
+                    '' ;
               } ;
             temporary =
               {
@@ -163,363 +164,251 @@
       } ;
     test =
       {
-        delay =
-          { coreutils } :
-            ''
-              ${ coreutils }/bin/sleep 10s &&
-              ${ coreutils }/bin/2800dd15-d6c8-495e-94c1-bc0adb1118d7
-            '' ;
-        create-log-file =
-          { bash-variable , coreutils , log } :
-            ''
-              ${ coreutils }/bin/echo ${ bash-variable 1 } > ${ log "a450f15b-9891-441c-b066-29a21a245d39" }
-            '' ;
-        create-temporary-file =
-          { bash-variable , coreutils , temporary } :
-            ''
-              ${ coreutils }/bin/echo ${ bash-variable 2 } > ${ temporary }/${ bash-variable 1 }
-            '' ;
         entry =
           { cowsay , dev } :
             ''
-              ${ cowsay }/bin/cowsay TESTING 2> ${ dev.null }
+              ${ cowsay }/bin/cowsay TESTING ENVIRONMENT 2> ${ dev.null }
             '' ;
-        file =
-          { bash-variable , coreutils } :
+        test-resource =
+          { coreutils , dev , shell-scripts , temporary } :
             ''
-              ${ coreutils }/bin/echo 7eaa6251-82e0-47c7-b492-7ababc3e709b > ${ bash-variable 1 }
-            '' ;
-        log =
-          {
-            resources =
-              {
-                alpha =
-                  {
-                    init =
-                      { bash-variable , coreutils , log } :
-                        ''
-                          ${ coreutils }/bin/echo 3adc7adf-4fdf-4b75-95fb-88cf58b4416a > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo a11b9044-ab5b-49c2-9912-58a42a5c62c9 > ${ log "94adb774-a511-4edc-a183-31d1737dbfa5" }
-                        '' ;
-                    release =
-                      { coreutils , log } :
-                        ''
-                          ${ coreutils }/bin/echo eff5a9ea-ceb3-4d55-981a-2388e2ece252 > ${ log "7723d148-ec94-45b3-afe1-3a8c2a0c9d1c" }
-                        '' ;
-                  } ;
-                beta =
-                  {
-                    init =
-                      { bash-variable , coreutils , log } :
-                        ''
-                          ${ coreutils }/bin/echo a8ee32f1-584d-44cf-82a0-5605b6c3c8ca > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo a8054783-bfe3-4efd-86bd-6de45f0e84a1 > ${ log "58f4e333-19f2-49f4-bbbf-c0ba880b5c4f" }
-                        '' ;
-                    release =
-                      { coreutils , log } :
-                        ''
-                          ${ coreutils }/bin/echo b20bea8c-7d56-4651-8dff-7d9e3d7ff760 > ${ log "4e0b16d2-c013-4b1c-9f51-d35ccda0f91d" }
-                        '' ;
-                  } ;
-                gamma =
-                  {
-                    init-man =
-                      { bash-variable , coreutils , log , resources } :
-                        ''
-                          ${ coreutils }/bin/echo 15da2f30-9dd2-4007-b4a4-6dc0cc905388 > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 53ccb708-202b-4ac2-97d2-8df55bc7dc74 > ${ log "f75af278-e2ca-4602-ad20-4805fb312679" }
-                        '' ;
-                    init =
-                      { bash-variable , coreutils , log , resources } :
-                        ''
-                          ${ coreutils }/bin/echo ${ resources.test.alpha } ${ resources.test.beta } > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo f68e6aea-3723-413c-84ff-07da9c0ee059 > ${ log "5fde8686-8fd1-4ccb-a273-acb040979d02" }
-                        '' ;
-                    release =
-                      { coreutils , log } :
-                        ''
-                          ${ coreutils }/bin/echo c6148348-3fb5-4b98-ad1f-a9ebde0b3bc6 > ${ log "dbda32dc-cbb6-4bf2-bfa9-9bf79ccb5de7" }
-                        '' ;
-                  } ;
-              } ;
-	    after =
-	      { bash-variable , coreutils , shell-scripts , temporary , yq } :
-	        ''
-		  ${ shell-scripts.structure.release.log.directory } ${ temporary }/output ${ temporary }/log &&
-		  ${ coreutils }/bin/cat ${ temporary }/output | ${ yq }/bin/yq --yaml-output "."	
-		'' ;
-            before =
-              { bash-variable , coreutils , resources , shell-scripts } :
-                ''
-                  ${ shell-scripts.test.util.sleep } &&
-                  if [ "${ resources.test.gamma }" == "3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca" ]
-                  then
-                    ${ coreutils }/bin/echo GOOD:  The gamma resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca
-                  else
-                    ${ coreutils }/bin/echo BAD:  The gamma resource is ${ resources.test.gamma } not 3adc7adf-4fdf-4b75-95fb-88cf58b4416a a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
-                    exit 64
-                  fi &&
-                  if [ ${ resources.test.alpha } == "3adc7adf-4fdf-4b75-95fb-88cf58b4416a" ]
-                  then
-                    ${ coreutils }/bin/echo GOOD:  The alpha resource matches 3adc7adf-4fdf-4b75-95fb-88cf58b4416a
-                  else
-                    ${ coreutils }/bin/echo BAD:  The alpha resource is ${ resources.test.alpha } not 3adc7adf-4fdf-4b75-95fb-88cf58b4416a &&
-                    exit 64
-                  fi &&
-                  if [ ${ resources.test.beta } == "a8ee32f1-584d-44cf-82a0-5605b6c3c8ca" ]
-                  then
-                    ${ coreutils }/bin/echo GOOD:  The beta resource matches a8ee32f1-584d-44cf-82a0-5605b6c3c8ca
-                  else
-                    ${ coreutils }/bin/echo BAD:  The beta resource is ${ resources.test.beta } not a8ee32f1-584d-44cf-82a0-5605b6c3c8ca &&
-                    exit 64
-                  fi
-                '' ;
-            test-resource =
-              { coreutils , shell-scripts , temporary } :
-                ''
-                  ${ shell-scripts.test.log.before } &&
-		  ${ coreutils }/bin/echo SLEEP=2s &&
-                  ${ coreutils }/bin/sleep 2s &&
-                  ${ shell-scripts.structure.release.resource.directory } ${ temporary }/311 > ${ temporary }/312 2> ${ temporary }/313 &&
-		  ${ coreutils }/bin/echo GOOD &&
-		  # ${ shell-scripts.test.log.after } &&
-                  ${ coreutils }/bin/echo GOOD:  ALL GOOD
-                '' ;
-          } ;
-        output =
-          { coreutils } :
-            ''
-              ${ coreutils }/bin/echo 2f7c0f5b-80f9-4b32-870a-3868702f0c18
-            '' ;
-        testing-log =
-          { bash-variable , coreutils , findutils , flock , gnused , local , resources , shell-scripts , structure-directory , temporary , yq } :
-            ''
-              exec ${ local.numbers.test }<>${ resources.test.lock } &&
-              ${ flock }/bin/flock ${ local.numbers.test } &&
-              ${ shell-scripts.structure.release.log.directory } ${ temporary }/211 ${ temporary }/212 > ${ temporary }/213 2> ${ temporary }/214 &&
-              ${ coreutils }/bin/echo We do not test 211 because we do not know how it will end up &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/212 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-              then
-                ${ coreutils }/bin/echo We were expecting two or more lines of output &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo Regardless of initial conditions we expect at least two lines of output.
-              fi &&
-              if [ -s ${ temporary }/213 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/214 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ shell-scripts.test.create-log-file } 310aaf17-13f2-4919-9edb-60d3bc3af35b &&
-              ${ coreutils }/bin/sleep 1s &&
-              LOGGED=$( ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d ) &&
-              ${ coreutils }/bin/echo We have the following LOG DIRECTORIES ${ bash-variable "LOGGED" } &&
-              ${ shell-scripts.structure.release.log.directory } ${ temporary }/221 ${ temporary }/222 > ${ temporary }/223 2> ${ temporary }/224 &&
-              OBSERVED=$( ${ coreutils }/bin/cat ${ temporary }/221 | ${ yq }/bin/yq --raw-output '.${ builtins.hashString "sha512" "a450f15b-9891-441c-b066-29a21a245d39" }[ 0 ].value' ) &&
-              if [ "310aaf17-13f2-4919-9edb-60d3bc3af35b" != ${ bash-variable "OBSERVED" } ]
-              then
-                ${ coreutils }/bin/echo We did not observed the expected value &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo OBSERVED is as EXPECTED
-              fi &&
-              for LOG in ${ bash-variable "LOGGED" }
-              do
-                if [ -d ${ bash-variable "LOG" } ]
-                then
-                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "LOG" } to be released &&
-                  exit 64
-                else
-                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "LOG" } has been release
-                fi
-              done &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/222 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 8 ]
-              then
-                ${ coreutils }/bin/echo We were expecting two or more lines of output &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo Regardless of initial conditions we created at least one log record so we expect at least eight lines of output
-              fi &&
-              if [ -s ${ temporary }/223 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/224 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ coreutils }/bin/echo The log functionality appears to work
-            '' ;
-        testing-resource =
-          { coreutils , hashes} :
-            ''
-              PARENT_TIMESTAMP=$( ${ coreutils }/bin/date +%s ) &&
-              ${ coreutils }/bin/echo '${ hashes }' &&
-              ${ coreutils }/bin/echo &&
-              ${ coreutils }/bin/echo ${ hashes }
-            '' ;
-        testing-temporary =
-          { bash-variable , coreutils , dev , findutils , flock , local , resources , shell-scripts , structure-directory , temporary } :
-            ''
-              exec ${ local.numbers.test }<>${ resources.test.lock } &&
-              ${ flock }/bin/flock ${ local.numbers.test } &&
-              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/111 > ${ temporary }/112 2> ${ temporary }/113 &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/111 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-              then
-                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo The release output was at least two lines long
-              fi &&
-              if [ -s ${ temporary }/112 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/113 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ shell-scripts.test.create-temporary-file } 13ae4498-57cb-4beb-aa19-77691bfc44af 3fbd5509-1227-48c5-9818-80f0ab91f996 &&
-              TEMPED=$( ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d ) &&
-              ${ coreutils }/bin/echo We have the following temp directories ${ bash-variable "TEMPED" } &&
-              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/121 > ${ temporary }/122 2> ${ temporary }/123 &&
-              for TEMP in ${ bash-variable "TEMPED" }
-              do
-                if [ ${ bash-variable "TEMP" }/temporary == ${ temporary } ]
-                then
-                  ${ coreutils }/bin/echo We do not expect ${ temporary } to be released
-                elif [ -d ${ bash-variable "TEMP" } ]
-                then
-                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "TEMP" } to be released &&
-                  exit 64
-                else
-                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "TEMP" } was released
-                fi
-              done &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/121 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-              then
-                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo The release output was at least two lines long
-              fi &&
-              if [ -s ${ temporary }/122 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/123 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ coreutils }/bin/echo The temporary functionality appears to work
-            '' ;
-        testing-temporary-2 =
-          { bash-variable , coreutils , dev , findutils , flock , local , shell-scripts , structure-directory , temporary } :
-            ''
-              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/111 > ${ temporary }/112 2> ${ temporary }/113 &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/111 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-              then
-                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo The release output was at least two lines long
-              fi &&
-              if [ -s ${ temporary }/112 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/113 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ shell-scripts.test.create-temporary-file } 13ae4498-57cb-4beb-aa19-77691bfc44af 3fbd5509-1227-48c5-9818-80f0ab91f996 &&
-              TEMPED=$( ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d ) &&
-              ${ coreutils }/bin/echo We have the following temp directories ${ bash-variable "TEMPED" } &&
-              ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/121 > ${ temporary }/122 2> ${ temporary }/123 &&
-              for TEMP in ${ bash-variable "TEMPED" }
-              do
-                if [ ${ bash-variable "TEMP" }/temporary == ${ temporary } ]
-                then
-                  ${ coreutils }/bin/echo We do not expect ${ temporary } to be released
-                elif [ -d ${ bash-variable "TEMP" } ]
-                then
-                  ${ coreutils }/bin/echo We were expecting ${ bash-variable "TEMP" } to be released &&
-                  exit 64
-                else
-                  ${ coreutils }/bin/echo Thankfully ${ bash-variable "TEMP" } was released
-                fi
-              done &&
-              if [ $( ${ coreutils }/bin/wc --lines ${ temporary }/121 | ${ coreutils }/bin/cut --delimiter " " --field 1 ) -lt 2 ]
-              then
-                ${ coreutils }/bin/echo We were expecting the release output to be at least two lines long &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo The release output was at least two lines long
-              fi &&
-              if [ -s ${ temporary }/122 ]
-              then
-                ${ coreutils }/bin/echo release outputed &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any output
-              fi &&
-              if [ -s ${ temporary }/123 ]
-              then
-                ${ coreutils }/bin/echo release errored &&
-                exit 64
-              else
-                ${ coreutils }/bin/echo We never expect any error
-              fi &&
-              ${ coreutils }/bin/echo The temporary functionality appears to work
+              source ${ shell-scripts.test.util.spec.suite } &&
+              trap cleanup EXIT &&
+              ${ shell-scripts.test.util.resource.setup } &&
+              ${ coreutils }/bin/true
             '' ;
         util =
           {
+            locks =
+              {
+                alpha =
+                  { bash-variable , coreutils } :
+                    ''
+                      ${ coreutils }/bin/echo $(( ( ${ bash-variable "1" } + ( 60 * 15 ) ) / ( 60 * 60 ) ))
+                    '' ;
+                beta =
+                  { bash-variable , coreutils } :
+                    ''
+                     ${ coreutils }/bin/echo $(( ( ${ bash-variable "1" } + ( 60 * 45 ) ) / ( 60 * 60 ) ))
+                    '' ;
+              } ;
             sleep =
-              { bash-variable , global , coreutils } :
+              { flock , global , resources } :
                 ''
-                  NOW=${ bash-variable global.variables.timestamp } &&
-                  START=$(( 30 * ( ${ bash-variable "NOW" } / 30 ) )) &&
-                  FINISH=$(( ${ bash-variable "START" } + 30 )) &&
-                  SLEEP=$(( ${ bash-variable "FINISH" } - ${ bash-variable "NOW" } )) &&
-                  ${ coreutils }/bin/echo START=$( ${ coreutils }/bin/date --date @${ bash-variable "START" } ) &&
-                  ${ coreutils }/bin/echo NOW=$( ${ coreutils }/bin/date --date @${ bash-variable "NOW" } ) &&
-                  ${ coreutils }/bin/echo FINISH=$( ${ coreutils }/bin/date --date @${ bash-variable "FINISH" } ) &&
-                  ${ coreutils }/bin/echo SLEEP=${ bash-variable "SLEEP" } &&
-		  ${ coreutils }/bin/echo ${ bash-variable "NOW" }
+                  exec 201<>${ resources.test.locks.alpha } &&
+                  ${ flock }/bin/flock 201 &&
+                  exec 202<>${ resources.test.locks.beta } &&
+                  ${ flock }/bin/flock 202
                 '' ;
+            spec =
+              {
+                bad =
+                  { bash-variable , coreutils } :
+                    ''
+                      ${ coreutils }/bin/echo BAD:  ${ bash-variable "@" } &&
+                      exit 64
+                    '' ;
+                good =
+                  { bash-variable , coreutils } :
+                    ''
+                      ${ coreutils }/bin/echo GOOD:  ${ bash-variable "@" }
+                    '' ;
+                suite =
+                  { bash-variable , coreutils } :
+                    ''
+                      function cleanup ( )
+                      {
+                        if [ ${ bash-variable "?" } == 0 ]
+                        then
+                          ${ coreutils }/bin/echo PASSED
+                        else
+                          ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
+                          exit 65
+                        fi
+                      }
+                    '' ;
+              } ;
+            resource =
+              {
+                alpha =
+                  {
+                    file =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 6cf25357-b934-48d2-bb32-f24266667c9a > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo 299781ba-a761-443f-a256-2e5eb84c1808 > ${ log "b2323076-91b9-48c6-899d-290864fff828" } &&
+                          ${ coreutils }/bin/echo 31d64c0f-777e-480a-88a2-6772fa44e801 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                        '' ;
+                    release =
+                      { coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" } &&
+                          ${ coreutils }/bin/echo 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152    
+                        '' ;
+                  } ;
+                beta-1 =
+                  {
+                    file =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                        '' ;
+                    release =
+                      { coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                        '' ;
+                    salt =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) ))
+                        '' ;
+                  } ;
+                beta-2 =
+                  {
+                    file =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                        '' ;
+                    release =
+                      { coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                        '' ;
+                    salt =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) ))
+                        '' ;
+                  } ;
+                gamma-1 =
+                  {
+                    file =
+                      { bash-variable , coreutils , log , resources , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                        '' ;
+                    release =
+                      { coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                        '' ;
+                    salt =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) ))
+                        '' ;
+                  } ;
+                gamma-2 =
+                  {
+                    file =
+                      { bash-variable , coreutils , log , resources , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" } &&
+                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16
+                        '' ;
+                    release =
+                      { coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "9f737ac5-fbee-445f-9bbf-e273ae9793b4" } &&
+                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da
+                        '' ;
+                    salt =
+                      { bash-variable , coreutils , log , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } &&
+                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) ))
+                        '' ;
+                  } ;
+                setup =
+                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , temporary , structure-directory , strip , yq } :
+                    let
+                      in
+                        ''
+                          MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
+                          if [ "${ resources.test.resources.alpha }" == "6cf25357-b934-48d2-bb32-f24266667c9a" ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } ALPHA resource matched expected
+                          else
+                            ${ shell-scripts.test.util.spec.bad } "ALPHA resource did not match expected \"${ resources.test.resources.alpha }\""
+                          fi &&
+                          if [ ${ bash-variable "MINUTE" } -lt 30 ]
+                          then
+                            if [ "${ resources.test.resources.beta-1 }" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
+                            then
+                              ${ shell-scripts.test.util.spec.good } BETA resource matched expected
+                            else
+                              ${ shell-scripts.test.util.spec.bad } "BETA resource did not match expected \"${ resources.test.resources.beta-1 }\""
+                            fi &&
+                            if [ "${ resources.test.resources.gamma-1 }" == "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ]
+                            then
+                              ${ shell-scripts.test.util.spec.good } GAMMA resource matched expected
+                            else
+                              ${ shell-scripts.test.util.spec.bad } "GAMMA resource did not match expected \"${ resources.test.resources.gamma-1 }\""
+                            fi
+                          else
+                            if [ "${ resources.test.resources.beta-2}" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
+                            then
+                              ${ shell-scripts.test.util.spec.good } BETA resource matched expected
+                            else
+                              ${ shell-scripts.test.util.spec.bad } "BETA resource did not match expected \"${ resources.test.resources.beta-2 }\""
+                            fi &&
+                            if [ "${ resources.test.resources.gamma-2 }" == "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ]
+                            then
+                              ${ shell-scripts.test.util.spec.good } GAMMA resource matched expected
+                            else
+                              ${ shell-scripts.test.util.spec.bad } "GAMMA resource did not match expected \"${ resources.test.resources.gamma-1 }\""
+                            fi
+                          fi
+                          ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caa > ${ temporary }/cab 2> ${ temporary }/cac &&
+			  ${ shell-scripts.test.util.spec.good } release temporary is good &&
+			  if [ ! -s ${ temporary }/cab ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } release temporary did not out
+			  else
+			    ${ shell-scripts.test.util.spec.bad } release temporary outed
+			  fi &&
+			  if [ ! -s ${ temporary }/cac ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } release temporary did not error
+			  else
+			    ${ shell-scripts.test.util.spec.bad } release temporary errored
+			  fi &&
+			  ${ shell-scripts.structure.release.log.directory } ${ temporary }/cba ${ temporary }/cbb > ${ temporary }/cbc 2> ${ temporary }/cbd &&
+			  ${ shell-scripts.test.util.spec.good } release log is good &&
+			  if [ ! -s ${ temporary }/cbc ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } release log did not out
+			  else
+			    ${ shell-scripts.test.util.spec.bad } release log outed
+			  fi &&
+			  if [ ! -s ${ temporary }/cbd ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } release log did not error
+			  else
+			    ${ shell-scripts.test.util.spec.bad } release log errored
+			  fi &&
+                          ${ coreutils }/bin/true
+                        '' ;
+              } ;
           } ;
       } ;
   }

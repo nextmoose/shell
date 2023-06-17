@@ -9,9 +9,18 @@
     name = resource : resource { output = scripts : scripts.name ; show = true ; } ;
     test =
       {
-        alpha = resource : resource { file = scripts : scripts.test.log.resources.alpha.init ; release = scripts : scripts.test.log.resources.alpha.release ; salt = 1 ; } ;
-        beta = resource : resource { file = scripts : scripts.test.log.resources.beta.init ; release = scripts : scripts.test.log.resources.beta.release ; salt = 60 * 60 * 24 * 7 ; } ;
-        gamma = resource : resource { file = scripts : scripts.test.log.resources.gamma.init ; release = scripts : scripts.test.log.resources.gamma.release ; salt = 60 * 60 * 24 * 7 ; } ;
-        lock = resource : resource { file = scripts : scripts.touch ; salt = 60 * 60 * 24 * 7 ; show = false ; permissions = 0600 ; } ;
+        locks =
+          {
+            alpha = resource : resource { file = scripts : scripts.touch ; salt = scripts : scripts.test.util.locks.alpha ; permissions = 0600 ; show = false ; } ;
+            beta= resource : resource { file = scripts : scripts.touch ; salt = scripts : scripts.test.util.locks.beta ; permissions = 0600 ; show = false ; } ;
+          } ;
+        resources =
+          {
+            alpha = resource : resource { file = scripts : scripts.test.util.resource.alpha.file ; release = scripts : scripts.test.util.resource.alpha.release ; } ;
+            beta-1 = resource : resource { file = scripts : scripts.test.util.resource.beta-1.file ; release = scripts : scripts.test.util.resource.beta-1.release ; salt = scripts : scripts.test.util.resource.beta-1.salt ; } ;
+            beta-2 = resource : resource { file = scripts : scripts.test.util.resource.beta-2.file ; release = scripts : scripts.test.util.resource.beta-2.release ; salt = scripts : scripts.test.util.resource.beta-2.salt ; } ;
+            gamma-1 = resource : resource { file = scripts : scripts.test.util.resource.gamma-1.file ; release = scripts : scripts.test.util.resource.gamma-1.release ; salt = scripts : scripts.test.util.resource.gamma-1.salt ; } ;
+            gamma-2 = resource : resource { file = scripts : scripts.test.util.resource.gamma-2.file ; release = scripts : scripts.test.util.resource.gamma-2.release ; salt = scripts : scripts.test.util.resource.gamma-2.salt ; } ;
+          } ;
       } ;
   }
