@@ -321,7 +321,7 @@
                     file =
                       { bash-variable , coreutils , log , resources , temporary } :
                         ''
-                          ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-2 } > ${ bash-variable 1 } &&
                           ${ coreutils }/bin/echo 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
                           ${ coreutils }/bin/echo 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
                         '' ;
@@ -397,24 +397,86 @@
                             ${ shell-scripts.test.util.spec.bad } release temporary errored
                           fi &&
 			  ${ shell-scripts.structure.release.log.directory } ${ temporary }/cba ${ temporary }/cbb > ${ temporary }/cbc 2> ${ temporary }/cbd &&
+
+			  ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cba &&
+			  
 			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "b2323076-91b9-48c6-899d-290864fff828" } ]
 			  then
-			    ${ shell-scripts.test.util.spec.good } The first log is the alpha
+			    ${ shell-scripts.test.util.spec.good } The first log is the alpha init
 			  else
-			    ${ shell-scripts.test.util.spec.bad } The first log is not the alpha
+			    ${ shell-scripts.test.util.spec.bad } The first log is not the alpha init
 			  fi &&
 			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].value" ${ temporary }/cba ) == 299781ba-a761-443f-a256-2e5eb84c1808 ]
 			  then
-			    ${ shell-scripts.test.util.spec.good } The first log is the alpha was written correctly
+			    ${ shell-scripts.test.util.spec.good } The first log - the alpha init - was written correctly
 			  else
-			    ${ shell-scripts.test.util.spec.bad } The first log was not written correctly
+			    ${ shell-scripts.test.util.spec.bad } The first log - the alpha init - was not written correctly
 			  fi &&
-			  
-                          if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/cba ) == 7 ]
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The second log is the beta salt
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The second log is not the beta salt
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The second log - the beta salt - was written correctly
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The second log - the beta salt - was not written correctly
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "fef3c013-7df3-4cb9-b117-067340b64f3b" } ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The third log is the beta init
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The third log is not the beta init
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].value" ${ temporary }/cba ) == 2cff5545-719e-4dde-af83-0605176a70c4 ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The third log - the beta init - was written correctly
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The third log - the beta init - was not written correctly
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The fourth log is the gamma salt
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The fourth log is not the gamma salt
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].value" ${ temporary }/cba ) == a12e653e-e7f7-4de1-91ce-a51153e9e52f ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The fourth log - the gamma salt - was written correctly
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The fourth log - the gamma salt - was not written correctly
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The fifth log is the beta salt, necessary for gamma salt
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The fifth log is not the beta salt, necessary for gamma salt
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The fifth log - the beta salt - was written correctly
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The fifth log - the beta salt - was not written correctly
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "cce640ac-962e-4df3-80b9-7378ff2b5531" } ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The sixth log is the gamma init
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The sixth log is not the gamma init
+			  fi &&
+			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].value" ${ temporary }/cba ) == 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 ]
+			  then
+			    ${ shell-scripts.test.util.spec.good } The sixth log - the gamma init - was written correctly
+			  else
+			    ${ shell-scripts.test.util.spec.bad } The sixth log - the gamma init - was not written correctly
+			  fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/cba ) == 6 ]
                           then
-                            ${ shell-scripts.test.util.spec.good } release log logs 7 times
+                            ${ shell-scripts.test.util.spec.good } release log logs 6 times
                           else
-                            ${ shell-scripts.test.util.spec.bad } release log does not log the right number of times
+                            ${ shell-scripts.test.util.spec.bad } release log does not log 6 times $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/cba )
                           fi &&
                           ${ shell-scripts.test.util.spec.good } release log is good &&
                           if [ ! -s ${ temporary }/cbc ]
