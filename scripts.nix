@@ -300,7 +300,7 @@
                           ${ coreutils }/bin/echo PASSED
                         else
                           ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
-			  ${ coreutils }/bin echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccba &&
+			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccba &&
 			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccba -exec cat {} \; &&
 			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbb &&
 			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbb -exec cat {} \; &&
