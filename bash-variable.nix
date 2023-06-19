@@ -12,4 +12,4 @@ expression :
         else if builtins.typeOf expression == "path" then builtins.throw "fa359c36-1dc6-4609-84ee-4345b9c8940b"
         else if builtins.typeOf expression == "set" then builtins.throw "cd9b7351-f946-4e85-9f86-fc14b11e047a"
         else builtins.throw "76c886d1-93d0-4e9f-8c98-dbeb6147eea2" ;
-      in builtins.concatStringsSep "" [ "$" "{" ( to-string expression ) "}" ] ;
+      in builtins.concatStringsSep "" [ "$" "{" ( to-string expression ) "}" ]
