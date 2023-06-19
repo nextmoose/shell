@@ -626,6 +626,12 @@
 		      else
 		        ${ shell-scripts.test.util.spec.bad }
 		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[4].value" ${ temporary }/cbbab ) == "a3cbc1cd-4f00-4317-ad85-db998d3b2783" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the fifth logged item is the gamma release
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
