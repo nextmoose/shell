@@ -638,6 +638,12 @@
 		      else
 		        ${ shell-scripts.test.util.spec.bad }
 		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output "length" ${ temporary }/cbbab ) == "6" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } I have accounted for every log
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
