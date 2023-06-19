@@ -16,7 +16,7 @@
                 {
                   bash-variable = import ./bash-variable.nix ;
                   nixpkgs = nixpkgs ;
-                  strip = strip.lib { } ;
+                  strip = import ./strip.nix ;
                   unique = unique.lib { } ;
                   visit = visit.lib { } ;
                 } ;
