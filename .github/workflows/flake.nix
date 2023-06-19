@@ -6,6 +6,6 @@
           {
             hook = scripts : scripts.test.entry ;
             inputs = scripts : [ scripts.test.test-resource ] ;
-            structure-directory = "/home/runner/work/_temp" ;
+            structure-directory = "/home/runner/work/_temp/structure" ;
           } ;
   }

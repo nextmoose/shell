@@ -291,7 +291,7 @@
                       ${ coreutils }/bin/echo GOOD:  ${ bash-variable "@" }
                     '' ;
                 suite =
-                  { bash-variable , coreutils } :
+                  { bash-variable , coreutils , find , structure-directory } :
                     ''
                       function cleanup ( )
                       {
@@ -300,6 +300,7 @@
                           ${ coreutils }/bin/echo PASSED
                         else
                           ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
+			  ${ find }/bin/find ${ structure-directory } &&
                           exit 65
                         fi
                       }
