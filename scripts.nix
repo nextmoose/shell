@@ -91,13 +91,6 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-                        ${ coreutils }/bin/echo global.variables.timestamp=${ global.variables.timestamp }=${ bash-variable global.variables.timestamp } >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo hashes = '${ hashes }' >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo hashes = ${ hashes } >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo FIND ________________ >> ${ bash-variable 1 } &&
-                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo COMMAND _____________ >> ${ bash-variable 1 } &&
-                        ${ coreutils }/bin/echo ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
                         ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
@@ -225,7 +218,7 @@
                   enrich =
                     ''
                       const fs = require("fs");
-                      const simplify = ( element, index, array ) => ({index, etimestamp : element.timestamp , key : element.key, value : element.value.trim()}) ;
+                      const simplify = ( element, index, array ) => ({key : element.key, value : element.value.trim()}) ;
                       const resources = {
                         "a12e653e-e7f7-4de1-91ce-a51153e9e52f" : "alpha" ,
                         "b25d9a99-3a63-44be-b4f4-d010efaa1779": "alpha" ,
@@ -246,7 +239,15 @@
                         "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "release" ,
                         "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "salt"
                       } ;
-                      const resourcify = ( element , index , array ) => ({ ...element , resource:  resources[element.value]}) ;
+		      const justifications = [
+		        "this is the first beta being salted for identification of resources to invalidate" ,
+		        "this is the second beta being salted for identifcation of resources to invalidate" ,
+		        "this is the first gamma being salted for identification of resources to invalidate" ,
+		        "this is the second gamma being salted for identification of resources to invalidate" ,
+		        "we have identified alpha for invalidation but we must first invalidate gamma" ,
+		        "we are finally invalidating alpha"
+		      ] ;
+                      const resourcify = ( element , index , array ) => ({ index, key: element.key, value: element.value , resource:  resources[element.value] , justification: justifications[index] }) ;
                       const methodify = ( element , index , array ) => ({ ...element, method : methods[element.value]});
                       fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.parse(success).map(simplify).map(resourcify).map(methodify)));
                     '' ;
@@ -571,14 +572,17 @@
                           ${ coreutils }/bin/true
                         '' ;
                 teardown =
-                  { coreutils , shell-scripts , temporary , yq } :
+                  { coreutils , jq , shell-scripts , temporary , yq } :
                     ''
 		      ${ coreutils }/bin/echo ${ temporary } &&
                       ${ coreutils }/bin/echo SLEEP 2s &&
                       ${ coreutils }/bin/sleep 2s &&
-                      ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
                       ${ coreutils }/bin/echo SLEPT 2s &&
+                      ${ coreutils }/bin/echo REPAIR 01 &&
+                      ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
+                      ${ coreutils }/bin/echo REPAIR 02 &&
                       ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caba > ${ temporary }/cabb 2> ${ temporary }/cabc &&
+                      ${ coreutils }/bin/echo REPAIR 03 &&
                       ${ shell-scripts.test.util.spec.good } release temporary is good &&
                       if [ ! -s ${ temporary }/cabb ]
                       then
@@ -597,7 +601,13 @@
                       ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
                       ${ coreutils }/bin/cat ${ temporary }/cbbab &&
-                      ${ coreutils }/bin/echo ${ temporary }/cbbab &&
+		      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the first logged item is the calculation of the first beta salt
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
