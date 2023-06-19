@@ -249,7 +249,7 @@
 		      ] ;
                       const resourcify = ( element , index , array ) => ({ index, key: element.key, value: element.value , resource:  resources[element.value] , justification: justifications[index] }) ;
                       const methodify = ( element , index , array ) => ({ ...element, method : methods[element.value]});
-                      fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.parse(success).map(simplify).map(resourcify).map(methodify)));
+                      fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.stringify(JSON.parse(success).map(simplify).map(resourcify).map(methodify))));
                     '' ;
                   in
                     ''
@@ -575,9 +575,9 @@
                   { coreutils , jq , shell-scripts , temporary , yq } :
                     ''
 		      ${ coreutils }/bin/echo ${ temporary } &&
-                      ${ coreutils }/bin/echo SLEEP 2s &&
-                      ${ coreutils }/bin/sleep 2s &&
-                      ${ coreutils }/bin/echo SLEPT 2s &&
+                      ${ coreutils }/bin/echo SLEEP 20s &&
+                      ${ coreutils }/bin/sleep 20s &&
+                      ${ coreutils }/bin/echo SLEPT 20s &&
                       ${ coreutils }/bin/echo REPAIR 01 &&
                       ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
                       ${ coreutils }/bin/echo REPAIR 02 &&
@@ -600,7 +600,7 @@
                       ${ shell-scripts.structure.release.log.directory } ${ temporary }/cbba ${ temporary }/cbbb > ${ temporary }/cbbc 2> ${ temporary }/cbbd &&
                       ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
-                      ${ coreutils }/bin/cat ${ temporary }/cbbab &&
+                      ${ coreutils }/bin/echo ${ temporary }/cbbab &&
 		      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
 		      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
 		      then
