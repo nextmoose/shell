@@ -300,10 +300,12 @@
                           ${ coreutils }/bin/echo PASSED
                         else
                           ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
+			  ${ coreutils }/bin echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccba &&
+			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccba -exec cat {} \; &&
 			  ${ coreutils }/bin echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbb &&
-			  ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 2 -maxdepth 2 -name ccbb -exec cat {} \; &&
+			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbb -exec cat {} \; &&
 			  ${ coreutils }/bin echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbc &&
-			  ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 2 -maxdepth 2 -name ccbc -exec cat {} \; &&
+			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbc -exec cat {} \; &&
 			  ${ coreutils }/bin echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX tree &&
 			  ${ findutils }/bin/find ${ structure-directory } &&
                           exit 65
