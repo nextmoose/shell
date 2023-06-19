@@ -607,7 +607,13 @@
 		        ${ shell-scripts.test.util.spec.good } the first logged item is the calculation of the first beta salt
 		      else
 		        ${ shell-scripts.test.util.spec.bad }
-		      fi
+		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[1].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the first beta salt - the same as the first
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
