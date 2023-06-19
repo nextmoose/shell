@@ -1,1 +1,1 @@
-{ pkgs ? import <nixpkgs> { } } : pkgs.mkShell { } 
+{ pkgs ? import <nixpkgs> { } } : pkgs.mkShell { }
