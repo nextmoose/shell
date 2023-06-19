@@ -151,13 +151,9 @@
                                                   track :
                                                     let
                                                       resource =
-                                                        { directory ? null , file ? null , output ? null , permissions ? null , release ? null , salt ? null , show ? null } :
+                                                        { directory ? null , input ? null , permissions ? null , release ? null , salt ? null , show ? null , use-output ? null } :
                                                           let
                                                             hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;
-                                                            init =
-                                                              if builtins.typeOf salted.output == "string" && builtins.typeOf salted.file == "bool" then salted.output
-                                                              else if builtins.typeOf salted.output == "bool" && builtins.typeOf salted.file == "string" then salted.file
-                                                              else builtins.throw "d35f79cc-01e0-4305-a6cd-07e1fcbe02c9" ;
                                                             invalidation-token = builtins.hashString "sha512" ( builtins.toString track.index ) ;
                                                             invocation =
                                                               let
@@ -168,14 +164,14 @@
                                                                     flock = pkgs.flock ;
                                                                     global = global ;
 								    hash = hash ;
-                                                                    init = init ;
+                                                                    init = salted.init ;
                                                                     invalidation-token = invalidation-token ;
                                                                     make-directory = false ;
-                                                                    output = if builtins.typeOf salted.output == "string" then true else false ;
                                                                     permissions = salted.permissions ;
                                                                     release = salted.release ;
                                                                     show = unsalted.show ;
                                                                     structure-directory = structure-directory ;
+								    use-output = salted.use-output ;
                                                                     type =
                                                                       if builtins.typeOf salted.file == "string" then "file"
                                                                       else if builtins.typeOf salted.output == "string" then "output"
@@ -185,19 +181,13 @@
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
                                                             salted =
                                                               {
-                                                                file =
+                                                                init =
                                                                   let
                                                                     lambda = track : track.reduced ( scripts ( { shell-script } : shell-script ) global ) ;
                                                                     null = track : false ;
                                                                     undefined = track : track.throw "67effc1b-0e46-4f9b-91ee-5d648dedad4c" ;
-                                                                    in visit { lambda = lambda ; null = null ; undefined = undefined ; } file ;
+                                                                    in visit { lambda = lambda ; null = null ; undefined = undefined ; } init ;
 								index = track.index ;
-                                                                output =
-                                                                  let
-                                                                    lambda = track : track.reduced ( scripts ( { shell-script } : shell-script ) global ) ;
-                                                                    null = track : false ;
-                                                                    undefined = track : track.throw "1ea15780-74da-454b-9012-a733620d5248" ;
-                                                                    in visit { lambda = lambda ; null = null ; undefined = undefined ; } output ;
                                                                 permissions =
                                                                   let
                                                                     int = track : builtins.substring 1 4 ( builtins.toString ( 90000 + track.reduced ) ) ;
@@ -218,6 +208,12 @@
                                                                     null = track : "$(( ${ bash-variable global.variables.timestamp } / ${ builtins.toString ( 60 * 60 ) } ))" ;
                                                                     undefined = track : track.throw "9c8cfa72-abd4-4e93-8579-a9c3e7255d95" ;
                                                                     in visit { float = float ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } salt ;
+						                use-output =
+								  let
+								    bool = track : track.reduced ;
+								    null = track : false ;
+								    null = track : track.throw "e4c45eb0-dfde-4c40-8ddb-c6fbd8412da2" ;
+								    in visit { bool = bool ; null = null ; undefined = undefined ; } use-output ;								    
                                                               } ;
                                                             unsalted =
                                                               {
