@@ -152,7 +152,7 @@
                                                   track :
                                                     let
                                                       resource =
-                                                        { directory ? null , input ? null , permissions ? null , release ? null , salt ? null , show ? null , use-output ? null } :
+                                                        { directory ? null , init ? null , permissions ? null , release ? null , salt ? null , show ? null , use-output ? null } :
                                                           let
                                                             hash = "$( ${ pkgs.coreutils }/bin/echo ${ pre-salt } ${ salted.salt } | ${ pkgs.coreutils }/bin/md5sum | ${ pkgs.coreutils }/bin/cut --bytes -32 )" ;
                                                             invalidation-token = builtins.hashString "sha512" ( builtins.toString track.index ) ;
