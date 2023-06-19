@@ -1,7 +1,6 @@
   {
     inputs =
       {
-        bash-variable.url = "/home/emory/Desktop/structure/flakes/bash-variable" ;
         flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ;
         nixpkgs.url = "github:nixos/nixpkgs?rev=57eac89459226f3ec743ffa6bbbc1042f5836843"  ;
         strip.url = "/home/emory/Desktop/structure/flakes/strip" ;
@@ -9,13 +8,13 @@
         visit.url = "/home/emory/Desktop/structure/flakes/visit" ;
       } ;
     outputs =
-      { bash-variable , flake-utils , nixpkgs , self , strip , unique , visit } :
+      { flake-utils , nixpkgs , self , strip , unique , visit } :
         {
           lib =
             let
               _ =
                 {
-                  bash-variable = bash-variable.lib { } ;
+                  bash-variable = import ./bash-variable.nix ;
                   nixpkgs = nixpkgs ;
                   strip = strip.lib { } ;
                   unique = unique.lib { } ;
