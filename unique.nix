@@ -1,5 +1,6 @@
 let
   try = import ./try.nix ;
+  visit = import ./visit.nix ;
   in
     arguments :
     factory :
