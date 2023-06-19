@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , hash , init , invalidation-token , make-directory , output , permissions , release , structure-directory , pre-salt , salt , show , type } :
+{ bash-variable , coreutils , flock , global , hash , init , invalidation-token , make-directory , output , permissions , release , structure-directory , show , type } :
   ''
     HASH=${ hash } &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]

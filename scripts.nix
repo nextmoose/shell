@@ -91,12 +91,19 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
+                        ${ coreutils }/bin/echo global.variables.timestamp=${ global.variables.timestamp }=${ bash-variable global.variables.timestamp } >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo hashes = '${ hashes }' >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo hashes = ${ hashes } >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo FIND ________________ >> ${ bash-variable 1 } &&
+                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo COMMAND _____________ >> ${ bash-variable 1 } &&
+                        ${ coreutils }/bin/echo ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } >> ${ bash-variable 1 } &&
                         ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
                 dir =
-                  { bash-variable , coreutils , findutils , flock , global , shell-scripts } :
+                  { bash-variable , coreutils , dev , findutils , flock , global , shell-scripts } :
                     ''
                       ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
                       if [ -d ${ bash-variable 1 } ]
@@ -104,15 +111,47 @@
                         exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
                         ${ flock }/bin/flock ${ global.numbers.resource-dir } &&
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.exclusion } {} ${ bash-variable 2 } \;
+                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.invalidation } {} ${ bash-variable 2 } ${ bash-variable 0 } \; &&
+                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read PID_FILE
+                        do
+                          ${ coreutils }/bin/echo PID_FILE=${ bash-variable "PID_FILE" } >> ${ bash-variable 2 } &&
+                          PID=$( ${ coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) &&
+                          ${ coreutils }/bin/echo PID=${ bash-variable "PID" } >> ${ bash-variable 2 } &&
+                          ${ coreutils }/bin/tail --pid ${ bash-variable "PID" } --follow ${ dev.null } &&
+                          ${ coreutils }/bin/rm ${ bash-variable "PID_FILE" }
+                        done &&
+                        if [ -f ${ bash-variable 1 }/release.sh ]
+                        then
+                          ${ coreutils }/bin/echo THERE IS A DEFINED RELEASE ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 }
+                          ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 } &&
+                          ${ coreutils }/bin/echo WE USED A DEFINED RELEASE ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 }
+                        else
+                          ${ coreutils }/bin/echo THERE IS NO DEFINED RELEASE >> ${ bash-variable 2 }
+                        fi
                       fi &&
+		      ${ findutils }/bin/find ${ bash-variable 1 } -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
+		      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
                       ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
                     '' ;
-                exclusion =
-                  { bash-variable , coreutils , findutils , shell-scripts , structure-directory } :
+                invalidation =
+                  { bash-variable , coreutils , findutils , gnugrep , shell-scripts , structure-directory } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-                      ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 2 -maxdepth 2 -type s -name "init.sh" >> ${ bash-variable 2 } &&
+                      ${ coreutils }/bin/echo BEGIN RELEASE INVALIDATION ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                      INVALIDATION_TOKEN=$( ${ coreutils }/bin/cat ${ bash-variable 1 } ) &&
+                      ${ coreutils }/bin/echo WE WILL USE INVALIDATION_TOKEN ${ bash-variable "INVALIDATION_TOKEN" } >> ${ bash-variable 2 } &&
+                      INVALIDATOR=${ bash-variable 3 } &&
+                      ${ coreutils }/bin/echo WE WILL USE INVALIDATOR ${ bash-variable "INVALIDATOR" } &&
+                      ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 2 -maxdepth 2 -type l -name "init.sh" -exec ${ gnugrep }/bin/grep --with-filename ${ bash-variable "INVALIDATION_TOKEN" } {} \; | while read GREP
+                      do
+                        ${ coreutils }/bin/echo GREP=${ bash-variable "GREP" } &&
+                        INVALIDATION_INIT=$( ${ coreutils }/bin/echo ${ bash-variable "GREP" } | ${ coreutils }/bin/cut --delimiter ":" --fields 1 ) &&
+                        ${ coreutils }/bin/echo WE WILL USE INVALIDATION_INIT ${ bash-variable "INVALIDATION_INIT" }
+                        INVALIDATION_DIR=$( ${ coreutils }/bin/dirname ${ bash-variable "INVALIDATION_INIT" } ) &&
+                        ${ coreutils }/bin/echo WE WILL USE INVALIDATION_DIR ${ bash-variable "INVALIDATION_DIR" } &&
+                        ${ coreutils }/bin/echo ${ bash-variable "INVALIDATOR" } ${ bash-variable "INVALIDATION_DIR" } ${ bash-variable 2 } >> ${ bash-variable 2 } &&
+                        ${ bash-variable "INVALIDATOR" } ${ bash-variable "INVALIDATION_DIR" } ${ bash-variable 2 } &&
+                        ${ coreutils }/bin/rm ${ bash-variable 1 }
+                      done >> ${ bash-variable 2 } &&
                       ${ coreutils }/bin/echo END RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 }
                     '' ;
               } ;
@@ -176,10 +215,46 @@
               source ${ shell-scripts.test.util.spec.suite } &&
               trap cleanup EXIT &&
               ${ shell-scripts.test.util.resource.setup } &&
-              ${ coreutils }/bin/true
+              ${ shell-scripts.test.util.resource.teardown }
             '' ;
         util =
           {
+            enrich =
+              { bash-variable , nodejs , temporary , yq } :
+                let
+                  enrich =
+                    ''
+                      const fs = require("fs");
+                      const simplify = ( element, index, array ) => ({index, etimestamp : element.timestamp , key : element.key, value : element.value.trim()}) ;
+                      const resources = {
+                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f" : "alpha" ,
+                        "b25d9a99-3a63-44be-b4f4-d010efaa1779": "alpha" ,
+                        "2cff5545-719e-4dde-af83-0605176a70c4": "beta" ,
+                        "23934ef5-7e31-4ab1-9f8d-c28d4f530fd8": "beta" ,
+                        "d4332c59-13a7-40ff-afd5-f9e39a77e306": "beta" ,
+                        "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01": "gamma" ,
+                        "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "gamma" ,
+                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "gamma"
+                      } ;
+                      const methods = {
+                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f" : "init" ,
+                        "b25d9a99-3a63-44be-b4f4-d010efaa1779": "release" ,
+                        "2cff5545-719e-4dde-af83-0605176a70c4": "init" ,
+                        "23934ef5-7e31-4ab1-9f8d-c28d4f530fd8": "release" ,
+                        "d4332c59-13a7-40ff-afd5-f9e39a77e306": "salt" ,
+                        "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01": "init" ,
+                        "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "release" ,
+                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "salt"
+                      } ;
+                      const resourcify = ( element , index , array ) => ({ ...element , resource:  resources[element.value]}) ;
+                      const methodify = ( element , index , array ) => ({ ...element, method : methods[element.value]});
+                      fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.parse(success).map(simplify).map(resourcify).map(methodify)));
+                    '' ;
+                  in
+                    ''
+                      ${ yq }/bin/yq "sort_by(.timestamp)" ${ bash-variable 1 } > ${ temporary }/data.json &&
+                      ${ nodejs }/bin/node ${ builtins.toFile "enrich.js" enrich } ${ temporary }/data.json
+                    '' ;
             locks =
               {
                 alpha =
@@ -243,6 +318,7 @@
                     release =
                       { coreutils , log , temporary } :
                         ''
+                          ${ coreutils }/bin/echo 1e733714-3ab1-4475-933c-53ecd415bead &&
                           ${ coreutils }/bin/echo 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152 &&
                           ${ coreutils }/bin/echo b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" }
                         '' ;
@@ -259,6 +335,7 @@
                     release =
                       { coreutils , log , temporary } :
                         ''
+                          ${ coreutils }/bin/echo 657ee7bd-9a7c-4d8a-b1ee-11ccbc2a36cb &&
                           ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
                           ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
                         '' ;
@@ -282,6 +359,7 @@
                     release =
                       { coreutils , log , temporary } :
                         ''
+                          ${ coreutils }/bin/echo 657ee7bd-9a7c-4d8a-b1ee-11ccbc2a36cb &&
                           ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
                           ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
                         '' ;
@@ -305,6 +383,7 @@
                     release =
                       { coreutils , log , temporary } :
                         ''
+                          ${ coreutils }/bin/echo e16a036f-9e55-4be8-aa81-72bb00fb3c58 &&
                           ${ coreutils }/bin/echo 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
                           ${ coreutils }/bin/echo a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
                         '' ;
@@ -328,6 +407,7 @@
                     release =
                       { coreutils , log , temporary } :
                         ''
+                          ${ coreutils }/bin/echo e16a036f-9e55-4be8-aa81-72bb00fb3c58 &&
                           ${ coreutils }/bin/echo 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
                           ${ coreutils }/bin/echo a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
                         '' ;
@@ -396,82 +476,79 @@
                           else
                             ${ shell-scripts.test.util.spec.bad } release temporary errored
                           fi &&
-			  ${ shell-scripts.structure.release.log.directory } ${ temporary }/cba ${ temporary }/cbb > ${ temporary }/cbc 2> ${ temporary }/cbd &&
-
-			  ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cba &&
-			  
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "b2323076-91b9-48c6-899d-290864fff828" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The first log is the alpha init
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The first log is not the alpha init
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].value" ${ temporary }/cba ) == 299781ba-a761-443f-a256-2e5eb84c1808 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The first log - the alpha init - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The first log - the alpha init - was not written correctly
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The second log is the beta salt
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The second log is not the beta salt
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The second log - the beta salt - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The second log - the beta salt - was not written correctly
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "fef3c013-7df3-4cb9-b117-067340b64f3b" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The third log is the beta init
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The third log is not the beta init
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].value" ${ temporary }/cba ) == 2cff5545-719e-4dde-af83-0605176a70c4 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The third log - the beta init - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The third log - the beta init - was not written correctly
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The fourth log is the gamma salt
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The fourth log is not the gamma salt
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].value" ${ temporary }/cba ) == a12e653e-e7f7-4de1-91ce-a51153e9e52f ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The fourth log - the gamma salt - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The fourth log - the gamma salt - was not written correctly
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The fifth log is the beta salt, necessary for gamma salt
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The fifth log is not the beta salt, necessary for gamma salt
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The fifth log - the beta salt - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The fifth log - the beta salt - was not written correctly
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "cce640ac-962e-4df3-80b9-7378ff2b5531" } ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The sixth log is the gamma init
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The sixth log is not the gamma init
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].value" ${ temporary }/cba ) == 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } The sixth log - the gamma init - was written correctly
-			  else
-			    ${ shell-scripts.test.util.spec.bad } The sixth log - the gamma init - was not written correctly
-			  fi &&
+                          ${ shell-scripts.structure.release.log.directory } ${ temporary }/cba ${ temporary }/cbb > ${ temporary }/cbc 2> ${ temporary }/cbd &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "b2323076-91b9-48c6-899d-290864fff828" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The first log is the alpha init
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The first log is not the alpha init
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[0].value" ${ temporary }/cba ) == 299781ba-a761-443f-a256-2e5eb84c1808 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The first log - the alpha init - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The first log - the alpha init - was not written correctly
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The second log is the beta salt
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The second log is not the beta salt
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[1].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The second log - the beta salt - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The second log - the beta salt - was not written correctly
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "fef3c013-7df3-4cb9-b117-067340b64f3b" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The third log is the beta init
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The third log is not the beta init
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[2].value" ${ temporary }/cba ) == 2cff5545-719e-4dde-af83-0605176a70c4 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The third log - the beta init - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The third log - the beta init - was not written correctly
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "80f3a9cc-69ff-44d9-9685-b174dfad35e9" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The fourth log is the gamma salt
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The fourth log is not the gamma salt
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[3].value" ${ temporary }/cba ) == a12e653e-e7f7-4de1-91ce-a51153e9e52f ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The fourth log - the gamma salt - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The fourth log - the gamma salt - was not written correctly
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "9f8e5ead-8d44-492c-8842-628ae3be773e" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The fifth log is the beta salt, necessary for gamma salt
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The fifth log is not the beta salt, necessary for gamma salt
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[4].value" ${ temporary }/cba ) == d4332c59-13a7-40ff-afd5-f9e39a77e306 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The fifth log - the beta salt - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The fifth log - the beta salt - was not written correctly
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].key" ${ temporary }/cba ) == ${ builtins.hashString "sha512" "cce640ac-962e-4df3-80b9-7378ff2b5531" } ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The sixth log is the gamma init
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The sixth log is not the gamma init
+                          fi &&
+                          if [ $( ${ yq }/bin/yq --raw-output "sort_by(.timestamp) | .[5].value" ${ temporary }/cba ) == 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 ]
+                          then
+                            ${ shell-scripts.test.util.spec.good } The sixth log - the gamma init - was written correctly
+                          else
+                            ${ shell-scripts.test.util.spec.bad } The sixth log - the gamma init - was not written correctly
+                          fi &&
                           if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/cba ) == 6 ]
                           then
                             ${ shell-scripts.test.util.spec.good } release log logs 6 times
@@ -493,6 +570,38 @@
                           fi &&
                           ${ coreutils }/bin/true
                         '' ;
+                teardown =
+                  { coreutils , shell-scripts , temporary , yq } :
+                    ''
+                      ${ coreutils }/bin/echo SLEEP 2s &&
+                      ${ coreutils }/bin/sleep 2s &&
+                      ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
+                      ${ coreutils }/bin/echo SLEPT 2s &&
+                      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caba > ${ temporary }/cabb 2> ${ temporary }/cabc &&
+                      ${ shell-scripts.test.util.spec.good } release temporary is good &&
+                      if [ ! -s ${ temporary }/cabb ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } release temporary did not out
+                      else
+                        ${ shell-scripts.test.util.spec.bad } release temporary outed
+                      fi &&
+                      if [ ! -s ${ temporary }/cabc ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } release temporary did not error
+                      else
+                        ${ shell-scripts.test.util.spec.bad } release temporary errored
+                      fi &&
+                      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caba > ${ temporary }/cabb 2> ${ temporary }/cabc &&
+                      ${ shell-scripts.structure.release.log.directory } ${ temporary }/cbba ${ temporary }/cbbb > ${ temporary }/cbbc 2> ${ temporary }/cbbd &&
+                      ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
+                      ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
+                      ${ coreutils }/bin/cat ${ temporary }/cbbab &&
+                      ${ coreutils }/bin/echo ${ temporary }/cbbab &&
+                      # ${ coreutils }/bin/echo NEXT &&
+                      # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
+                      # ${ coreutils }/bin/cat ${ temporary }/ccba
+                      ${ coreutils }/bin/true
+                    '' ;
               } ;
           } ;
       } ;

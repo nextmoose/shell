@@ -16,7 +16,7 @@
           } ;
         resources =
           {
-            alpha = resource : resource { file = scripts : scripts.test.util.resource.alpha.file ; release = scripts : scripts.test.util.resource.alpha.release ; } ;
+            alpha = resource : resource { file = scripts : scripts.test.util.resource.alpha.file ; release = scripts : scripts.test.util.resource.alpha.release ; salt = 1 ; } ;
             beta-1 = resource : resource { file = scripts : scripts.test.util.resource.beta-1.file ; release = scripts : scripts.test.util.resource.beta-1.release ; salt = scripts : scripts.test.util.resource.beta-1.salt ; } ;
             beta-2 = resource : resource { file = scripts : scripts.test.util.resource.beta-2.file ; release = scripts : scripts.test.util.resource.beta-2.release ; salt = scripts : scripts.test.util.resource.beta-2.salt ; } ;
             gamma-1 = resource : resource { file = scripts : scripts.test.util.resource.gamma-1.file ; release = scripts : scripts.test.util.resource.gamma-1.release ; salt = scripts : scripts.test.util.resource.gamma-1.salt ; } ;
