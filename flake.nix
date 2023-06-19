@@ -172,10 +172,7 @@
                                                                     show = unsalted.show ;
                                                                     structure-directory = structure-directory ;
 								    use-output = salted.use-output ;
-                                                                    type =
-                                                                      if builtins.typeOf salted.file == "string" then "file"
-                                                                      else if builtins.typeOf salted.output == "string" then "output"
-                                                                      else builtins.throw "665da9aa-555d-4b51-ad26-79d3c392f675" ;
+                                                                    type = if salted.use-output then "output" else "file" ;
                                                                   } ;
                                                                 in "$( ${ pkgs.writeShellScript "init" ( import ./resource.nix arguments ) } ${ invalidation-token } ${ bash-variable "$" } ${ bash-variable "0" } )" ;
                                                             pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString ( builtins.attrValues salted ) ) ) ;
