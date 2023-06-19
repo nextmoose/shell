@@ -632,6 +632,12 @@
 		      else
 		        ${ shell-scripts.test.util.spec.bad }
 		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[5].value" ${ temporary }/cbbab ) == "b25d9a99-3a63-44be-b4f4-d010efaa1779" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the sixth logged item is the alpha release, notice that the gamma release preceded the alpha release and the beta release never happened
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
