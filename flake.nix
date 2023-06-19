@@ -3,10 +3,9 @@
       {
         flake-utils.url = "github:numtide/flake-utils?rev=5aed5285a952e0b949eb3ba02c12fa4fcfef535f" ;
         nixpkgs.url = "github:nixos/nixpkgs?rev=57eac89459226f3ec743ffa6bbbc1042f5836843"  ;
-        visit.url = "/home/emory/Desktop/structure/flakes/visit" ;
       } ;
     outputs =
-      { flake-utils , nixpkgs , self , visit } :
+      { flake-utils , nixpkgs , self } :
         {
           lib =
             let
@@ -16,7 +15,7 @@
                   nixpkgs = nixpkgs ;
                   strip = import ./strip.nix ;
                   unique = import ./unique.nix ;
-                  visit = visit.lib { } ;
+                  visit = import ./visit.nix ;
                 } ;
               in
                 {
