@@ -300,6 +300,8 @@
                           ${ coreutils }/bin/echo PASSED
                         else
                           ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
+			  ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 2 -maxdepth 2 -name ccbb -exec cat {} \; &&
+			  ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 2 -maxdepth 2 -name ccbc -exec cat {} \; &&
 			  ${ findutils }/bin/find ${ structure-directory } &&
                           exit 65
                         fi
