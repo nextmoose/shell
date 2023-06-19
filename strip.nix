@@ -12,4 +12,4 @@ string :
         if builtins.typeOf string == "string" && n > 0 then
           if is-prepended then strip append else if is-appended then strip prepend else string
           else if n == 0 then ""
-        else builtins.throw "668ec04c-a40c-45bc-b66d-de439acf4384 ${ builtins.typeOf string }" ;
+        else builtins.throw "668ec04c-a40c-45bc-b66d-de439acf4384 ${ builtins.typeOf string }"
