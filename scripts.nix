@@ -573,6 +573,7 @@
                 teardown =
                   { coreutils , shell-scripts , temporary , yq } :
                     ''
+		      ${ coreutils }/bin/echo ${ temporary } &&
                       ${ coreutils }/bin/echo SLEEP 2s &&
                       ${ coreutils }/bin/sleep 2s &&
                       ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
