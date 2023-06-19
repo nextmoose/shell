@@ -122,7 +122,7 @@
                           ${ coreutils }/bin/echo THERE IS NO DEFINED RELEASE >> ${ bash-variable 2 }
                         fi
                       fi &&
-		      ${ findutils }/bin/find ${ bash-variable 1 } -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
+		      ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
 		      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
                       ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
                     '' ;
@@ -610,7 +610,19 @@
 		      fi &&
 		      if [ $( ${ jq }/bin/jq --raw-output ".[1].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
 		      then
-		        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the first beta salt - the same as the first
+		        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the second beta salt - the same as the first
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[2].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the third logged item is the calculation of the first gamma salt
+		      else
+		        ${ shell-scripts.test.util.spec.bad }
+		      fi &&
+		      if [ $( ${ jq }/bin/jq --raw-output ".[3].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
+		      then
+		        ${ shell-scripts.test.util.spec.good } the fourth logged item is the calculation of the second gamma salt - the same as the first
 		      else
 		        ${ shell-scripts.test.util.spec.bad }
 		      fi &&
