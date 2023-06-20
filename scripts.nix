@@ -21,7 +21,8 @@
           trap cleanup EXIT &&
           (
             ${ coreutils }/bin/cat <<EOF
-          * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron }
+          * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.log }
+          * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
           EOF
           ) | ${ dev.sudo }/bin/tee ${ bash-variable "CRON" } &&
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
@@ -54,12 +55,24 @@
     structure =
       {
         cron =
-          { coreutils , flock , resources , shell-scripts } :
-            ''
-              exec 201<>${ resources.cron.temporary } &&
-              ${ flock }/bin/flock 201 &&
-              ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.temporary }
-            '' ;
+	  {
+	    log =
+              { coreutils , flock , resources , shell-scripts } :
+                ''
+                  exec 201<>${ resources.cron.log.jq } &&
+                  ${ flock }/bin/flock 201 &&
+                  exec 202<>${ resources.cron.log.log } &&
+                  ${ flock }/bin/flock 201 &&
+                  ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.log.log } ${ resources.cron.log.jq }
+                '' ;
+	    temporary =
+              { coreutils , flock , resources , shell-scripts } :
+                ''
+                  exec 201<>${ resources.cron.temporary } &&
+                  ${ flock }/bin/flock 201 &&
+                  ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.temporary }
+                '' ;
+	  } ;
         release =
           {
             log =
