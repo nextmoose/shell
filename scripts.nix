@@ -11,11 +11,26 @@
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
     entry =
-      { shell-scripts , cowsay , dev } :
+      { coreutils , cowsay , dev , shell-scripts } :
         ''
-          # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
+	  CRON=$( ${ dev.sudo } ${ coreutils }/bin/mktemp --suffix ".cron" ${ dev.cron }/XXXXXXXX ) &&
+	  cleanup ( )
+	  {
+	    ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
+	  } &&
+	  trap cleanup EXIT &&
+	  (
+	    ${ coreutils }/bin/cat <<EOF
+	  * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron }
+	  EOF
+	  ) | ${ dev.sudo }/bin/tee ${ bash-variable "CRON" } &&
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
+    mine =
+      { coreutils , temporary } :
+        ''
+	  ${ coreutils }/bin/echo HELLO WORLD > ${ temporary }/hello
+	'' ;
     name =
       { git } :
         ''
@@ -39,11 +54,11 @@
     structure =
       {
         cron =
-	  { flock , resources , shell-scripts } :
+	  { coreutils , flock , shell-scripts } :
 	    ''
-	      exec 201<>${ resources.cron.lock } &&
+	      exec 201<>${ resources.cron.temporary } &&
 	      ${ flock }/bin/flock 201 &&
-	      ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.logs.temporary }
+	      ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.temporary }
 	    '' ;
         release =
           {
