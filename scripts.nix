@@ -45,12 +45,11 @@
     structure =
       {
         cron =
-	  { flock , resources , shell-scripts } :
+	  { flock , resources , shell-scripts , temporary } :
 	    ''
 	      exec 200<>${ resources.cron.lock } &&
 	      ${ flock }/bin/flock 200 &&
-	      ${ shell-scripts.structure.release.temporary } ${ resources.cron.log.temporary } &&
-	      ${ shell-scripts.structure.release.log } ${ resources.cron.logs.log.a } ${ resources.cron.logs.log.b }
+	      ${ shell-scripts.structure.release.temporary } ${ resources.cron.logs.temporary }
 	    '' ;
         release =
           {
