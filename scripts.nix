@@ -54,7 +54,7 @@
     structure =
       {
         cron =
-	  { coreutils , flock , shell-scripts } :
+	  { coreutils , flock , resources , shell-scripts } :
 	    ''
 	      exec 201<>${ resources.cron.temporary } &&
 	      ${ flock }/bin/flock 201 &&
