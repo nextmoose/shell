@@ -11,7 +11,7 @@
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
         '' ;
     entry =
-      { coreutils , cowsay , dev , shell-scripts } :
+      { bash-variable , coreutils , cowsay , dev , shell-scripts } :
         ''
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null } &&
 	  CRON=$( ${ dev.sudo } ${ coreutils }/bin/mktemp --suffix ".cron" ${ dev.cron }/XXXXXXXX ) &&
