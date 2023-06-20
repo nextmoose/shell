@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd .github/workflows && nix develop --command test-resource
+      - run: cd .github/workflows && nix develop --command test-resource --show-trace
