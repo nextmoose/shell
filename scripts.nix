@@ -102,7 +102,7 @@
 			do
 			  if [ -d ${ bash-variable "RESOURCE" } ]
 			  then
-			    ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 }
+			    ${ shell-scripts.structure.release.resource.dir } ${ bash-variable "RESOURCE" } ${ bash-variable 1 }
 			  fi
 			done
                       fi &&
