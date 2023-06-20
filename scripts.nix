@@ -39,12 +39,12 @@
     structure =
       {
         cron =
-	  { flock , resources , shell-scripts } :
-	    ''
-	      exec 201<>${ resources.cron.lock } &&
-	      ${ flock }/bin/flock 201 &&
-	      ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.logs.temporary }
-	    '' ;
+          { flock , resources , shell-scripts } :
+            ''
+              exec 201<>${ resources.cron.lock } &&
+              ${ flock }/bin/flock 201 &&
+              ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.logs.temporary }
+            '' ;
         release =
           {
             log =
@@ -99,12 +99,12 @@
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } | while read RESOURCE
-			do
-			  if [ -d ${ bash-variable "RESOURCE" } ]
-			  then
-			    ${ shell-scripts.structure.release.resource.dir } ${ bash-variable "RESOURCE" } ${ bash-variable 1 }
-			  fi
-			done
+                        do
+                          if [ -d ${ bash-variable "RESOURCE" } ]
+                          then
+                            ${ shell-scripts.structure.release.resource.dir } ${ bash-variable "RESOURCE" } ${ bash-variable 1 }
+                          fi
+                        done
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
@@ -135,8 +135,8 @@
                           ${ coreutils }/bin/echo THERE IS NO DEFINED RELEASE >> ${ bash-variable 2 }
                         fi
                       fi &&
-		      ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
-		      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+                      ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
                       ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
                     '' ;
                 invalidation =
@@ -252,14 +252,14 @@
                         "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "release" ,
                         "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "salt"
                       } ;
-		      const justifications = [
-		        "this is the first beta being salted for identification of resources to invalidate" ,
-		        "this is the second beta being salted for identifcation of resources to invalidate" ,
-		        "this is the first gamma being salted for identification of resources to invalidate" ,
-		        "this is the second gamma being salted for identification of resources to invalidate" ,
-		        "we have identified alpha for invalidation but we must first invalidate gamma" ,
-		        "we are finally invalidating alpha"
-		      ] ;
+                      const justifications = [
+                        "this is the first beta being salted for identification of resources to invalidate" ,
+                        "this is the second beta being salted for identifcation of resources to invalidate" ,
+                        "this is the first gamma being salted for identification of resources to invalidate" ,
+                        "this is the second gamma being salted for identification of resources to invalidate" ,
+                        "we have identified alpha for invalidation but we must first invalidate gamma" ,
+                        "we are finally invalidating alpha"
+                      ] ;
                       const resourcify = ( element , index , array ) => ({ index, key: element.key, value: element.value , resource:  resources[element.value] , justification: justifications[index] }) ;
                       const methodify = ( element , index , array ) => ({ ...element, method : methods[element.value]});
                       fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.stringify(JSON.parse(success).map(simplify).map(resourcify).map(methodify))));
@@ -313,14 +313,14 @@
                           ${ coreutils }/bin/echo PASSED
                         else
                           ${ coreutils }/bin/echo FAILED ${ bash-variable "?" } &&
-			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccba &&
-			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccba -exec cat {} \; &&
-			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbb &&
-			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbb -exec cat {} \; &&
-			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbc &&
-			  ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbc -exec cat {} \; &&
-			  ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX tree &&
-			  ${ findutils }/bin/find ${ structure-directory } &&
+                          ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccba &&
+                          ${ findutils }/bin/find ${ structure-directory }/temporary -name ccba -exec cat {} \; &&
+                          ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbb &&
+                          ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbb -exec cat {} \; &&
+                          ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX ccbc &&
+                          ${ findutils }/bin/find ${ structure-directory }/temporary -name ccbc -exec cat {} \; &&
+                          ${ coreutils }/bin/echo XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX tree &&
+                          ${ findutils }/bin/find ${ structure-directory } &&
                           exit 65
                         fi
                       }
@@ -595,7 +595,7 @@
                 teardown =
                   { coreutils , jq , shell-scripts , temporary , yq } :
                     ''
-		      ${ coreutils }/bin/echo ${ temporary } &&
+                      ${ coreutils }/bin/echo ${ temporary } &&
                       ${ coreutils }/bin/echo SLEEP 20s &&
                       ${ coreutils }/bin/sleep 20s &&
                       ${ coreutils }/bin/echo SLEPT 20s &&
@@ -622,49 +622,49 @@
                       ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
                       ${ coreutils }/bin/cat ${ temporary }/cbbab &&
-		      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the first logged item is the calculation of the first beta salt
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[1].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the second beta salt - the same as the first
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[2].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the third logged item is the calculation of the first gamma salt
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[3].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the fourth logged item is the calculation of the second gamma salt - the same as the first
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[4].value" ${ temporary }/cbbab ) == "a3cbc1cd-4f00-4317-ad85-db998d3b2783" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the fifth logged item is the gamma release
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output ".[5].value" ${ temporary }/cbbab ) == "b25d9a99-3a63-44be-b4f4-d010efaa1779" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } the sixth logged item is the alpha release, notice that the gamma release preceded the alpha release and the beta release never happened
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
-		      if [ $( ${ jq }/bin/jq --raw-output "length" ${ temporary }/cbbab ) == "6" ]
-		      then
-		        ${ shell-scripts.test.util.spec.good } I have accounted for every log
-		      else
-		        ${ shell-scripts.test.util.spec.bad }
-		      fi &&
+                      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the first logged item is the calculation of the first beta salt
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[1].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the second beta salt - the same as the first
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[2].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the third logged item is the calculation of the first gamma salt
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[3].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the fourth logged item is the calculation of the second gamma salt - the same as the first
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[4].value" ${ temporary }/cbbab ) == "a3cbc1cd-4f00-4317-ad85-db998d3b2783" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the fifth logged item is the gamma release
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output ".[5].value" ${ temporary }/cbbab ) == "b25d9a99-3a63-44be-b4f4-d010efaa1779" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } the sixth logged item is the alpha release, notice that the gamma release preceded the alpha release and the beta release never happened
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
+                      if [ $( ${ jq }/bin/jq --raw-output "length" ${ temporary }/cbbab ) == "6" ]
+                      then
+                        ${ shell-scripts.test.util.spec.good } I have accounted for every log
+                      else
+                        ${ shell-scripts.test.util.spec.bad }
+                      fi &&
                       # ${ coreutils }/bin/echo NEXT &&
                       # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       # ${ coreutils }/bin/cat ${ temporary }/ccba
