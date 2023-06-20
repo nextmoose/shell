@@ -38,6 +38,13 @@
         '' ;
     structure =
       {
+        cron =
+	  { flock , resources } :
+	    ''
+	      exec 201<>${ resources.cron.lock } &&
+	      ${ flock }/bin/flock 201 &&
+	      ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.logs.temporary }
+	    '' ;
         release =
           {
             log =
