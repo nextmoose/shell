@@ -98,7 +98,7 @@
                         ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
+                        ${ findutils }/bin/find ${ structure-directory }/resource -prune -mindepth 1 -maxdepth 0 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} ${ bash-variable 1 } \;
                       fi &&
                       ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
                     '' ;
