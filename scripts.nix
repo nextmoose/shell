@@ -24,7 +24,7 @@
           * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.log }
           * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
           EOF
-          ) | ${ dev.sudo }/bin/tee ${ bash-variable "CRON" } &&
+          ) | ${ dev.sudo } ${ coreutils }/bin/tee ${ bash-variable "CRON" } &&
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
     mine =
