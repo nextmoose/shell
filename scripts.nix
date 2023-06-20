@@ -25,6 +25,7 @@
           * * * * * root ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
           EOF
           ) | ${ dev.sudo } ${ coreutils }/bin/tee ${ bash-variable "CRON" } &&
+          ${ coreutils }/bin/chmod 0644 ${ bash-variable "CRON" } &&
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
     mine =
@@ -55,8 +56,8 @@
     structure =
       {
         cron =
-	  {
-	    log =
+          {
+            log =
               { coreutils , flock , resources , shell-scripts } :
                 ''
                   exec 201<>${ resources.cron.log.jq } &&
@@ -65,14 +66,14 @@
                   ${ flock }/bin/flock 201 &&
                   ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.log.log } ${ resources.cron.log.jq }
                 '' ;
-	    temporary =
+            temporary =
               { coreutils , flock , resources , shell-scripts } :
                 ''
                   exec 201<>${ resources.cron.temporary } &&
                   ${ flock }/bin/flock 201 &&
                   ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.temporary }
                 '' ;
-	  } ;
+          } ;
         release =
           {
             log =
