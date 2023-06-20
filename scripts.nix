@@ -13,7 +13,7 @@
     entry =
       { bash-variable , coreutils , cowsay , dev , shell-scripts } :
         ''
-          CRON=$( ${ dev.sudo } ${ coreutils }/bin/mktemp --suffix ".cron" ${ dev.cron }/XXXXXXXX ) &&
+          CRON=$( ${ dev.sudo } ${ coreutils }/bin/mktemp ${ dev.cron }/XXXXXXXX ) &&
           cleanup ( )
           {
             ${ dev.sudo } ${ coreutils }/bin/rm ${ bash-variable "CRON" }
