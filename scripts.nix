@@ -615,7 +615,7 @@
                       ${ shell-scripts.structure.release.log.directory } ${ temporary }/cbba ${ temporary }/cbbb > ${ temporary }/cbbc 2> ${ temporary }/cbbd &&
                       ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
                       ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
-                      ${ coreutils }/bin/echo ${ temporary }/cbbab &&
+                      ${ coreutils }/bin/cat ${ temporary }/cbbab &&
 		      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
 		      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
 		      then
