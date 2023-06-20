@@ -45,7 +45,7 @@
     structure =
       {
         cron =
-	  { flock , resources } :
+	  { flock , resources , shell-scripts } :
 	    ''
 	      exec 200<>${ resources.cron.lock } &&
 	      ${ flock }/bin/flock 200 &&
