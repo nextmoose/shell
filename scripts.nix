@@ -21,9 +21,9 @@
           trap cleanup EXIT &&
           (
             ${ coreutils }/bin/cat <<EOF
-          * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.log }
-          * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.resource }
-          * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
+          * * * * *   $( ${ coreutils }/bin/whoami )   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.log }
+          * * * * *   $( ${ coreutils }/bin/whoami )   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.resource }
+          * * * * *   $( ${ coreutils }/bin/whoami )   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
           EOF
           ) | ${ dev.sudo } ${ coreutils }/bin/tee ${ bash-variable "CRON" } &&
           ${ dev.sudo } ${ coreutils }/bin/chmod 0644 ${ bash-variable "CRON" } &&
