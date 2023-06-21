@@ -30,9 +30,11 @@
           ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
     mine =
-      { coreutils , temporary } :
+      { coreutils , log , resources , temporary } :
         ''
-          ${ coreutils }/bin/echo HELLO WORLD > ${ temporary }/hello
+          ${ coreutils }/bin/echo HELLO WORLD > ${ temporary }/hello &&
+	  ${ coreutils }/bin/echo HELLO WORLD > ${ log "1f18b5d3-bcda-464d-ae28-8a55b5fd460a" } &&
+	  ${ coreutils }/bin/echo ${ resources.mine }
         '' ;
     name =
       { git } :
