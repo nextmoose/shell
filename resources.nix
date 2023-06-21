@@ -17,7 +17,7 @@
         file = resource : resource { init = scripts : scripts.touch ; salt = 60 * 60 * 24 * 7 ; show = false ; permissions = 0600 ; } ;
         lock = resource : resource { init = scripts : scripts.touch ; salt = 60 * 60 * 24 * 7 ; show = false ; permissions = 0600 ; } ;
       } ;
-    error = resource : resource { init - scripts : scripts.touch ; show = false ; permissions = 0600 ; } ;
+    error = resource : resource { init = scripts : scripts.touch ; show = false ; permissions = 0600 ; } ;
     mine = resource : resource { init = scripts : scripts.name ; salt = 1 ; show = false ; use-output = true ; } ;
     name = resource : resource { init = scripts : scripts.name ; show = true ; use-output = true ; } ;
     test =
