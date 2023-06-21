@@ -60,6 +60,41 @@
       {
         cron =
           {
+	    alpha =
+	      { bash-variable , coreutils } :
+	        ''
+		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+		'' ;
+	    beta =
+	      { bash-variable , coreutils } :
+	        ''
+		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+		'' ;
+	    read =
+	      { coreutils , flock , global , resources } :
+	        ''
+		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
+		  if [ ${ bash-variable "WEEK" } -lt 2 ]
+		  then
+		    exec 201<>${ resources.release.alpha } &&
+		    ${ flock }/bin/flock -s 201 &&
+		    ${ coreutils }/bin/cat ${ resources.release.alpha }
+		  else
+		    exec 201<>${ resources.release.beta } &&
+		    ${ flock }/bin/flock -s 201 &&
+		    ${ coreutils }/bin/cat ${ resources.release.beta }
+		  fi
+		'' ;
+            write =
+	      { bash-variable , coreutils , flock , resources } :
+	        ''
+		  exec 201<>${ resources.cron.alpha } &&
+		  ${ flock }/bin/flock 201 &&
+		  exec 202<>${ resources.cron.beta } &&
+		  ${ flock }/bin/flock 202 &&
+		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.alpha } &&
+		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.beta }
+		'' ;
             log =
               { flock , resources , shell-scripts } :
                 ''
@@ -92,16 +127,6 @@
           } ;
         release =
           {
-	    alpha =
-	      { bash-variable , coreutils } :
-	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
-		'' ;
-	    beta =
-	      { bash-variable , coreutils } :
-	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
-		'' ;
             log =
               {
                 directory =
@@ -140,21 +165,6 @@
                        ${ coreutils }/bin/echo END RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 }
                      '' ;
               } ;
-	    read =
-	      { coreutils , flock , global , resources }
-	        ''
-		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
-		  if [ ${ bash-variable "WEEK" } -lt 2 ]
-		  then
-		    exec 201<>${ resources.release.alpha } &&
-		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.release.alpha }
-		  else
-		    exec 201<>${ resources.release.beta } &&
-		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.release.beta }
-		  fi
-		'' ;
             resource =
               {
                 directory =
@@ -258,16 +268,6 @@
                       ${ coreutils }/bin/echo END RELEASE TEMPORARY ${ bash-variable 1 } >> ${ bash-variable 2 }
                     '' ;
               } ;
-            write =
-	      { bash-variable , coreutils , flock , resources } :
-	        ''
-		  exec 201<>${ resources.cron.alpha } &&
-		  ${ flock }/bin/flock 201 &&
-		  exec 202<>${ resources.cron.beta } &&
-		  ${ flock }/bin/flock 202 &&
-		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.alpha } &&
-		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.beta }
-		'' ;
           } ;
         _resource =
           {
