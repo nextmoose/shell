@@ -1,8 +1,8 @@
   {
     cron =
       {
-        alpha = resource : resource { salt = scripts : scripts.cron.alpha ; show = false ; } ;
-	beta = resource : resource { salt = scripts : scripts.cron.beta ; show = false ; } ;
+        alpha = resource : resource { salt = scripts : scripts.structure.cron.alpha ; show = false ; } ;
+	beta = resource : resource { salt = scripts : scripts.structure.cron.beta ; show = false ; } ;
         log =
 	  {
 	    jq = resource : resource { init = scripts : scripts.touch ; salt = 60 * 60 * 24 * 7 ; show = false ; permissions = 0600 ; } ;
