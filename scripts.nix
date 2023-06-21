@@ -244,7 +244,7 @@
                     '' ;
               } ;
             write =
-	      { bash-variable , coreutils , flock . resources } :
+	      { bash-variable , coreutils , flock , resources } :
 	        ''
 		  exec 201<>${ resources.cron.alpha } &&
 		  ${ flock }/bin/flock 201 &&
