@@ -22,6 +22,7 @@
           (
             ${ coreutils }/bin/cat <<EOF
           * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.log }
+          * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.resource }
           * * * * *   root   ${ coreutils }/bin/nice --adjustment 19 ${ shell-scripts.structure.cron.temporary }
           EOF
           ) | ${ dev.sudo } ${ coreutils }/bin/tee ${ bash-variable "CRON" } &&
@@ -58,7 +59,7 @@
         cron =
           {
             log =
-              { coreutils , flock , resources , shell-scripts } :
+              { flock , resources , shell-scripts } :
                 ''
                   exec 201<>${ resources.cron.log.jq } &&
                   ${ flock }/bin/flock 201 &&
@@ -66,8 +67,21 @@
                   ${ flock }/bin/flock 201 &&
                   ${ shell-scripts.structure.release.temporary.directory } ${ resources.cron.log.log } ${ resources.cron.log.jq }
                 '' ;
+            resource =
+              { shell-scripts , temporary } :
+                ''
+                  ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/c &&
+		  ${ shell-scripts.structure.cron.resource-alpha } ${ temporary }/c
+                '' ;
+	    resource-alpha =
+	      { flock , resources , shell-scripts } :
+	        ''
+		  exec 201<>${ resources.cron.resource } &&
+		  ${ flock }/bin/flock 201 &&
+		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.resource }
+		'' ;
             temporary =
-              { coreutils , flock , resources , shell-scripts } :
+              { flock , resources , shell-scripts } :
                 ''
                   exec 201<>${ resources.cron.temporary } &&
                   ${ flock }/bin/flock 201 &&
