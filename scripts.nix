@@ -140,6 +140,21 @@
                        ${ coreutils }/bin/echo END RELEASE FILE ${ bash-variable 1 } >> ${ bash-variable 3 }
                      '' ;
               } ;
+	    read =
+	      { coreutils , flock , global , resources }
+	        ''
+		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
+		  if [ ${ bash-variable "WEEK" } -lt 2 ]
+		  then
+		    exec 201<>${ resources.release.alpha } &&
+		    ${ flock }/bin/flock -s 201 &&
+		    ${ coreutils }/bin/cat ${ resources.release.alpha }
+		  else
+		    exec 201<>${ resources.release.beta } &&
+		    ${ flock }/bin/flock -s 201 &&
+		    ${ coreutils }/bin/cat ${ resources.release.beta }
+		  fi
+		'' ;
             resource =
               {
                 directory =
