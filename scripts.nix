@@ -76,11 +76,11 @@
 		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
 		  if [ ${ bash-variable "WEEK" } -lt 2 ]
 		  then
-		    exec 201<>${ resources.release.alpha } &&
+		    exec 201<>${ resources.cron.alpha } &&
 		    ${ flock }/bin/flock -s 201 &&
 		    ${ coreutils }/bin/cat ${ resources.release.alpha }
 		  else
-		    exec 201<>${ resources.release.beta } &&
+		    exec 201<>${ resources.cron.beta } &&
 		    ${ flock }/bin/flock -s 201 &&
 		    ${ coreutils }/bin/cat ${ resources.release.beta }
 		  fi
