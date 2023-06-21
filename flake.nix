@@ -25,7 +25,6 @@
                   inputs ? null ,
                   knull ? "/dev/null" ,
                   nixpkgs ? _.nixpkgs ,
-		  private ? { } ,
                   strip ? _.strip ,
                   structure-directory ,
                   sudo ? "/usr/bin/sudo" ,
@@ -242,7 +241,6 @@
 						  global = global ;
                                                   local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
-						  private = private ;
                                                   resources = _resources ( { invocation } : invocation) ( track : track.reduced ) ( track : track.reduced ) ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) global ;
 						  strip = strip ;
