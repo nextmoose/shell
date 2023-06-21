@@ -78,11 +78,11 @@
 		  then
 		    exec 201<>${ resources.cron.alpha } &&
 		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.release.alpha }
+		    ${ coreutils }/bin/cat ${ resources.cron.alpha }
 		  else
-		    exec 201<>${ resources.cron.beta } &&
+		    exec 201<>${ resources.cron	.beta } &&
 		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.release.beta }
+		    ${ coreutils }/bin/cat ${ resources.cron.beta }
 		  fi
 		'' ;
             write =
