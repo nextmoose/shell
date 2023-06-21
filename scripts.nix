@@ -74,7 +74,7 @@
                   ${ shell-scripts.structure.cron.resource-alpha } ${ temporary }/c
                 '' ;
             resource-alpha =
-              { coreutils , flock , resources , shell-scripts } :
+              { bash-variable , coreutils , flock , resources , shell-scripts } :
                 ''
                   exec 201<>${ resources.cron.resource } &&
                   ${ flock }/bin/flock 201 &&
