@@ -246,26 +246,23 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , local , shell-scripts , structure-directory } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY >> ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/echo "- " >> ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/echo "  directories:" >> ${ bash-variable 1 } &&
                       if [ -d ${ structure-directory }/temporary ]
                       then
                         exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
-                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY >> ${ bash-variable 1 } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} ${ bash-variable 1 } \;
-                        ${ coreutils }/bin/echo END RELEASE TEMPORARY >> ${ bash-variable 1 }
-                      fi &&
-                      ${ coreutils }/bin/echo END RELEASE TEMPORARY >> ${ bash-variable 1 }
+                      fi
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE TEMPORARY ${ bash-variable 1 } >> ${ bash-variable 2 } &&
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-                      ${ coreutils }/bin/echo BEGIN LOCK RELEASE TEMPORARY ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
-                      ${ coreutils }/bin/echo END RELEASE TEMPORARY ${ bash-variable 1 } >> ${ bash-variable 2 }
+		      ${ coreutils }/bin/echo "    -${ bash-variable 1 }" >> ${ bash-variable 2 } &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                     '' ;
               } ;
           } ;
