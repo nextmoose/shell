@@ -71,7 +71,7 @@
 		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
 		'' ;
 	    read =
-	      { coreutils , flock , global , resources } :
+	      { bash-variable , coreutils , flock , global , resources } :
 	        ''
 		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
 		  if [ ${ bash-variable "WEEK" } -lt 2 ]
