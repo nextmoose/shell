@@ -63,12 +63,12 @@
 	    alpha =
 	      { bash-variable , coreutils } :
 	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variables 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
 		'' ;
 	    beta =
 	      { bash-variable , coreutils } :
 	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variables 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
 		'' ;
             log =
               { flock , resources , shell-scripts } :
