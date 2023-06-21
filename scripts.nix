@@ -71,15 +71,15 @@
               { shell-scripts , temporary } :
                 ''
                   ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/c &&
-		  ${ shell-scripts.structure.cron.resource-alpha } ${ temporary }/c
+                  ${ shell-scripts.structure.cron.resource-alpha } ${ temporary }/c
                 '' ;
-	    resource-alpha =
-	      { flock , resources , shell-scripts } :
-	        ''
-		  exec 201<>${ resources.cron.resource } &&
-		  ${ flock }/bin/flock 201 &&
-		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.resource }
-		'' ;
+            resource-alpha =
+              { coreutils , flock , resources , shell-scripts } :
+                ''
+                  exec 201<>${ resources.cron.resource } &&
+                  ${ flock }/bin/flock 201 &&
+                  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.resource }
+                '' ;
             temporary =
               { flock , resources , shell-scripts } :
                 ''
