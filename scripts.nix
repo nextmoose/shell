@@ -245,8 +245,8 @@
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
                       if [ -d ${ structure-directory }/temporary ]
                       then
-                        exec ${ local.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
-                        ${ flock }/bin/flock -s ${ local.numbers.temporary-directory } &&
+                        exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
+                        ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} ${ bash-variable 1 } \;
                       fi &&
 		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result > ${ bash-variable 1 }
