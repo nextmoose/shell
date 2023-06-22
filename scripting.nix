@@ -1,4 +1,4 @@
-  { bash-variable , coreutils, flock , global , local , structure-directory }  :
+  { bash-variable , coreutils, flock , global , local , structure-directory , track }  :
     {
       log =
         {
@@ -73,6 +73,7 @@
               ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
               exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
               ${ flock }/bin/flock ${ local.numbers.temporary-dir } &&
+	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/index.asc &&
               ${ coreutils }/bin/mkdir ${ bash-variable local.variables.temporary-dir }/temporary
             '' ;
         } ;

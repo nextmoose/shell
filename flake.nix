@@ -121,7 +121,7 @@
                                                   set = track : track.reduced ;
                                                   string = track : strip track.reduced ;
                                                   undefined = track : track.throw "" ;
-                                                  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./scripting.nix { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = global ; structure-directory = structure-directory ; } ) ;
+                                                  in visit { set = set ; string = string ; undefined = undefined ; } ( import ./scripting.nix { bash-variable = bash-variable ; coreutils = pkgs.coreutils ; flock = pkgs.flock ; global = global ; local = global ; structure-directory = structure-directory ; track = track ; } ) ;
                                               structure = if builtins.any ( functionArg : builtins.any ( dir : functionArg == dir ) [ "log" "resources" "temporary" ] ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.structure.yes else scripting.structure.no ;
                                               resource = if builtins.any ( functionArg : functionArg == "resources" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.resource.yes else scripting.resource.no ;
                                               temporary = if builtins.any ( functionArg : functionArg == "temporary" ) ( builtins.attrNames ( builtins.functionArgs track.reduced ) ) then scripting.temporary.yes else scripting.temporary.no ;
