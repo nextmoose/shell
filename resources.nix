@@ -30,10 +30,10 @@
         resources =
           {
             alpha = resource : resource { init = scripts : scripts.test.util.resource.alpha.file ; release = scripts : scripts.test.util.resource.alpha.release ; salt = 1 ; } ;
-            beta-1 = resource : resource { init = scripts : scripts.test.util.resource.beta-1.file ; release = scripts : scripts.test.util.resource.beta-1.release ; salt = scripts : scripts.test.util.resource.beta-1.salt ; } ;
-            beta-2 = resource : resource { init = scripts : scripts.test.util.resource.beta-2.file ; release = scripts : scripts.test.util.resource.beta-2.release ; salt = scripts : scripts.test.util.resource.beta-2.salt ; } ;
-            gamma-1 = resource : resource { init = scripts : scripts.test.util.resource.gamma-1.file ; release = scripts : scripts.test.util.resource.gamma-1.release ; salt = scripts : scripts.test.util.resource.gamma-1.salt ; } ;
-            gamma-2 = resource : resource { init = scripts : scripts.test.util.resource.gamma-2.file ; release = scripts : scripts.test.util.resource.gamma-2.release ; salt = scripts : scripts.test.util.resource.gamma-2.salt ; } ;
+            beta-1 = resource : resource { init = scripts : scripts.test.util.resource.beta.file ; release = scripts : scripts.test.util.resource.beta.release ; salt = scripts : scripts.test.util.resource.beta.salt-1 ; } ;
+            beta-2 = resource : resource { init = scripts : scripts.test.util.resource.beta.file ; release = scripts : scripts.test.util.resource.beta.release ; salt = scripts : scripts.test.util.resource.beta.salt-2 ; } ;
+            gamma-1 = resource : resource { init = scripts : scripts.test.util.resource.gamma.file ; release = scripts : scripts.test.util.resource.gamma.release ; salt = scripts : scripts.test.util.resource.gamma.salt-1 ; } ;
+            gamma-2 = resource : resource { init = scripts : scripts.test.util.resource.gamma.file ; release = scripts : scripts.test.util.resource.gamma.release ; salt = scripts : scripts.test.util.resource.gamma.salt-2 ; } ;
           } ;
       } ;
   }
