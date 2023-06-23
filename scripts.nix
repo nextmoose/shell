@@ -496,9 +496,9 @@
                     let
 		      result =
 		        {
-			  alpha = "" ;
-			  beta = "" ;
-			  gamma = "" ;
+			  alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
+			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0	 " ;
+			  gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
 			  temporary =
 		            {
 			      type = "temporary" ;
@@ -520,7 +520,8 @@
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
-			  if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/result ) ]
+			  ${ coreutils }/bin/echo ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/result &&
+			  if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/result ) == true ]
 			  then
 			    ${ coreutils }/bin/echo GOOD &&
 			    exit 66
