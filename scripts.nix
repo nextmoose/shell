@@ -33,8 +33,8 @@
       { coreutils , log , resources , temporary } :
         ''
           ${ coreutils }/bin/echo HELLO WORLD > ${ temporary }/hello &&
-	  ${ coreutils }/bin/echo HELLO WORLD > ${ log "1f18b5d3-bcda-464d-ae28-8a55b5fd460a" } &&
-	  ${ coreutils }/bin/echo ${ resources.mine }
+          ${ coreutils }/bin/echo HELLO WORLD > ${ log "1f18b5d3-bcda-464d-ae28-8a55b5fd460a" } &&
+          ${ coreutils }/bin/echo ${ resources.mine }
         '' ;
     name =
       { git } :
@@ -60,41 +60,41 @@
       {
         cron =
           {
-	    alpha =
-	      { bash-variable , coreutils } :
-	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
-		'' ;
-	    beta =
-	      { bash-variable , coreutils } :
-	        ''
-		  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
-		'' ;
-	    read =
-	      { bash-variable , coreutils , flock , global , resources } :
-	        ''
-		  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
-		  if [ ${ bash-variable "WEEK" } -lt 2 ]
-		  then
-		    exec 201<>${ resources.cron.alpha } &&
-		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.cron.alpha }
-		  else
-		    exec 201<>${ resources.cron	.beta } &&
-		    ${ flock }/bin/flock -s 201 &&
-		    ${ coreutils }/bin/cat ${ resources.cron.beta }
-		  fi
-		'' ;
+            alpha =
+              { bash-variable , coreutils } :
+                ''
+                  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 1 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+                '' ;
+            beta =
+              { bash-variable , coreutils } :
+                ''
+                  ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 60 * 24 * 7 * 3 ) ) / ( 60 * 60 * 24 * 7 * 4 ) ))
+                '' ;
+            read =
+              { bash-variable , coreutils , flock , global , resources } :
+                ''
+                  WEEK=$( ${ coreutils }/bin/echo $(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 60 * 24 & 7 * 2 ) ) / ( 60 * 60 * 24 * 7 ) ) % 4  )) &&
+                  if [ ${ bash-variable "WEEK" } -lt 2 ]
+                  then
+                    exec 201<>${ resources.cron.alpha } &&
+                    ${ flock }/bin/flock -s 201 &&
+                    ${ coreutils }/bin/cat ${ resources.cron.alpha }
+                  else
+                    exec 201<>${ resources.cron .beta } &&
+                    ${ flock }/bin/flock -s 201 &&
+                    ${ coreutils }/bin/cat ${ resources.cron.beta }
+                  fi
+                '' ;
             write =
-	      { bash-variable , coreutils , flock , resources } :
-	        ''
-		  exec 201<>${ resources.cron.alpha } &&
-		  ${ flock }/bin/flock 201 &&
-		  exec 202<>${ resources.cron.beta } &&
-		  ${ flock }/bin/flock 202 &&
-		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.alpha } &&
-		  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.beta }
-		'' ;
+              { bash-variable , coreutils , flock , resources } :
+                ''
+                  exec 201<>${ resources.cron.alpha } &&
+                  ${ flock }/bin/flock 201 &&
+                  exec 202<>${ resources.cron.beta } &&
+                  ${ flock }/bin/flock 202 &&
+                  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.alpha } &&
+                  ${ coreutils }/bin/cat ${ bash-variable 1 } >> ${ resources.cron.beta }
+                '' ;
             log =
               { flock , resources , shell-scripts } :
                 ''
@@ -137,7 +137,7 @@
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
-			${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                        ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
                       fi
                     '' ;
                 dir =
@@ -153,7 +153,8 @@
                      ''
                        KEY=${ bash-variable "1##*." } &&
                        ${ coreutils }/bin/echo "-" &&
-		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
+                       ${ coreutils }/bin/echo "  script: XXXX" &&
+                       # ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
                        ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
@@ -246,16 +247,16 @@
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; > ${ temporary }/result
                       fi &&
-		      ${ yq }/bin/yq --yaml-output "sort" ${ temporary }/result
+                      ${ yq }/bin/yq --yaml-output "sort" ${ temporary }/result
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
                     ''
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-		      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/script.asc )" &&
+                      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/script.asc )" &&
                       # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
-		      ${ coreutils }/bin/true
+                      ${ coreutils }/bin/true
                     '' ;
               } ;
           } ;
@@ -322,16 +323,16 @@
                         "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "release" ,
                         "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "salt"
                       } ;
-		      const justifications =
-		        {
-			  setup : [
-			    "this is the alpha init",
-			    "this is the beta salt",
-			    "this is the beta init",
-			    "this is the gamma salt",
-			    "this is the beta salt"
-			    "this is the gamma init"
-			  ] ,
+                      const justifications =
+                        {
+                          setup : [
+                            "this is the alpha init",
+                            "this is the beta salt",
+                            "this is the beta init",
+                            "this is the gamma salt",
+                            "this is the beta salt"
+                            "this is the gamma init"
+                          ] ,
                           teardown : [
                             "this is the first beta being salted for identification of resources to invalidate" ,
                             "this is the second beta being salted for identifcation of resources to invalidate" ,
@@ -339,17 +340,17 @@
                             "this is the second gamma being salted for identification of resources to invalidate" ,
                             "we have identified alpha for invalidation but we must first invalidate gamma" ,
                             "we are finally invalidating alpha"
-			  ] ,
-			} ;
-		      const justify = ( index , array ) => {
-		        if(array.length === justifications.setup.length) {
-			  return justifications.setup[index] ;
-			else if(array.length === justifications.teardown.length ) {
-			  return justifications.teardown[index];
-			}else {
-			  return "" ;
-			}
-		      } ;
+                          ] ,
+                        } ;
+                      const justify = ( index , array ) => {
+                        if(array.length === justifications.setup.length) {
+                          return justifications.setup[index] ;
+                        else if(array.length === justifications.teardown.length ) {
+                          return justifications.teardown[index];
+                        }else {
+                          return "" ;
+                        }
+                      } ;
                       const resourcify = ( element , index , array ) => ({ index, key: element.key, value: element.value , resource:  resources[element.value] , justification: justifications[index] }) ;
                       fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.stringify(JSON.parse(success).map(simplify).map(resourcify).map(methodify))));
                     '' ;
@@ -491,41 +492,41 @@
                 setup =
                   { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , structure-directory , strip , temporary , yq } :
                     let
-		      result =
-		        {
-			  alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
-			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
-			  gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
-			  log = [ ] ;
-			  temporary = [ 27 29 31 31 33 35 ] ;
-			} ;
+                      result =
+                        {
+                          alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
+                          beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
+                          gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
+                          log = [ ] ;
+                          temporary = [ 27 29 31 31 33 35 ] ;
+                        } ;
                       in
                         ''
                           MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
-			  ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } >> ${ temporary }/result &&
-			  if [ ${ bash-variable "MINUTE" } -lt 30 ]
+                          ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } >> ${ temporary }/result &&
+                          if [ ${ bash-variable "MINUTE" } -lt 30 ]
                           then
-			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } >> ${ temporary }/result &&
-			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 } >> ${ temporary }/result
+                            ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } >> ${ temporary }/result &&
+                            ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 } >> ${ temporary }/result
                           else
-			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
-			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
+                            ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
+                            ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-			  ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
-			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
-			  ${ yq }/bin/yq --yaml-output "{log: .}" ${ temporary }/cbaaa >> ${ temporary }/result &&
-			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
-			  ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
-			  ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
-			  if [ $( ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result ) == "true" ]
-			  then
-			    ${ coreutils }/bin/echo GOOD &&
-			    exit 66
-			  else
-			    ${ coreutils }/bin/echo BAD &&
-			    exit 64
-			  fi
+                          ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
+                          ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
+                          ${ yq }/bin/yq --yaml-output "{log: .}" ${ temporary }/cbaaa >> ${ temporary }/result &&
+                          ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
+                          ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
+                          ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
+                          if [ $( ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result ) == "true" ]
+                          then
+                            ${ coreutils }/bin/echo GOOD &&
+                            exit 66
+                          else
+                            ${ coreutils }/bin/echo BAD &&
+                            exit 64
+                          fi
                         '' ;
                 teardown =
                   { coreutils , jq , shell-scripts , temporary , yq } :
