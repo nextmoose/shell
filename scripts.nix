@@ -247,16 +247,16 @@
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} ${ bash-variable 1 } \;
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
                       fi &&
-		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result > ${ bash-variable 1 }
+		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
                     ''
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-		      ${ coreutils }/bin/echo "    - $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" >> ${ bash-variable 2 } &&
+		      ${ coreutils }/bin/echo "    - $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" &&
                       ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                     '' ;
               } ;
