@@ -18,7 +18,7 @@
               ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
               exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
               ${ flock }/bin/flock ${ local.numbers.log-dir } &&
-	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/index.asc &&
+	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/script.asc &&
             '' ;
         } ;
       resource =
@@ -74,7 +74,7 @@
               ${ local.variables.temporary-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/temporary/XXXXXXXX ) &&
               exec ${ local.numbers.temporary-dir }<>${ bash-variable local.variables.temporary-dir }/lock &&
               ${ flock }/bin/flock ${ local.numbers.temporary-dir } &&
-	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/index.asc &&
+	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/script.asc &&
               ${ coreutils }/bin/mkdir ${ bash-variable local.variables.temporary-dir }/temporary
             '' ;
         } ;

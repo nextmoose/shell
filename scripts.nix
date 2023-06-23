@@ -153,7 +153,7 @@
                      ''
                        KEY=${ bash-variable "1##*." } &&
                        ${ coreutils }/bin/echo "-" &&
-		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/index.asc )" &&
+		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
                        ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
@@ -253,7 +253,7 @@
                     ''
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-		      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" &&
+		      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/script.asc )" &&
                       # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
 		      ${ coreutils }/bin/true
                     '' ;
