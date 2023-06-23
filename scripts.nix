@@ -240,6 +240,7 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
+		      ${ coreutils }/bin/echo "REPAIR: 1" &&
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
@@ -249,7 +250,8 @@
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
                       fi &&
-		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
+		      # ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
+		      ${ coreutils }/bin/cat ${ temporary }/result }
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
