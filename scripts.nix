@@ -493,7 +493,7 @@
 		      result =
 		        {
 			  alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
-			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0	 " ;
+			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
 			  gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
 			  temporary = [ 27 29 31 31 33 35 ] ;
 			} ;
@@ -509,8 +509,6 @@
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
-			  ${ coreutils }/bin/cat ${ temporary }/result &&
-			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  # ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
