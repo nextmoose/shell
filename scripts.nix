@@ -136,8 +136,8 @@
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
-                        ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                        # ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
+                        # ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
                       fi
                     '' ;
                 dir =
@@ -153,10 +153,7 @@
                      ''
                        KEY=${ bash-variable "1##*." } &&
                        ${ coreutils }/bin/echo "-" &&
-		       
-                       ${ coreutils }/bin/echo "  script: XXXX" &&
-
-		       # ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
+		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
                        ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
@@ -516,6 +513,7 @@
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
                           ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
+			  ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
                           ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
                           ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
                           ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
