@@ -238,14 +238,15 @@
             temporary =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory } :
+                  { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
                       if [ -d ${ structure-directory }/temporary ]
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \;
-                      fi
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; > ${ temporary }/result
+                      fi &&
+		      ${ yq }/bin/yq "sort" --yaml-output
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
