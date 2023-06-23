@@ -130,32 +130,32 @@
             log =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , gnused , local , shell-scripts , structure-directory } :
+                  { bash-variable , coreutils , findutils , flock , gnused , local , shell-scripts , structure-directory , temporary } :
                     ''
-		      ${ coreutils }/bin/echo "- " >> ${ bash-variable 1 } &&
-		      ${ coreutils }/bin/echo "  type: release-log" >> ${ bash-variable 1 } &&
                       if [ -d ${ structure-directory }/log ]
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} ${ bash-variable 1 } ${ bash-variable 2 } \;
-                        fi
+                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
+			${ jq }/bin/jq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                      fi
                     '' ;
                 dir =
                  { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
                    ''
                      exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
                      ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
-                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 2 } \; &&
+                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                    '' ;
                  file =
                    { bash-variable , coreutils , gnused } :
                      ''
                        KEY=${ bash-variable "1##*." } &&
-                       ${ coreutils }/bin/echo "  -" >> ${ bash-variable 2 } &&
-                       ${ coreutils }/bin/echo "    key: ${ bash-variable "KEY" }" >> ${ bash-variable 2 } &&
-                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#    timestamp: \1\n    value: >\n    \2#' ${ bash-variable 1 } >> ${ bash-variable 2 } &&
+                       ${ coreutils }/bin/echo "-" >> ${ bash-variable 2 } &&
+		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/index.asc" &&
+                       ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" >> ${ bash-variable 1 } &&
+                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
                      '' ;
               } ;
@@ -496,6 +496,7 @@
 			  alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
 			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
 			  gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
+			  log = [ ] ;
 			  temporary = [ 27 29 31 31 33 35 ] ;
 			} ;
                       in
@@ -511,8 +512,9 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-			  # ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
+			  ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
+			  ${ yq }/bin/yq --yaml-output "{log: .}" ${ temporary }/cbaaa >> ${ temporary }/result &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
 			  ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
 			  ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&

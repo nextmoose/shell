@@ -17,7 +17,8 @@
               ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
               ${ local.variables.log-dir }=$( ${ coreutils }/bin/mktemp --directory ${ structure-directory }/log/XXXXXXXX ) &&
               exec ${ local.numbers.log-dir }<>${ bash-variable local.variables.log-dir }/lock &&
-              ${ flock }/bin/flock ${ local.numbers.log-dir }
+              ${ flock }/bin/flock ${ local.numbers.log-dir } &&
+	      ${ coreutils }/bin/echo ${ builtins.toString track.index } > ${ bash-variable local.variables.temporary-dir }/index.asc &&
             '' ;
         } ;
       resource =
