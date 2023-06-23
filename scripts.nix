@@ -249,7 +249,7 @@
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
                       fi &&
-		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts}" ${ temporary }/result
+		      ${ coreutils }/bin/cat ${ temporary }/result
 		      # ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
                     '' ;
                 dir =
