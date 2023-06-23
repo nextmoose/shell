@@ -240,7 +240,6 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
-		      exit 66 &&
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
