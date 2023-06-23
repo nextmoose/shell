@@ -241,7 +241,6 @@
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
 		      exit 66 &&
-		      ${ coreutils }/bin/echo "REPAIR: 1" &&
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
@@ -249,7 +248,8 @@
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
+                        # ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
+			${ coreutils }/bin/true
                       fi &&
 		      # ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
 		      ${ coreutils }/bin/cat ${ temporary }/result }
@@ -509,11 +509,9 @@
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
-			  ${ coreutils }/bin/cat ${ temporary }/result &&
-			  ${ coreutils }/bin/echo repair: 0 &&
+			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-			  ${ coreutils }/bin/echo repair: 1 &&
-			  ${ yq }/bin/yq "." ${ temporary }/caaaa &&
+			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
 			  exit 66 &&
 			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
 			  if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/caaaa ) == 1 ]
