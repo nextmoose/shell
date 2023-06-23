@@ -492,7 +492,7 @@
                         '' ;
                   } ;
                 setup =
-                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , temporary , structure-directory , strip , yq } :
+                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , structure-directory , strip , temporary , yq } :
                     let
                       in
                         ''
@@ -506,6 +506,7 @@
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
+			  ${ coreutils }/bin/cat ${ temporary }/result &&
                           ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caaaa > ${ temporary }/caaba 2> ${ temporary }/caaca &&
 			  ${ yq }/bin/yq "." ${ temporary }/caaaa &&
 			  exit 66 &&
