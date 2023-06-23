@@ -137,7 +137,8 @@
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
-                        ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                        # ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+			${ coreutils }/bin/cat ${ temporary }/result }
                       fi
                     '' ;
                 dir =
