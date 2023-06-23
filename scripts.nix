@@ -152,9 +152,9 @@
                    { bash-variable , coreutils , gnused } :
                      ''
                        KEY=${ bash-variable "1##*." } &&
-                       ${ coreutils }/bin/echo "-" >> ${ bash-variable 2 } &&
-		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/index.asc" &&
-                       ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" >> ${ bash-variable 1 } &&
+                       ${ coreutils }/bin/echo "-" &&
+		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/index.asc )" &&
+                       ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
                      '' ;
