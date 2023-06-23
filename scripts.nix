@@ -510,7 +510,9 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
 			  ${ coreutils }/bin/cat ${ temporary }/result &&
+			  ${ coreutils }/bin/echo repair: 0 &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
+			  ${ coreutils }/bin/echo repair: 1 &&
 			  ${ yq }/bin/yq "." ${ temporary }/caaaa &&
 			  exit 66 &&
 			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
