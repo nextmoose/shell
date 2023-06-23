@@ -257,7 +257,8 @@
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
 		      ${ coreutils }/bin/echo "    - $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" &&
-                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
+                      # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+		      ${ coreutils }/bin/true
                     '' ;
               } ;
           } ;
