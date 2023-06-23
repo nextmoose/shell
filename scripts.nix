@@ -240,9 +240,6 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
-		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
-		      ${ coreutils }/bin/echo "  type: temporary" >> ${ temporary }/result &&
-		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
                       if [ -d ${ structure-directory }/temporary ]
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
@@ -256,7 +253,7 @@
                     ''
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-		      ${ coreutils }/bin/echo "    - $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" &&
+		      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/index.asc )" &&
                       # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
 		      ${ coreutils }/bin/true
                     '' ;
@@ -499,11 +496,7 @@
 			  alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
 			  beta = "3be7473e-c335-4102-a8fd-f68b643014a0	 " ;
 			  gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
-			  temporary =
-		            {
-			      type = "temporary" ;
-			      scripts = [ 27 29 31 31 33 35 ] ;
-			    } ;
+			  temporary = [ 27 29 31 31 33 35 ] ;
 			} ;
                       in
                         ''
