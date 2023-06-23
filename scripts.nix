@@ -541,19 +541,19 @@
 			  then
 			    ${ shell-scripts.test.util.spec.good } release temporary produced one record
 			  else
-			    ${ shell-scripts.test-util.spec.bad } release temporary produced the wrong number of records
+			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong number of records
 			  fi &&
 			  if [ $( ${ yq }/bin/yq --raw-output ".[0].type" ${ temporary }/caaaa ) == "release-temporary" ]
 			  then
 			    ${ shell-scripts.test.util.spec.good } release temporary produced a release-temporary record
 			  else
-			    ${ shell-scripts.test-util.spec.bad } release temporary produced the wrong type of record
+			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong type of record
 			  fi &&
 			  if [ $( ${ yq }/bin/yq --raw-output ".[0].directories | length" ${ temporary }/caaaa ) == 5 ]
 			  then
 			    ${ shell-scripts.test.util.spec.good } release temporary produced a release-temporary record
 			  else
-			    ${ shell-scripts.test-util.spec.bad } release temporary produced the wrong type of record
+			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong type of record
 			  fi &&
 			  if [ ! -s ${ temporary }/caaba ]
 			  then
