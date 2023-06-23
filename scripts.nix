@@ -245,8 +245,7 @@
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
                         ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
-                      fi &&
-		      ${ yq }/bin/yq --yaml-output "map({type:.type, scripts:.scripts|sort})" ${ temporary }/result
+                      fi
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
@@ -511,7 +510,7 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
 			  ${ coreutils }/bin/cat ${ temporary }/result &&
-			  ${ yq }/bin/yq "." ${ temporary }/result &&
+			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  # ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
