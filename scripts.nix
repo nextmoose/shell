@@ -494,6 +494,17 @@
                 setup =
                   { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , structure-directory , strip , temporary , yq } :
                     let
+		      result =
+		        {
+			  alpha = "" ;
+			  beta = "" ;
+			  gamma = "" ;
+			  temporary =
+		            {
+			      type = "temporary" ;
+			      scripts = [ 27 29 31 31 33 35 ] ;
+			    } ;
+			} ;
                       in
                         ''
                           MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
@@ -507,51 +518,14 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
-			  exit 66 &&
-			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
-			  if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/caaaa ) == 1 ]
+			  ${ yq }/bin/yq --yaml-output "temporary: ." ${ temporary }/caaaa >> ${ temporary }/result &&
+			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
+			  if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/result ) ]
 			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary produced one record
+			    ${ coreutils }/bin/echo GOOD
 			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong number of records
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output ".[0].type" ${ temporary }/caaaa ) == "release-temporary" ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary produced a release-temporary record
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong type of record
-			  fi &&
-			  if [ $( ${ yq }/bin/yq --raw-output ".[0].directories | length" ${ temporary }/caaaa ) == 5 ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary produced a release-temporary record
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary produced the wrong type of record
-			  fi &&
-			  if [ ! -s ${ temporary }/caaba ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary did not output
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary outputed $( ${ coreutils }/bin/cat ${ temporary }/caaba )
-			  fi &&
-			  if [ ! -s ${ temporary }/caaca ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release temporary did not error
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release temporary errored $( ${ coreutils }/bin/cat ${ temporary }/caaca )
-			  fi &&
-			  ${ shell-scripts.structure.release.log.directory } ${ temporary }/cbaaa > ${ temporary }/cbaba 2> ${ temporary }/cbaca &&
-			  if [ ! -s ${ temporary }/cbaba ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release log did not output
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release log outputed $( ${ coreutils }/bin/cat ${ temporary }/caaca )
-			  fi &&
-			  if [ ! -s ${ temporary }/cbaca ]
-			  then
-			    ${ shell-scripts.test.util.spec.good } release log did not error
-			  else
-			    ${ shell-scripts.test.util.spec.bad } release log errored $( ${ coreutils }/bin/cat ${ temporary }/cbaca )
+			    ${ coreutils }/bin/echo BAD &&
+			    exit 64
 			  fi
                         '' ;
                 teardown =
