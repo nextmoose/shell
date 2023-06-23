@@ -518,11 +518,12 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-			  ${ yq }/bin/yq --yaml-output "temporary: ." ${ temporary }/caaaa >> ${ temporary }/result &&
+			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
 			  if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/result ) ]
 			  then
-			    ${ coreutils }/bin/echo GOOD
+			    ${ coreutils }/bin/echo GOOD &&
+			    exit 66
 			  else
 			    ${ coreutils }/bin/echo BAD &&
 			    exit 64
