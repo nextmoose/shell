@@ -510,11 +510,9 @@
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
-			  ${ coreutils }/bin/cat ${ temporary }/result &&
-			  ${ coreutils }/bin/echo before &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
 			  ${ coreutils }/bin/echo after 1 &&
-                          ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
+                          ${ shell-scripts.structure.release.temporary.directory } &&
 			  ${ coreutils }/bin/echo after 2 &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
 			  ${ coreutils }/bin/echo after 3 &&
