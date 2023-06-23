@@ -240,7 +240,6 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
-	              ${ coreutils }/bin/echo "repair: 0" &&
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
@@ -248,9 +247,7 @@
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
-			${ coreutils }/bin/echo "before: true" &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result &&
-			${ coreutils }/bin/echo "after: true"
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; >> ${ temporary }/result
                       fi &&
 		      ${ yq }/bin/yq --yaml-output "{type: .type, scripts: .scripts|sort}" ${ temporary }/result
                     '' ;
@@ -510,7 +507,7 @@
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
 			  ${ coreutils }/bin/cat ${ temporary }/result &&
-                          ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caaaa > ${ temporary }/caaba 2> ${ temporary }/caaca &&
+                          ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  ${ yq }/bin/yq "." ${ temporary }/caaaa &&
 			  exit 66 &&
 			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
