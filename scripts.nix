@@ -512,9 +512,11 @@
 			  ${ coreutils }/bin/cat ${ temporary }/result &&
 			  ${ coreutils }/bin/echo before &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
-			  ${ coreutils }/bin/echo after &&
+			  ${ coreutils }/bin/echo after 1 &&
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
+			  ${ coreutils }/bin/echo after 2 &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
+			  ${ coreutils }/bin/echo after 3 &&
 			  exit 66 &&
 			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
 			  if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/caaaa ) == 1 ]
