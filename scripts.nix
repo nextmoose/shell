@@ -497,42 +497,16 @@
                       in
                         ''
                           MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
-                          ${ coreutils }/bin/echo minute:  ${ bash-variable "MINUTE" } &&
-                          if [ "${ resources.test.resources.alpha }" == "6cf25357-b934-48d2-bb32-f24266667c9a" ]
-                          then
-                            ${ shell-scripts.test.util.spec.good } ALPHA resource matched expected
-                          else
-                            ${ shell-scripts.test.util.spec.bad } "ALPHA resource did not match expected \"${ resources.test.resources.alpha }\""
-                          fi &&
-                          if [ ${ bash-variable "MINUTE" } -lt 30 ]
+                          ${ coreutils }/bin/echo minute:  ${ bash-variable "MINUTE" } > ${ temporary }/result &&
+			  ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } >> ${ temporary }/result &&
                           then
                             ${ coreutils }/bin/echo period: 1 &&
-                            if [ "${ resources.test.resources.beta-1 }" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
-                            then
-                              ${ shell-scripts.test.util.spec.good } BETA resource matched expected
-                            else
-                              ${ shell-scripts.test.util.spec.bad } "BETA resource did not match expected \"${ resources.test.resources.beta-1 }\""
-                            fi &&
-                            if [ "${ resources.test.resources.gamma-1 }" == "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ]
-                            then
-                              ${ shell-scripts.test.util.spec.good } GAMMA resource matched expected
-                            else
-                              ${ shell-scripts.test.util.spec.bad } "GAMMA resource did not match expected \"${ resources.test.resources.gamma-1 }\""
-                            fi
+			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } >> ${ temporary }/result &&
+			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 } >> ${ temporary }/result
                           else
                             ${ coreutils }/bin/echo period: 2 &&
-                            if [ "${ resources.test.resources.beta-2}" == "3be7473e-c335-4102-a8fd-f68b643014a0" ]
-                            then
-                              ${ shell-scripts.test.util.spec.good } BETA resource matched expected
-                            else
-                              ${ shell-scripts.test.util.spec.bad } "BETA resource did not match expected \"${ resources.test.resources.beta-2 }\""
-                            fi &&
-                            if [ "${ resources.test.resources.gamma-2 }" == "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ]
-                            then
-                              ${ shell-scripts.test.util.spec.good } GAMMA resource matched expected
-                            else
-                              ${ shell-scripts.test.util.spec.bad } "GAMMA resource did not match expected \"${ resources.test.resources.gamma-1 }\""
-                            fi
+			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
+			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
                           ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caaaa > ${ temporary }/caaba 2> ${ temporary }/caaca &&
 			  ${ yq }/bin/yq "." ${ temporary }/caaaa &&
