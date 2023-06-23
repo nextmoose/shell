@@ -512,7 +512,9 @@
                           ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  # ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
+			  ${ coreutils }/bin/echo AAAA &&
 			  ${ yq }/bin/yq '.' ${ temporary }/result &&
+			  ${ coreutils }/bin/echo BBBB &&
 			  ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
 			  ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
 			  if [ $( ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result ) == "true" ]
