@@ -241,7 +241,7 @@
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
-		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
+		      ${ coreutils }/bin/echo "  type: temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
                       if [ -d ${ structure-directory }/temporary ]
                       then
@@ -507,12 +507,8 @@
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
-			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
-			  ${ coreutils }/bin/echo after 1 &&
-                          ${ shell-scripts.structure.release.temporary.directory } &&
-			  ${ coreutils }/bin/echo after 2 &&
+                          ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
 			  ${ yq }/bin/yq --yaml-output "." ${ temporary }/caaaa &&
-			  ${ coreutils }/bin/echo after 3 &&
 			  exit 66 &&
 			  ${ yq } --yaml-output "." ${ temporary }/caaaa &&
 			  if [ $( ${ yq }/bin/yq --raw-output "length" ${ temporary }/caaaa ) == 1 ]
