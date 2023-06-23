@@ -240,6 +240,7 @@
                 directory =
                   { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
                     ''
+	              ${ coreutils }/bin/echo "repair: 0" &&
 		      ${ coreutils }/bin/echo "- " > ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  type: release-temporary" >> ${ temporary }/result &&
 		      ${ coreutils }/bin/echo "  scripts:" >> ${ temporary }/result &&
