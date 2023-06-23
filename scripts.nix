@@ -514,7 +514,7 @@
 			  ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
 			  ${ yq }/bin/yq '.' ${ temporary }/result &&
 			  ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
-			  ${ yq }/bin/yq '. == 0' ${ temporary }/result &&
+			  ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
 			  if [ $( ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result ) == "true" ]
 			  then
 			    ${ coreutils }/bin/echo GOOD &&
