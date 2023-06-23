@@ -135,18 +135,18 @@
                       if [ -d ${ structure-directory }/log ]
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
-                        ${ flock }/bin/flock -s ${ local.numbers.log-directory }
-                        # ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
-                        # ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                        ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
+                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
+                        ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
                       fi
                     '' ;
                 dir =
                  { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
                    ''
                      exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
-                     ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
-                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
-                     ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
+                     ${ flock }/bin/flock -n ${ local.numbers.log-dir }
+                     # ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
+                     # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                    '' ;
                  file =
                    { bash-variable , coreutils , gnused } :
