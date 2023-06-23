@@ -497,14 +497,12 @@
                       in
                         ''
                           MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
-                          ${ coreutils }/bin/echo minute:  ${ bash-variable "MINUTE" } > ${ temporary }/result &&
 			  ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } >> ${ temporary }/result &&
+			  if [ ${ bash-variable "MINUTE" } -lt 30 ]
                           then
-                            ${ coreutils }/bin/echo period: 1 &&
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 } >> ${ temporary }/result
                           else
-                            ${ coreutils }/bin/echo period: 2 &&
 			    ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
 			    ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
                           fi &&
