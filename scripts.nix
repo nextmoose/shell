@@ -136,108 +136,79 @@
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" &&
-                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; > ${ temporary }/result &&
-                        ${ yq }/bin/yq --yaml-output "sorted_by(timestamp,script,key)" ${ temporary }/result
+                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; | ${ yq }/bin/yq --yaml-output "sort_by(.timestamp,.script.key)"
                       fi
                     '' ;
                 dir =
                  { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
                    ''
-                   '' ;
-                dir2 =
-                 { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
-                   ''
                      exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
-                     ${ flock }/bin/flock -n ${ local.numbers.log-dir }
-                     # ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
-                     # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
+                     ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
+                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -name "*.*" -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
+                     ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                    '' ;
                  file =
                    { bash-variable , coreutils , gnused } :
                      ''
                        KEY=${ bash-variable "1##*." } &&
                        ${ coreutils }/bin/echo "-" &&
-		       ${ coreutils }/bin/echo "  script: $( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )" &&
+                       ${ coreutils }/bin/echo "  script: \"$( ${ coreutils }/bin/cat ${ bash-variable 2 }/script )\"" &&
                        ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
-                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n  \2#' ${ bash-variable 1 } &&
+                       ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n    \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
                      '' ;
               } ;
             resource =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , hashes , global , local , shell-scripts , structure-directory } :
+                  { bash-variable , coreutils , findutils , flock , hashes , global , local , shell-scripts , structure-directory , temporary , yq } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE >> ${ bash-variable 1 } &&
                       if [ -d ${ structure-directory }/resource ]
                       then
                         exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
-                        ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
-                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE >> ${ bash-variable 1 } &&
+                        ${ flock }/bin/flock ${ local.numbers.resource-directory } > ${ temporary }/result &&
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } | while read RESOURCE
-                        do
-                          if [ -d ${ bash-variable "RESOURCE" } ]
-                          then
-                            ${ shell-scripts.structure.release.resource.dir } ${ bash-variable "RESOURCE" } ${ bash-variable 1 }
-                          fi
-                        done
-                      fi &&
-                      ${ coreutils }/bin/echo END RELEASE RESOURCE >> ${ bash-variable 1 }
+                        ${ coreutils }/bin/echo "timestamp:  ${ bash-variable global.variables.timestamp }" > ${ temporary }/result &&
+                        ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} \; | ${ yq }/bin/yq --yaml-output "{resources:.}" | ${ yq }/bin/yq --yaml-output "{result:.}"
+                      fi
                     '' ;
                 dir =
-                  { bash-variable , coreutils , dev , findutils , flock , global , shell-scripts } :
+                  { bash-variable , coreutils , dev , findutils , flock , global , gnused , shell-scripts , temporary , yq  } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
                       if [ -d ${ bash-variable 1 } ]
                       then
                         exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
                         ${ flock }/bin/flock ${ global.numbers.resource-dir } &&
-                        ${ coreutils }/bin/echo BEGIN LOCK RELEASE RESOURCE ${ bash-variable 1 } >> ${ bash-variable 2 } &&
-                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.invalidation } {} ${ bash-variable 2 } ${ bash-variable 0 } \; &&
+                        ${ coreutils }/bin/echo "resource: \"$( ${ coreutils }/bin/cat ${ bash-variable 1 }/resource.asc )\"" &&
+                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.invalidation } {} ${ bash-variable 0 } \; | ${ yq }/bin/yq --yaml-output "{invalidations:.}" &&
                         ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read PID_FILE
                         do
-                          ${ coreutils }/bin/echo PID_FILE=${ bash-variable "PID_FILE" } >> ${ bash-variable 2 } &&
                           PID=$( ${ coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) &&
-                          ${ coreutils }/bin/echo PID=${ bash-variable "PID" } >> ${ bash-variable 2 } &&
+                          ${ coreutils }/bin/echo ${ bash-variable "PID" } &&
                           ${ coreutils }/bin/tail --pid ${ bash-variable "PID" } --follow ${ dev.null } &&
                           ${ coreutils }/bin/rm ${ bash-variable "PID_FILE" }
-                        done &&
+                        done | ${ yq }/bin/yq --yaml-output "{pids:.}"
                         if [ -f ${ bash-variable 1 }/release.sh ]
                         then
-                          ${ coreutils }/bin/echo THERE IS A DEFINED RELEASE ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 }
-                          ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 } &&
-                          ${ coreutils }/bin/echo WE USED A DEFINED RELEASE ${ bash-variable 1 }/release.sh >> ${ bash-variable 2 }
+                          ${ bash-variable 1 }/release.sh | ${ gnused }/bin/sed -e "s#^#  #" | ${ yq }/bin/yq --yaml-output "{release: true,result:true}"
                         else
-                          ${ coreutils }/bin/echo THERE IS NO DEFINED RELEASE >> ${ bash-variable 2 }
+                          ${ coreutils }/bin/echo "release: false"
                         fi
-                      fi &&
-                      ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -type f -exec ${ coreutils }/bin/shred --force --remove {} \; &&
-                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
-                      ${ coreutils }/bin/echo END RELEASE ${ bash-variable 1 } >> ${ bash-variable 2 }
+                      fi
                     '' ;
                 invalidation =
-                  { bash-variable , coreutils , findutils , gnugrep , shell-scripts , structure-directory } :
+                  { bash-variable , coreutils , findutils , gnugrep , shell-scripts , structure-directory , yq } :
                     ''
-                      ${ coreutils }/bin/echo BEGIN RELEASE INVALIDATION ${ bash-variable 1 } >> ${ bash-variable 2 } &&
                       INVALIDATION_TOKEN=$( ${ coreutils }/bin/cat ${ bash-variable 1 } ) &&
-                      ${ coreutils }/bin/echo WE WILL USE INVALIDATION_TOKEN ${ bash-variable "INVALIDATION_TOKEN" } >> ${ bash-variable 2 } &&
-                      INVALIDATOR=${ bash-variable 3 } &&
-                      ${ coreutils }/bin/echo WE WILL USE INVALIDATOR ${ bash-variable "INVALIDATOR" } &&
+                      INVALIDATOR=${ bash-variable 2 } &&
                       ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 2 -maxdepth 2 -type l -name "init.sh" -exec ${ gnugrep }/bin/grep --with-filename ${ bash-variable "INVALIDATION_TOKEN" } {} \; | while read GREP
                       do
-                        ${ coreutils }/bin/echo GREP=${ bash-variable "GREP" } &&
                         INVALIDATION_INIT=$( ${ coreutils }/bin/echo ${ bash-variable "GREP" } | ${ coreutils }/bin/cut --delimiter ":" --fields 1 ) &&
-                        ${ coreutils }/bin/echo WE WILL USE INVALIDATION_INIT ${ bash-variable "INVALIDATION_INIT" }
                         INVALIDATION_DIR=$( ${ coreutils }/bin/dirname ${ bash-variable "INVALIDATION_INIT" } ) &&
-                        ${ coreutils }/bin/echo WE WILL USE INVALIDATION_DIR ${ bash-variable "INVALIDATION_DIR" } &&
-                        ${ coreutils }/bin/echo ${ bash-variable "INVALIDATOR" } ${ bash-variable "INVALIDATION_DIR" } ${ bash-variable 2 } >> ${ bash-variable 2 } &&
                         ${ bash-variable "INVALIDATOR" } ${ bash-variable "INVALIDATION_DIR" } ${ bash-variable 2 } &&
                         ${ coreutils }/bin/rm ${ bash-variable 1 }
-                      done >> ${ bash-variable 2 } &&
-                      ${ coreutils }/bin/echo END RELEASE EXCLUSION ${ bash-variable 1 } >> ${ bash-variable 2 }
+                      done | ${ yq }/bin/yq --yaml-output "."
                     '' ;
               } ;
             temporary =
@@ -249,17 +220,16 @@
                       then
                         exec ${ global.numbers.temporary-directory }<>${ structure-directory }/temporary/lock &&
                         ${ flock }/bin/flock -s ${ global.numbers.temporary-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; > ${ temporary }/result
-                      fi &&
-                      ${ yq }/bin/yq --yaml-output "sort" ${ temporary }/result
+                        ${ findutils }/bin/find ${ structure-directory }/temporary -mindepth 1 -maxdepth 1 -type d -exec ${ shell-scripts.structure.release.temporary.dir } {} \; | ${ yq }/bin/yq --yaml-output "sort"
+                      fi
                     '' ;
                 dir =
                   { bash-variable , coreutils , flock , local } :
                     ''
                       exec ${ local.numbers.temporary-dir }<>${ bash-variable 1 }/lock &&
                       ${ flock }/bin/flock -n ${ local.numbers.temporary-dir } &&
-                      ${ coreutils }/bin/echo "- $( ${ coreutils }/bin/cat ${ bash-variable 1 }/script.asc )" &&
-                      # ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
+                      ${ coreutils }/bin/echo "- \"$( ${ coreutils }/bin/cat ${ bash-variable 1 }/script.asc )\"" &&
+                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 } &&
                       ${ coreutils }/bin/true
                     '' ;
               } ;
@@ -291,78 +261,88 @@
               ${ cowsay }/bin/cowsay TESTING ENVIRONMENT 2> ${ dev.null }
             '' ;
         test-resource =
-          { coreutils , dev , shell-scripts , temporary } :
-            ''
-              source ${ shell-scripts.test.util.spec.suite } &&
-              trap cleanup EXIT &&
-              ${ shell-scripts.test.util.resource.setup } &&
-              ${ shell-scripts.test.util.resource.teardown }
+          { coreutils , dev , gnused , shell-scripts , temporary , yq } :
+            let
+              result =
+                {
+                  setup =
+                    {
+                      alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
+                      beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
+                      gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
+                      log =
+                        [
+                          {
+                            script = "{ test } { util } { resource } { alpha } { file }" ;
+                            key = "d020cdc7f37c8659eb3a5144d69a1c246cdbac59f995764999fbe50787d71202c8eed03e9d9811df608fd86801429a92904697510a7d54619e248503e1d3715d" ;
+                            value = "299781ba-a761-443f-a256-2e5eb84c1808" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { beta } { salt-2 }" ;
+                            key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                            value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { beta } { file }" ;
+                            key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
+                            value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { gamma } { salt-2 }" ;
+                            key = "4e2621c558ecfa2055e7a18e45b4a0e485e931e86ba0a68deae112e26f8fdee06867faa97a7b4781c1d72b75bdb52ebb1388225ef170e93d05f143f5e39564f4" ;
+                            value = "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { beta } { salt-1 }" ;
+                            key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                            value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { beta } { file }" ;
+                            key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
+                            value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
+                          }
+                          {
+                            script = "{ test } { util } { resource } { gamma } { file }" ;
+                            key = "f93ec10213044c288c7e28a550b178d597cd36ed445bfa8eda51a1eaec16f32d345ddee8ea26603bcc18f30f6b159a750ce7c620d89af90e64d53d2a61920e6c" ;
+                            value = "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01" ;
+                          }
+                        ] ;
+                      temporary =
+                        [
+                          "{ structure } { release } { log } { directory }"
+                          "{ structure } { release } { temporary } { directory }"
+                          "{ test } { test-resource }"
+                          "{ test } { util } { resource } { alpha } { file }"
+                          "{ test } { util } { resource } { beta } { salt-2 }"
+                          "{ test } { util } { resource } { gamma } { salt-2 }"
+                          "{ test } { util } { resource } { setup }"
+                        ] ;
+                    } ;
+                  teardown =
+                    {
+                    } ;
+                } ;
+              in
+                ''
+                  source ${ shell-scripts.test.util.spec.suite } &&
+                  trap cleanup EXIT &&
+                  ${ shell-scripts.test.util.resource.setup } | ${ yq }/bin/yq --yaml-output "{setup:.}" > ${ temporary }/raw &&
+                  ${ coreutils }/bin/sleep 2s &&
+                  ${ shell-scripts.test.util.resource.teardown } | ${ yq }/bin/yq --yaml-output "{teardown:.}" >> ${ temporary }/raw &&
+                  ${ gnused }/bin/sed \
+                    -e 's#{ test } { util } { resource } { beta } { salt-1 }#{ test } { util } { resource } { beta } { salt }#' \
+                    -e 's#{ test } { util } { resource } { beta } { salt-2 }#{ test } { util } { resource } { beta } { salt }#' \
+                    -e 's#{ test } { util } { resource } { gamma } { salt-1 }#{ test } { util } { resource } { gamma } { salt }#' \
+                    -e 's#{ test } { util } { resource } { gamma } { salt-2 }#{ test } { util } { resource } { gamma } { salt }#' \
+                    -e "s#{ test } { resources } { gamma-1 }#{ test } { resources } { gamma-1 }#" \
+                    -e "s#{ test } { resources } { gamma-2 }#{ test } { resources } { gamma-2 }#" \
+                    -e "w${ temporary }/result" \
+                    ${ temporary }/raw &&
+		  ${ coreutils }/bin/cat ${ temporary }/raw
             '' ;
         util =
           {
-            enrich =
-              { bash-variable , nodejs , temporary , yq } :
-                let
-                  enrich =
-                    ''
-                      const fs = require("fs");
-                      const simplify = ( element, index, array ) => ({key : element.key, value : element.value.trim()}) ;
-                      const resources = {
-                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f" : "alpha" ,
-                        "b25d9a99-3a63-44be-b4f4-d010efaa1779": "alpha" ,
-                        "2cff5545-719e-4dde-af83-0605176a70c4": "beta" ,
-                        "23934ef5-7e31-4ab1-9f8d-c28d4f530fd8": "beta" ,
-                        "d4332c59-13a7-40ff-afd5-f9e39a77e306": "beta" ,
-                        "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01": "gamma" ,
-                        "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "gamma" ,
-                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "gamma"
-                      } ;
-                      const methods = {
-                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f" : "init" ,
-                        "b25d9a99-3a63-44be-b4f4-d010efaa1779": "release" ,
-                        "2cff5545-719e-4dde-af83-0605176a70c4": "init" ,
-                        "23934ef5-7e31-4ab1-9f8d-c28d4f530fd8": "release" ,
-                        "d4332c59-13a7-40ff-afd5-f9e39a77e306": "salt" ,
-                        "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01": "init" ,
-                        "a3cbc1cd-4f00-4317-ad85-db998d3b2783": "release" ,
-                        "a12e653e-e7f7-4de1-91ce-a51153e9e52f": "salt"
-                      } ;
-                      const justifications =
-                        {
-                          setup : [
-                            "this is the alpha init",
-                            "this is the beta salt",
-                            "this is the beta init",
-                            "this is the gamma salt",
-                            "this is the beta salt"
-                            "this is the gamma init"
-                          ] ,
-                          teardown : [
-                            "this is the first beta being salted for identification of resources to invalidate" ,
-                            "this is the second beta being salted for identifcation of resources to invalidate" ,
-                            "this is the first gamma being salted for identification of resources to invalidate" ,
-                            "this is the second gamma being salted for identification of resources to invalidate" ,
-                            "we have identified alpha for invalidation but we must first invalidate gamma" ,
-                            "we are finally invalidating alpha"
-                          ] ,
-                        } ;
-                      const justify = ( index , array ) => {
-                        if(array.length === justifications.setup.length) {
-                          return justifications.setup[index] ;
-                        else if(array.length === justifications.teardown.length ) {
-                          return justifications.teardown[index];
-                        }else {
-                          return "" ;
-                        }
-                      } ;
-                      const resourcify = ( element , index , array ) => ({ index, key: element.key, value: element.value , resource:  resources[element.value] , justification: justifications[index] }) ;
-                      fs.readFile(process.argv[2], "utf-8", (err, success) => console.log(JSON.stringify(JSON.parse(success).map(simplify).map(resourcify).map(methodify))));
-                    '' ;
-                  in
-                    ''
-                      ${ yq }/bin/yq "sort_by(.timestamp)" ${ bash-variable 1 } > ${ temporary }/data.json &&
-                      ${ nodejs }/bin/node ${ builtins.toFile "enrich.js" enrich } ${ temporary }/data.json
-                    '' ;
             locks =
               {
                 alpha =
@@ -419,16 +399,16 @@
                     file =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 6cf25357-b934-48d2-bb32-f24266667c9a > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 31d64c0f-777e-480a-88a2-6772fa44e801 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
-                          ${ coreutils }/bin/echo 299781ba-a761-443f-a256-2e5eb84c1808 > ${ log "b2323076-91b9-48c6-899d-290864fff828" }
+                          ${ coreutils }/bin/echo -n 6cf25357-b934-48d2-bb32-f24266667c9a > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo -n 31d64c0f-777e-480a-88a2-6772fa44e801 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
+                          ${ coreutils }/bin/echo -n 299781ba-a761-443f-a256-2e5eb84c1808 > ${ log "b2323076-91b9-48c6-899d-290864fff828" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 1e733714-3ab1-4475-933c-53ecd415bead &&
-                          ${ coreutils }/bin/echo 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152 &&
-                          ${ coreutils }/bin/echo b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" }
+                          ${ coreutils }/bin/echo -n 1e733714-3ab1-4475-933c-53ecd415bead &&
+                          ${ coreutils }/bin/echo -n 1f02f307-fc6a-490a-aea8-e89aa1bae770 > ${ temporary }/adb95592-37d5-404c-bf75-147091101152 &&
+                          ${ coreutils }/bin/echo -n b25d9a99-3a63-44be-b4f4-d010efaa1779 > ${ log "d85c557e-a71f-4eb0-a6e4-99309aa6f68b" }
                         '' ;
                   } ;
                 beta =
@@ -436,30 +416,30 @@
                     file =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
-                          ${ coreutils }/bin/echo 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" }
+                          ${ coreutils }/bin/echo -n 3be7473e-c335-4102-a8fd-f68b643014a0 > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo -n 792d7940-4d42-426e-ad94-67cdd9f53d59 > ${ temporary }/4c3eefc2-3c42-4a1f-b30e-73318d0a6c16 &&
+                          ${ coreutils }/bin/echo -n 2cff5545-719e-4dde-af83-0605176a70c4 > ${ log "fef3c013-7df3-4cb9-b117-067340b64f3b" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo 657ee7bd-9a7c-4d8a-b1ee-11ccbc2a36cb &&
-                          ${ coreutils }/bin/echo 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
-                          ${ coreutils }/bin/echo 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
+                          ${ coreutils }/bin/echo -n 657ee7bd-9a7c-4d8a-b1ee-11ccbc2a36cb &&
+                          ${ coreutils }/bin/echo -n 9f737ac5-fbee-445f-9bbf-e273ae9793b4 > ${ temporary }/4400c8b1-3560-498a-aa0b-56bfad5204da &&
+                          ${ coreutils }/bin/echo -n 23934ef5-7e31-4ab1-9f8d-c28d4f530fd8 > ${ log "921188f8-3494-488f-adfc-4178e5b5c608" }
                         '' ;
                     salt-1 =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
-                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
+                          ${ coreutils }/bin/echo -n $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo -n ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo -n d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
                         '' ;
                     salt-2 =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
-                          ${ coreutils }/bin/echo ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
-                          ${ coreutils }/bin/echo d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
+                          ${ coreutils }/bin/echo -n $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo -n ee5bcfa3-50ea-4297-8864-7813f0ed0e99 > ${ temporary }/5d7ec497-ac05-4788-9d67-445d5a3bef6e &&
+                          ${ coreutils }/bin/echo -n d4332c59-13a7-40ff-afd5-f9e39a77e306 > ${ log "9f8e5ead-8d44-492c-8842-628ae3be773e" }
                         '' ;
                   } ;
                 gamma =
@@ -467,145 +447,54 @@
                     file =
                       { bash-variable , coreutils , log , resources , temporary } :
                         ''
-                          ${ coreutils }/bin/echo ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
-                          ${ coreutils }/bin/echo 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
-                          ${ coreutils }/bin/echo 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
+                          ${ coreutils }/bin/echo -n ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo -n 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
+                          ${ coreutils }/bin/echo -n 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
                         '' ;
                     release =
                       { coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo e16a036f-9e55-4be8-aa81-72bb00fb3c58 &&
-                          ${ coreutils }/bin/echo 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
-                          ${ coreutils }/bin/echo a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
+                          ${ coreutils }/bin/echo -n e16a036f-9e55-4be8-aa81-72bb00fb3c58 &&
+                          ${ coreutils }/bin/echo -n 2e11aad3-ed4f-4ef2-8a4b-358bf2dae4b0 > ${ temporary }/339f1af4-179a-409b-b0b5-e9925fff3be4 &&
+                          ${ coreutils }/bin/echo -n a3cbc1cd-4f00-4317-ad85-db998d3b2783 > ${ log "b05f75f7-59eb-4e9a-af0d-141b0bc672f6" }
                         '' ;
                     salt-1 =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
-                          ${ coreutils }/bin/echo 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
-                          ${ coreutils }/bin/echo a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
+                          ${ coreutils }/bin/echo -n $(( ( ${ bash-variable 1 } + ( 60 * 15 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo -n 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
+                          ${ coreutils }/bin/echo -n a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
                         '' ;
                     salt-2 =
                       { bash-variable , coreutils , log , temporary } :
                         ''
-                          ${ coreutils }/bin/echo $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
-                          ${ coreutils }/bin/echo 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
-                          ${ coreutils }/bin/echo a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
+                          ${ coreutils }/bin/echo -n $(( ( ${ bash-variable 1 } + ( 60 * 45 ) ) / ( 60 * 60 ) )) &&
+                          ${ coreutils }/bin/echo -n 508277a1-7d82-42fa-acaa-248c93a1b503 > ${ temporary }/38509095-2a0f-4f16-8b18-4fbc728badb5 &&
+                          ${ coreutils }/bin/echo -n a12e653e-e7f7-4de1-91ce-a51153e9e52f > ${ log "80f3a9cc-69ff-44d9-9685-b174dfad35e9" }
                         '' ;
                   } ;
                 setup =
-                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , resources , shell-scripts , structure-directory , strip , temporary , yq } :
-                    let
-                      result =
-                        {
-                          alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
-                          beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
-                          gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
-                          log = [ ] ;
-                          temporary = [ 27 29 31 31 33 35 ] ;
-                        } ;
-                      in
-                        ''
-                          MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
-                          ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } >> ${ temporary }/result &&
-                          if [ ${ bash-variable "MINUTE" } -lt 30 ]
-                          then
-                            ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } >> ${ temporary }/result &&
-                            ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 } >> ${ temporary }/result
-                          else
-                            ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } >> ${ temporary }/result &&
-                            ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 } >> ${ temporary }/result
-                          fi &&
-                          ${ shell-scripts.structure.release.temporary.directory } > ${ temporary }/caaaa 2> ${ temporary }/caaba &&
-                          ${ yq }/bin/yq --yaml-output "{temporary: .}" ${ temporary }/caaaa >> ${ temporary }/result &&
-			  ${ shell-scripts.structure.release.log.directory } > ${ temporary }/cbaaa 2> ${ temporary }/cbaba &&
-                          ${ yq }/bin/yq --yaml-output "." ${ temporary }/result &&
-                          ${ coreutils }/bin/echo '${ builtins.toJSON result }' && 
-                          ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result &&
-                          if [ $( ${ yq }/bin/yq '. == ${ builtins.toJSON result }' ${ temporary }/result ) == "true" ]
-                          then
-                            ${ coreutils }/bin/echo GOOD &&
-                            exit 66
-                          else
-                            ${ coreutils }/bin/echo BAD &&
-                            exit 64
-                          fi
-                        '' ;
+                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , jq , resources , shell-scripts , structure-directory , strip , temporary , yq } :
+                    ''
+                      MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
+                      ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } &&
+                      if [ ${ bash-variable "MINUTE" } -lt 30 ]
+                      then
+                        ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-1 } &&
+                        ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-1 }
+                      else
+                        ${ coreutils }/bin/echo beta: ${ resources.test.resources.beta-2 } &&
+                        ${ coreutils }/bin/echo gamma: ${ resources.test.resources.gamma-2 }
+                      fi &&
+                      ( ${ shell-scripts.structure.release.temporary.directory } > >( ${ yq }/bin/yq --yaml-output "{out:.}" ) 2> >( ${ yq }/bin/yq --yaml-output "{err:.}" ) ) > >( ${ yq }/bin/yq --yaml-output {temporary:.} ) &&
+                      ( ${ shell-scripts.structure.release.log.directory } > >( ${ yq }/bin/yq --yaml-output "{out:.}" ) 2> >( ${ yq }/bin/yq --yaml-output {err:.} ) ) > >( ${ yq }/bin/yq --yaml-output "{log:.}" )
+                    '' ;
                 teardown =
                   { coreutils , jq , shell-scripts , temporary , yq } :
                     ''
-                      ${ coreutils }/bin/echo SLEEP 2s &&
-                      ${ coreutils }/bin/sleep 2s &&
-                      ${ coreutils }/bin/echo SLEPT 2s &&
-                      ${ shell-scripts.structure.release.resource.directory } ${ temporary }/ccba > ${ temporary }/ccbb 2> ${ temporary }/ccbc &&
-                      ${ coreutils }/bin/echo REPAIR 02 &&
-                      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caba > ${ temporary }/cabb 2> ${ temporary }/cabc &&
-                      ${ coreutils }/bin/echo REPAIR 03 &&
-                      ${ shell-scripts.test.util.spec.good } release temporary is good &&
-                      if [ ! -s ${ temporary }/cabb ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } release temporary did not out
-                      else
-                        ${ shell-scripts.test.util.spec.bad } release temporary outed
-                      fi &&
-                      if [ ! -s ${ temporary }/cabc ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } release temporary did not error
-                      else
-                        ${ shell-scripts.test.util.spec.bad } release temporary errored
-                      fi &&
-                      ${ shell-scripts.structure.release.temporary.directory } ${ temporary }/caba > ${ temporary }/cabb 2> ${ temporary }/cabc &&
-                      ${ shell-scripts.structure.release.log.directory } ${ temporary }/cbba ${ temporary }/cbbb > ${ temporary }/cbbc 2> ${ temporary }/cbbd &&
-                      ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
-                      ${ shell-scripts.test.util.enrich } ${ temporary }/cbba > ${ temporary }/cbbab &&
-                      ${ coreutils }/bin/cat ${ temporary }/cbbab &&
-                      ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[0].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the first logged item is the calculation of the first beta salt
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[1].value" ${ temporary }/cbbab ) == "d4332c59-13a7-40ff-afd5-f9e39a77e306" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the second logged item is the calculation of the second beta salt - the same as the first
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[2].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the third logged item is the calculation of the first gamma salt
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[3].value" ${ temporary }/cbbab ) == "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the fourth logged item is the calculation of the second gamma salt - the same as the first
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[4].value" ${ temporary }/cbbab ) == "a3cbc1cd-4f00-4317-ad85-db998d3b2783" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the fifth logged item is the gamma release
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output ".[5].value" ${ temporary }/cbbab ) == "b25d9a99-3a63-44be-b4f4-d010efaa1779" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } the sixth logged item is the alpha release, notice that the gamma release preceded the alpha release and the beta release never happened
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      if [ $( ${ jq }/bin/jq --raw-output "length" ${ temporary }/cbbab ) == "6" ]
-                      then
-                        ${ shell-scripts.test.util.spec.good } I have accounted for every log
-                      else
-                        ${ shell-scripts.test.util.spec.bad }
-                      fi &&
-                      # ${ coreutils }/bin/echo NEXT &&
-                      # ${ yq }/bin/yq --yaml-output "sort_by(.timestamp)" ${ temporary }/cbba &&
-                      # ${ coreutils }/bin/cat ${ temporary }/ccba
-                      ${ coreutils }/bin/true
+                      ( ${ shell-scripts.structure.release.resource.directory } > >( ${ yq }/bin/yq --yaml-output "{out:.}" ) 2> >( ${ yq }/bin/yq --yaml-output "{err:.}" ) ) > >( ${ yq }/bin/yq --yaml-output "{resource:.}" ) &&
+                      ( ${ shell-scripts.structure.release.temporary.directory } > >( ${ yq }/bin/yq --yaml-output "{out:.}" ) 2> >( ${ yq }/bin/yq --yaml-output "{err:.}" ) ) > >( ${ yq }/bin/yq --yaml-output {temporary:.} ) &&
+                      ( ${ shell-scripts.structure.release.log.directory } > >( ${ yq }/bin/yq --yaml-output "{out:.}" ) 2> >( ${ yq }/bin/yq --yaml-output {err:.} ) ) > >( ${ yq }/bin/yq --yaml-output "{log:.}" )
                     '' ;
               } ;
           } ;

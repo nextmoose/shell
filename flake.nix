@@ -25,6 +25,7 @@
                   inputs ? null ,
                   knull ? "/dev/null" ,
                   nixpkgs ? _.nixpkgs ,
+		  private ? null ,
                   strip ? _.strip ,
                   structure-directory ,
                   sudo ? "/usr/bin/sudo" ,
@@ -171,6 +172,7 @@
                                                                     release = salted.release ;
                                                                     show = unsalted.show ;
                                                                     structure-directory = structure-directory ;
+								    track = track ;
 								    use-output = salted.use-output ;
                                                                     type = if salted.use-output then "output" else "file" ;
                                                                   } ;
@@ -242,6 +244,7 @@
                                                   local = local ;
                                                   log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { invocation } : invocation) ( track : track.reduced ) ( track : track.reduced ) ;
+						  private = private ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) global ;
 						  strip = strip ;
                                                   structure-directory = structure-directory ;
