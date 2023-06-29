@@ -1,4 +1,4 @@
-{ bash-variable , coreutils , flock , global , hash , init , invalidation-token , make-directory , permissions , release , structure-directory , show , type , use-output } :
+{ bash-variable , coreutils , flock , global , hash , init , invalidation-token , make-directory , permissions , release , structure-directory , show , track , type , use-output } :
   ''
     HASH=${ hash } &&
     if [ ! -d ${ structure-directory }/resource/${ bash-variable "HASH" } ]
@@ -24,6 +24,8 @@
     PARENT_PID_FILE=$( ${ coreutils }/bin/mktemp --suffix .pid ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
     ${ coreutils }/bin/echo ${ bash-variable 2 } > ${ bash-variable "PARENT_PID_FILE" } &&
     ${ coreutils }/bin/chmod 0400 ${ bash-variable "PARENT_PID_FILE" } &&
+    ${ coreutils }/bin/echo "${ track.qualified-name }" >  ${ structure-directory }/resource/${ bash-variable "HASH" }/resource.asc &&
+    ${ coreutils }/bin/chmod 0400  ${ structure-directory }/resource/${ bash-variable "HASH" }/resource &&
     INVALIDATION_TOKEN_FILE=$( ${ coreutils }/bin/mktemp --dry-run --suffix .invalidation ${ structure-directory }/resource/${ bash-variable "HASH" }/XXXXXXXX ) &&
     ${ coreutils }/bin/echo ${ invalidation-token } > ${ bash-variable "INVALIDATION_TOKEN_FILE" } &&
     ${ coreutils }/bin/chmod 0400 ${ bash-variable "INVALIDATION_TOKEN_FILE" } &&
