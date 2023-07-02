@@ -130,29 +130,29 @@
             log =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , gnused , local , shell-scripts , structure-directory , temporary , yq } :
+                  { bash-variable , coreutils , findutils , flock , gnused , local , shell-scripts , structure-directory , yq } :
                     ''
                       if [ -d ${ structure-directory }/log ]
                       then
                         exec ${ local.numbers.log-directory }<>${ structure-directory }/log/lock &&
                         ${ flock }/bin/flock -s ${ local.numbers.log-directory } &&
-                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; | ${ yq }/bin/yq --yaml-output "sort_by(.timestamp,.script.key)"
+                        ${ findutils }/bin/find ${ structure-directory }/log -mindepth 1 -maxdepth 1 -type d -name "????????" -exec ${ shell-scripts.structure.release.log.dir } {} \; | ${ yq }/bin/yq --yaml-output "sort_by(.timestamp,.script,.key)"
                       fi
                     '' ;
                 dir =
-                 { bash-variable , coreutils , findutils , flock , local , shell-scripts } :
+                 { bash-variable , coreutils , findutils , flock , local , shell-scripts , yq } :
                    ''
                      exec ${ local.numbers.log-dir }<>${ bash-variable 1 }/lock &&
                      ${ flock }/bin/flock -n ${ local.numbers.log-dir } &&
-                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*" -type f -name "*.*" -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; &&
+                     ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -name "*.*.log" -type f -name "*.*" -exec ${ shell-scripts.structure.release.log.file } {} ${ bash-variable 1 } \; | ${ yq }/bin/yq --yaml-output "flatten | sort_by(.timestamp,.script,.key)" &&
                      ${ coreutils }/bin/rm --recursive --force ${ bash-variable 1 }
                    '' ;
                  file =
                    { bash-variable , coreutils , gnused } :
                      ''
-                       KEY=${ bash-variable "1##*." } &&
+                       KEY=$( ${ coreutils }/bin/echo ${ bash-variable 1 } | ${ gnused }/bin/sed 's#^.*[.]\(.*\)[.].*#\1#' ) &&
                        ${ coreutils }/bin/echo "-" &&
-                       ${ coreutils }/bin/echo "  script: \"$( ${ coreutils }/bin/cat ${ bash-variable 2 }/script )\"" &&
+                       ${ coreutils }/bin/echo "  script: \"$( ${ coreutils }/bin/cat ${ bash-variable 2 }/script.asc )\"" &&
                        ${ coreutils }/bin/echo "  key: ${ bash-variable "KEY" }" &&
                        ${ gnused }/bin/sed -e 's#^\([0-9]*.[0-9]*\) \(.*\)$#  timestamp: \1\n  value: >\n    \2#' ${ bash-variable 1 } &&
                        ${ coreutils }/bin/rm ${ bash-variable 1 }
@@ -161,20 +161,20 @@
             resource =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , hashes , global , local , shell-scripts , structure-directory , temporary , yq } :
+                  { bash-variable , coreutils , findutils , flock , hashes , global , local , shell-scripts , structure-directory , yq } :
                     ''
                       if [ -d ${ structure-directory }/resource ]
                       then
                         exec ${ local.numbers.resource-directory }<>${ structure-directory }/resource/lock &&
-                        ${ flock }/bin/flock ${ local.numbers.resource-directory } > ${ temporary }/result &&
+                        ${ flock }/bin/flock ${ local.numbers.resource-directory } &&
                         export ${ local.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
                         export ${ global.variables.timestamp }=$( ${ coreutils }/bin/date +%s ) &&
-                        ${ coreutils }/bin/echo "timestamp:  ${ bash-variable global.variables.timestamp }" > ${ temporary }/result &&
+                        ${ coreutils }/bin/echo "timestamp:  ${ bash-variable global.variables.timestamp }" &&
                         ${ findutils }/bin/find ${ structure-directory }/resource -mindepth 1 -maxdepth 1 -type d ${ hashes } -exec ${ shell-scripts.structure.release.resource.dir } {} \; | ${ yq }/bin/yq --yaml-output "{resources:.}" | ${ yq }/bin/yq --yaml-output "{result:.}"
                       fi
                     '' ;
                 dir =
-                  { bash-variable , coreutils , dev , findutils , flock , global , gnused , shell-scripts , temporary , yq  } :
+                  { bash-variable , coreutils , dev , findutils , flock , global , gnused , shell-scripts , yq  } :
                     ''
                       if [ -d ${ bash-variable 1 } ]
                       then
@@ -191,7 +191,8 @@
                         done | ${ yq }/bin/yq --yaml-output "{pids:.}"
                         if [ -f ${ bash-variable 1 }/release.sh ]
                         then
-                          ${ bash-variable 1 }/release.sh | ${ gnused }/bin/sed -e "s#^#  #" | ${ yq }/bin/yq --yaml-output "{release: true,result:true}"
+                          ${ coreutils }/bin/echo "release: >" &&
+                          ${ bash-variable 1 }/release.sh | ${ gnused }/bin/sed -e "s#^#  #"
                         else
                           ${ coreutils }/bin/echo "release: false"
                         fi
@@ -214,7 +215,7 @@
             temporary =
               {
                 directory =
-                  { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory , temporary } :
+                  { bash-variable , coreutils , findutils , flock , yq , global , shell-scripts , structure-directory } :
                     ''
                       if [ -d ${ structure-directory }/temporary ]
                       then
@@ -267,79 +268,159 @@
                 {
                   setup =
                     {
-                      alpha = "6cf25357-b934-48d2-bb32-f24266667c9a" ;
+                      alpha= "6cf25357-b934-48d2-bb32-f24266667c9a" ;
                       beta = "3be7473e-c335-4102-a8fd-f68b643014a0" ;
                       gamma = "6cf25357-b934-48d2-bb32-f24266667c9a 3be7473e-c335-4102-a8fd-f68b643014a0" ;
-                      log =
-                        [
-                          {
-                            script = "{ test } { util } { resource } { alpha } { file }" ;
-                            key = "d020cdc7f37c8659eb3a5144d69a1c246cdbac59f995764999fbe50787d71202c8eed03e9d9811df608fd86801429a92904697510a7d54619e248503e1d3715d" ;
-                            value = "299781ba-a761-443f-a256-2e5eb84c1808" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { beta } { salt-2 }" ;
-                            key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
-                            value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { beta } { file }" ;
-                            key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
-                            value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { gamma } { salt-2 }" ;
-                            key = "4e2621c558ecfa2055e7a18e45b4a0e485e931e86ba0a68deae112e26f8fdee06867faa97a7b4781c1d72b75bdb52ebb1388225ef170e93d05f143f5e39564f4" ;
-                            value = "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { beta } { salt-1 }" ;
-                            key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
-                            value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { beta } { file }" ;
-                            key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
-                            value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
-                          }
-                          {
-                            script = "{ test } { util } { resource } { gamma } { file }" ;
-                            key = "f93ec10213044c288c7e28a550b178d597cd36ed445bfa8eda51a1eaec16f32d345ddee8ea26603bcc18f30f6b159a750ce7c620d89af90e64d53d2a61920e6c" ;
-                            value = "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01" ;
-                          }
-                        ] ;
                       temporary =
-                        [
-                          "{ structure } { release } { log } { directory }"
-                          "{ structure } { release } { temporary } { directory }"
-                          "{ test } { test-resource }"
-                          "{ test } { util } { resource } { alpha } { file }"
-                          "{ test } { util } { resource } { beta } { salt-2 }"
-                          "{ test } { util } { resource } { gamma } { salt-2 }"
-                          "{ test } { util } { resource } { setup }"
-                        ] ;
+                        {
+                          err = null ;
+                          out =
+                            [
+                              "{ test } { util } { resource } { alpha } { file }"
+                              "{ test } { util } { resource } { beta } { file }"
+                              "{ test } { util } { resource } { beta } { salt }"
+                              "{ test } { util } { resource } { beta } { salt }"
+                              "{ test } { util } { resource } { gamma } { file }"
+                              "{ test } { util } { resource } { gamma } { salt }"
+                            ] ;
+                        } ;
+                      log =
+                        {
+                          err = null ;
+                          out =
+                            [
+                              {
+                                script = "{ test } { util } { resource } { alpha } { file }" ;
+                                key = "d020cdc7f37c8659eb3a5144d69a1c246cdbac59f995764999fbe50787d71202c8eed03e9d9811df608fd86801429a92904697510a7d54619e248503e1d3715d" ;
+                                value = "299781ba-a761-443f-a256-2e5eb84c1808" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { beta } { salt }" ;
+                                key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                                value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                              }
+			      {
+                                script = "{ test } { util } { resource } { beta } { file }" ;
+                                key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
+                                value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { gamma } { salt }" ;
+                                key = "4e2621c558ecfa2055e7a18e45b4a0e485e931e86ba0a68deae112e26f8fdee06867faa97a7b4781c1d72b75bdb52ebb1388225ef170e93d05f143f5e39564f4" ;
+                                value = "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { beta } { salt }" ;
+                                key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                                value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                              }
+			      {
+                                script = "{ test } { util } { resource } { gamma } { file }" ;
+                                key = "f93ec10213044c288c7e28a550b178d597cd36ed445bfa8eda51a1eaec16f32d345ddee8ea26603bcc18f30f6b159a750ce7c620d89af90e64d53d2a61920e6c" ;
+                                value = "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01" ;
+                              }
+                            ] ;
+                        } ;
                     } ;
                   teardown =
                     {
+                      resource =
+                        {
+                          err = null ;
+                          out =
+                            {
+                              result =
+                                {
+                                  resources =
+                                    {
+                                      resource = "{ test } { resources } { alpha }" ;
+                                      invalidations =
+                                        {
+                                          resource = "{ test } { resources } { gamma }" ;
+                                          release = "e16a036f-9e55-4be8-aa81-72bb00fb3c58" ;
+                                        } ;
+                                      release = "1e733714-3ab1-4475-933c-53ecd415bead" ;
+                                    } ;
+                                } ; 
+                              } ;
+                        } ;
+                      temporary =
+                        {
+                          err = null ;
+                          out =
+                            [
+                              "{ test } { util } { resource } { alpha } { release }"
+                              "{ test } { util } { resource } { beta } { salt }"
+                              "{ test } { util } { resource } { beta } { salt }"
+                              "{ test } { util } { resource } { gamma } { release }"
+                              "{ test } { util } { resource } { gamma } { release }"
+                              "{ test } { util } { resource } { gamma } { salt }"
+                              "{ test } { util } { resource } { gamma } { salt }"
+                            ] ;
+                        } ;
+                      log =
+                        {
+                          err = null ;
+                          out =
+                            [
+                              {
+                                script = "{ test } { util } { resource } { alpha } { file }" ;
+                                key = "d020cdc7f37c8659eb3a5144d69a1c246cdbac59f995764999fbe50787d71202c8eed03e9d9811df608fd86801429a92904697510a7d54619e248503e1d3715d" ;
+                                value = "299781ba-a761-443f-a256-2e5eb84c1808" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { beta } { salt }" ;
+                                key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                                value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { beta } { file }" ;
+                                key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
+                                value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { gamma } { salt }" ;
+                                key = "4e2621c558ecfa2055e7a18e45b4a0e485e931e86ba0a68deae112e26f8fdee06867faa97a7b4781c1d72b75bdb52ebb1388225ef170e93d05f143f5e39564f4" ;
+                                value = "a12e653e-e7f7-4de1-91ce-a51153e9e52f" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { beta } { salt }" ;
+                                key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
+                                value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
+                              }
+                              {
+                                script = "{ test } { util } { resource } { gamma } { file }" ;
+                                key = "f93ec10213044c288c7e28a550b178d597cd36ed445bfa8eda51a1eaec16f32d345ddee8ea26603bcc18f30f6b159a750ce7c620d89af90e64d53d2a61920e6c" ;
+                                value = "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01" ;
+                              }
+                            ] ;
+                         } ;
                     } ;
                 } ;
               in
                 ''
-                  source ${ shell-scripts.test.util.spec.suite } &&
-                  trap cleanup EXIT &&
-                  ${ shell-scripts.test.util.resource.setup } | ${ yq }/bin/yq --yaml-output "{setup:.}" > ${ temporary }/raw &&
+                  ${ shell-scripts.test.util.resource.setup } | ${ yq }/bin/yq --yaml-output "{setup:.}" > ${ temporary }/t0 &&
                   ${ coreutils }/bin/sleep 2s &&
-                  ${ shell-scripts.test.util.resource.teardown } | ${ yq }/bin/yq --yaml-output "{teardown:.}" >> ${ temporary }/raw &&
+                  ${ shell-scripts.test.util.resource.teardown } | ${ yq }/bin/yq --yaml-output "{teardown:.}" >> ${ temporary }/t0 &&
                   ${ gnused }/bin/sed \
                     -e 's#{ test } { util } { resource } { beta } { salt-1 }#{ test } { util } { resource } { beta } { salt }#' \
                     -e 's#{ test } { util } { resource } { beta } { salt-2 }#{ test } { util } { resource } { beta } { salt }#' \
                     -e 's#{ test } { util } { resource } { gamma } { salt-1 }#{ test } { util } { resource } { gamma } { salt }#' \
                     -e 's#{ test } { util } { resource } { gamma } { salt-2 }#{ test } { util } { resource } { gamma } { salt }#' \
-                    -e "s#{ test } { resources } { gamma-1 }#{ test } { resources } { gamma-1 }#" \
-                    -e "s#{ test } { resources } { gamma-2 }#{ test } { resources } { gamma-2 }#" \
-                    -e "w${ temporary }/result" \
-                    ${ temporary }/raw &&
-		  ${ coreutils }/bin/cat ${ temporary }/raw
+                    -e 's#{ test } { util } { resource } { gamma } { file-1 }#{ test } { util } { resource } { gamma } { file }#' \
+                    -e 's#{ test } { util } { resource } { gamma } { file-2 }#{ test } { util } { resource } { gamma } { file }#' \
+                    -e 's#{ test } { resources } { gamma-1 }#{ test } { resources } { gamma }#' \
+                    -e 's#{ test } { resources } { gamma-2 }#{ test } { resources } { gamma }#' \
+                    -e "w${ temporary }/t1" \
+                    ${ temporary }/t0 > ${ dev.null } &&
+                  ${ yq }/bin/yq --yaml-output "{setup:{alpha:.setup.alpha,beta:.setup.beta,gamma:.setup.gamma,temporary:{err:.setup.temporary.err,out:.setup.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}},teardown:{resource:{err:.teardown.resource.err,out:{result:{resources:{resource:.teardown.resource.out.result.resources.resource,invalidations:{resource:.teardown.resource.out.result.resources.invalidations.resource,release:.teardown.resource.out.result.resources.invalidations.release},release:.teardown.resource.out.result.resources.release}}}},temporary:{err:.teardown.temporary.err,out:.teardown.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}}}" ${ temporary }/t1 > ${ temporary }/t2 &&
+                  if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/t2 ) == true ]
+                  then
+                    ${ yq }/bin/yq --yaml-output "." ${ temporary }/t0
+                  else
+                    ${ yq }/bin/yq --yaml-output '{observed:.,expected:${ builtins.toJSON result }}' ${ temporary }/t2 &&
+                    exit 64
+                  fi
             '' ;
         util =
           {
@@ -444,10 +525,17 @@
                   } ;
                 gamma =
                   {
-                    file =
+                    file-1 =
                       { bash-variable , coreutils , log , resources , temporary } :
                         ''
                           ${ coreutils }/bin/echo -n ${ resources.test.resources.alpha } ${ resources.test.resources.beta-1 } > ${ bash-variable 1 } &&
+                          ${ coreutils }/bin/echo -n 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
+                          ${ coreutils }/bin/echo -n 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
+                        '' ;
+                    file-2 =
+                      { bash-variable , coreutils , log , resources , temporary } :
+                        ''
+                          ${ coreutils }/bin/echo -n ${ resources.test.resources.alpha } ${ resources.test.resources.beta-2 } > ${ bash-variable 1 } &&
                           ${ coreutils }/bin/echo -n 5d37daae-afd5-4717-bd89-3746c2f90dd2 > ${ temporary }/63abb11d-eedb-4500-8dd9-8fef3fb569e6 &&
                           ${ coreutils }/bin/echo -n 896b780d-8cc1-4dd4-b7b0-6ae020a1ac01 > ${ log "cce640ac-962e-4df3-80b9-7378ff2b5531" }
                         '' ;
@@ -474,9 +562,10 @@
                         '' ;
                   } ;
                 setup =
-                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , jq , resources , shell-scripts , structure-directory , strip , temporary , yq } :
+                  { bash-variable , coreutils , diffutils , findutils , flock , global , gnused , jq , resources , shell-scripts , structure-directory , strip , yq } :
                     ''
                       MINUTE=$(( ( ( ${ bash-variable global.variables.timestamp } + ( 60 * 15 ) ) / 60 ) % 60 )) &&
+                      ${ coreutils }/bin/echo minute: ${ bash-variable "MINUTE" } &&
                       ${ coreutils }/bin/echo alpha: ${ resources.test.resources.alpha } &&
                       if [ ${ bash-variable "MINUTE" } -lt 30 ]
                       then
