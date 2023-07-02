@@ -242,7 +242,7 @@
                                                       in builtins.concatStringsSep " " ( _resources fun list set ) ;
 						  global = global ;
                                                   local = local ;
-                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) } ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
+                                                  log = name : ">( ${ pkgs.moreutils }/bin/ts %.s > $( ${ pkgs.coreutils }/bin/mktemp --suffix .${ builtins.hashString "sha512" ( builtins.toString name ) }.log ${ bash-variable local.variables.log-dir }/XXXXXXXX ) 2> ${ knull } )" ;
                                                   resources = _resources ( { invocation } : invocation) ( track : track.reduced ) ( track : track.reduced ) ;
 						  private = private ;
                                                   shell-scripts = scripts ( { shell-script } : shell-script ) global ;
