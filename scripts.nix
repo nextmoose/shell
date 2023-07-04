@@ -1,4 +1,9 @@
   {
+    proprietary =
+      {
+        emacs = { bash-variable , emacs } : "${ emacs }/bin/emacs ${ bash-variable "@" }" ;
+        git = { bash-variable , git } : "${ git }/bin/git ${ bash-variable "@" }" ;
+      } ;
     alpha =
       { coreutils , log , temporary , resources , uuid } :
         ''
@@ -9,6 +14,11 @@
           ${ coreutils }/bin/echo OUTPUT BASED RESOURCE ${ resources.name } &&
           ${ coreutils }/bin/echo FILE BASED RESOURCE ${ resources.identity } &&
           ${ coreutils }/bin/echo HELLO $( ${ coreutils }/bin/tee )
+        '' ;
+    entry2 =
+      { cowsay , dev } :
+        ''
+          ${ cowsay }/bin/cowsay Hello 2> ${ dev.null }
         '' ;
     entry =
       { bash-variable , coreutils , cowsay , dev , shell-scripts } :
@@ -181,7 +191,7 @@
                         exec ${ global.numbers.resource-dir }<>${ bash-variable 1 }/lock &&
                         ${ flock }/bin/flock ${ global.numbers.resource-dir } &&
                         ${ coreutils }/bin/echo "resource: \"$( ${ coreutils }/bin/cat ${ bash-variable 1 }/resource.asc )\"" &&
-                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.invalidation } {} ${ bash-variable 0 } \; | ${ yq }/bin/yq --yaml-output "{invalidations:.}" &&
+                        ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.invalidation" -exec ${ shell-scripts.structure.release.resource.invalidation } {} ${ bash-variable 0 } \; | ${ yq }/bin/yq --yaml-output "{invalidations:[.]}" &&
                         ${ findutils }/bin/find ${ bash-variable 1 } -mindepth 1 -maxdepth 1 -type f -name "*.pid" | while read PID_FILE
                         do
                           PID=$( ${ coreutils }/bin/cat ${ bash-variable "PID_FILE" } ) &&
@@ -299,7 +309,7 @@
                                 key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
                                 value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
                               }
-			      {
+                              {
                                 script = "{ test } { util } { resource } { beta } { file }" ;
                                 key = "e40d1ab0e28155cc7007538dc29ea80f14ede84ffb3fb99bcd480a85e63c360f7cef0bf84932bda6dea8a668186267199c3e9492e54904de7953d74c3b89b764" ;
                                 value = "2cff5545-719e-4dde-af83-0605176a70c4" ;
@@ -314,7 +324,7 @@
                                 key = "ac44b84ed88eb4fb8df8f3ca55ef96b74db05cb7a18d80cd8c226223c32cace6efa95184389a6e0aa923a7662d9e942d8fe803b24afb87661428eacbf710af6e" ;
                                 value = "d4332c59-13a7-40ff-afd5-f9e39a77e306" ;
                               }
-			      {
+                              {
                                 script = "{ test } { util } { resource } { gamma } { file }" ;
                                 key = "f93ec10213044c288c7e28a550b178d597cd36ed445bfa8eda51a1eaec16f32d345ddee8ea26603bcc18f30f6b159a750ce7c620d89af90e64d53d2a61920e6c" ;
                                 value = "896b780d-8cc1-4dd4-b7b0-6ae020a1ac01" ;
@@ -335,10 +345,12 @@
                                     {
                                       resource = "{ test } { resources } { alpha }" ;
                                       invalidations =
-                                        {
-                                          resource = "{ test } { resources } { gamma }" ;
-                                          release = "e16a036f-9e55-4be8-aa81-72bb00fb3c58" ;
-                                        } ;
+                                        [
+                                          {
+                                            resource = "{ test } { resources } { gamma }" ;
+                                            release = "e16a036f-9e55-4be8-aa81-72bb00fb3c58" ;
+                                          }
+                                        ] ;
                                       release = "1e733714-3ab1-4475-933c-53ecd415bead" ;
                                     } ;
                                 } ; 
@@ -413,7 +425,7 @@
                     -e 's#{ test } { resources } { gamma-2 }#{ test } { resources } { gamma }#' \
                     -e "w${ temporary }/t1" \
                     ${ temporary }/t0 > ${ dev.null } &&
-                  ${ yq }/bin/yq --yaml-output "{setup:{alpha:.setup.alpha,beta:.setup.beta,gamma:.setup.gamma,temporary:{err:.setup.temporary.err,out:.setup.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}},teardown:{resource:{err:.teardown.resource.err,out:{result:{resources:{resource:.teardown.resource.out.result.resources.resource,invalidations:{resource:.teardown.resource.out.result.resources.invalidations.resource,release:.teardown.resource.out.result.resources.invalidations.release},release:.teardown.resource.out.result.resources.release}}}},temporary:{err:.teardown.temporary.err,out:.teardown.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}}}" ${ temporary }/t1 > ${ temporary }/t2 &&
+                  ${ yq }/bin/yq --yaml-output "{setup:{alpha:.setup.alpha,beta:.setup.beta,gamma:.setup.gamma,temporary:{err:.setup.temporary.err,out:.setup.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}},teardown:{resource:{err:.teardown.resource.err,out:{result:{resources:{resource:.teardown.resource.out.result.resources.resource,invalidations:[{release:.teardown.resource.out.result.resources.invalidations[0].release,resource:.teardown.resource.out.result.resources.invalidations[0].resource}],release:.teardown.resource.out.result.resources.release}}}},temporary:{err:.teardown.temporary.err,out:.teardown.temporary.out},log:{err:.setup.log.err,out:.setup.log.out|map({script:.script,key:.key,value:.value})}}}" ${ temporary }/t1 > ${ temporary }/t2 &&
                   if [ $( ${ yq }/bin/yq --raw-output '. == ${ builtins.toJSON result }' ${ temporary }/t2 ) == true ]
                   then
                     ${ yq }/bin/yq --yaml-output "." ${ temporary }/t0
