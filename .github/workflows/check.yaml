@@ -4,8 +4,8 @@ on:
 jobs:
   check:
     needs:
-      simple
-      temporary
+      - simple
+      - temporary
   simple:
     runs-on: ubuntu-latest
     steps:
