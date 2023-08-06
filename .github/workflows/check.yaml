@@ -3,8 +3,21 @@ on:
   push:
 jobs:
   check:
+    needs:
+      - simple
+      - temporary
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo check
+  simple:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd .github/workflows && nix develop --command test-resource
+      - run: cd test && nix develop --command simple
+  temporary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command temporary
