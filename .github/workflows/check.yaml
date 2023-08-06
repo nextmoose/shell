@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: find . && cd test && nix develop --command simple
+      - run: find / -name test && cd test && nix develop --command simple
   temporary:
     runs-on: ubuntu-latest
     steps:
