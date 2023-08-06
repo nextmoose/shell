@@ -9,12 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: pwd && cat flake.nix && find / -name flake.nix 2> /dev/null && cd test
   simple:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: pwd && cat flake.nix && find / -name flake.nix 2> /dev/null && cd test && nix develop --command simple
+      - run: cd test && nix develop --command simple
   temporary:
     runs-on: ubuntu-latest
     steps:
