@@ -1,0 +1,1 @@
+fun : arguments : fun ( builtins.mapAttrs ( name : value : builtins.getAttr name arguments ) ( builtins.functionArgs fun ) )
