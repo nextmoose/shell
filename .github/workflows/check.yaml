@@ -6,6 +6,9 @@ jobs:
     needs:
       - simple
       - temporary
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
   simple:
     runs-on: ubuntu-latest
     steps:
