@@ -19,8 +19,8 @@
       ''
         ${ script }
       '' ;
-    script = inject lambda ( arguments // { bash-variable = bash-variable ; temporary = inject temporary arguments ; } ) ;
-    temporary = import ./temporary.nix ;
+    script = inject lambda ( arguments // { bash-variable = bash-variable ; resource = inject resource arguments ; } ) ;
+    resource = import ./resource.nix ;
     shell-script = target.writeShellScript simple-name program ;
     shell-script-bin = target.writeShellScriptBin simple-name program ;
     simple-name =

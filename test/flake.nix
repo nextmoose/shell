@@ -20,7 +20,7 @@
                         let
                           hooks = fun ( { script } : script ) ;
                           inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                          in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.simple inputs.private inputs.temporary ] ; } ; } ;
+                          in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.simple inputs.private inputs.resource ] ; } ; } ;
                     host = pkgs ;
                     null = "/dev/null" ;
                     out = "/dev/stdout" ;
@@ -47,10 +47,10 @@
                             ''
                               ${ target.cowsay }/bin/cowsay SIMPLE
                             '' ;
-                        temporary =
-                          { target , temporary } :
+                        resource =
+                          { target , resource } :
                             ''
-                              ${ target.coreutils }/bin/echo ${ temporary { init = scripts : scripts.init ; } }
+                              ${ target.coreutils }/bin/echo ${ resource { init = scripts : scripts.init ; } }
                             '' ;
                       } ;
                     structure-directory = "/home/emory/formation" ;
