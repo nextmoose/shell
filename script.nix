@@ -6,6 +6,7 @@
   lambda ,
   null ,
   out ,
+  private ,
   scripts ,
   structure-directory ,
   target ,
