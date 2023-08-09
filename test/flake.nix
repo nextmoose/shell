@@ -20,7 +20,7 @@
                         let
                           hooks = fun ( { script } : script ) ;
                           inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                          in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.simple inputs.temporary ] ; } ; } ;
+                          in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.simple inputs.private inputs.temporary ] ; } ; } ;
                     host = pkgs ;
                     null = "/dev/null" ;
                     out = "/dev/stdout" ;
