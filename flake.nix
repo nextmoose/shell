@@ -11,6 +11,7 @@
               host ,
               null ? "/dev/null" ,
               out ? "/dev/out" ,
+	      private ? null ,
               scripts ,
               structure-directory ,
               target 

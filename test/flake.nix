@@ -24,6 +24,7 @@
                     host = pkgs ;
                     null = "/dev/null" ;
                     out = "/dev/stdout" ;
+		    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
                     scripts =
                       {
                         entrypoint =
@@ -31,19 +32,11 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
-                        git =
-                          {
-                            init =
-                              { bash-variable , target } :
-                                ''
-                                  ${ target.coreutils }/bin/mkdir $( ${ target.coreutils }/bin/dirname ${ bash-variable 0 } )/temporary
-                                '' ;
-                            release =
-                              { bash-variable , target } :
-                                ''
-                                  ${ target.coreutils }/bin/echo HELLO
-                                '' ;
-                          } ;
+			private =
+			  { private , target } :
+			    ''
+			      ${ target.coreutils }/bin/echo ${ private }
+			    '' ;
                         simple =
                           { target } :
                             ''
