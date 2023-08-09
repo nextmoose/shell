@@ -5,6 +5,7 @@ jobs:
   check:
     needs:
       - simple
+      - private
       - temporary
     runs-on: ubuntu-latest
     steps:
