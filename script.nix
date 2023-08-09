@@ -19,7 +19,7 @@
       ''
         ${ script }
       '' ;
-    script = inject lambda ( arguments // { bash-variable = bash-variable ; resource = inject resource arguments ; } ) ;
+    script = inject lambda ( arguments // { bash-variable = bash-variable ; resource = inject resource arguments ; private = private ; } ) ;
     resource = import ./resource.nix ;
     shell-script = target.writeShellScript simple-name program ;
     shell-script-bin = target.writeShellScriptBin simple-name program ;
