@@ -32,6 +32,11 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
+			init =
+			  { bash-variable , target } :
+			    ''
+			      ${ target.coreutils }/bin/mkdir ${ bash-variable "@" }
+			    '' ;
 			private =
 			  { private , target } :
 			    ''
@@ -45,7 +50,7 @@
                         temporary =
                           { target , temporary } :
                             ''
-                              ${ target.coreutils }/bin/echo ${ temporary { init = scripts : scripts.git.init ; release = scripts : scripts.git.release ; } }
+                              ${ target.coreutils }/bin/echo ${ temporary { init = scripts : scripts.init ; } }
                             '' ;
                       } ;
                     structure-directory = "/home/emory/formation" ;
