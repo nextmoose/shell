@@ -24,7 +24,7 @@
                     host = pkgs ;
                     null = "/dev/null" ;
                     out = "/dev/stdout" ;
-		    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
+                    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
                     scripts =
                       {
                         entrypoint =
@@ -32,16 +32,11 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
-			init =
-			  { bash-variable , target } :
-			    ''
-			      ${ target.coreutils }/bin/mkdir ${ bash-variable "@" }
-			    '' ;
-			private =
-			  { private , target } :
-			    ''
-			      ${ target.coreutils }/bin/echo ${ private }
-			    '' ;
+                        private =
+                          { private , target } :
+                            ''
+                              ${ target.coreutils }/bin/echo ${ private }
+                            '' ;
                         simple =
                           { target } :
                             ''
@@ -50,7 +45,7 @@
                         resource =
                           { target , resource } :
                             ''
-                              ${ target.coreutils }/bin/echo ${ resource { init = scripts : scripts.init ; } }
+                              ${ target.coreutils }/bin/echo ${ resource { init = { bash-variable , target } : "${ target.coreutils }/bin/kdir ${ bash-variable 1 }" ; } }
                             '' ;
                       } ;
                     structure-directory = "/home/emory/formation" ;
