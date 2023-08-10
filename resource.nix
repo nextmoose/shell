@@ -37,12 +37,12 @@
     init =
       if builtins.typeOf parameters.init == "lambda" && builtins.length ( builtins.attrNames ( builtins.functionsArgs parameters.init ) ) == 0 then
         ''
-	  ${ target.coreutils }/bin/ln --symbolic ${ init shell-scripts } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+	  ${ target.coreutils }/bin/ln --symbolic ${ inject script ( arguments // { lambda = parameters.init ; } ) } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
 	  ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource
 	''
       else if builtins.typeOf parameters.init == "lambda" then
         ''
-	  ${ target.coreutils }/bin/ln --symbolic ${ inject script ( arguments // { lambda = parameters.init ; } ) } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+	  ${ target.coreutils }/bin/ln --symbolic ${ init shell-scripts } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
 	  ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource
 	''
       else
@@ -52,11 +52,11 @@
     release =
       if builtins.typeOf parameters.release == "lambda" && builtins.length ( builtins.attrNames ( builtins.functionArgs parameters.release ) ) == 0 then
         ''
-	  ${ target.coreutils }/bin/ln --symbolic ${ release shell-scripts } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
+	  ${ target.coreutils }/bin/ln --symbolic ${ inject script ( arguments // { lambda = parameters.release ; } ) } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
 	''
       else if builtins.typeOf parameters.release == "lambda" then
         ''
-	  ${ target.coreutils }/bin/ln --symbolic ${ inject script ( arguments // { lambda = parameters.release ; } ) } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
+	  ${ target.coreutils }/bin/ln --symbolic ${ release shell-scripts } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
 	''
       else
         ''
