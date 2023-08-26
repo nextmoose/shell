@@ -14,16 +14,7 @@
                 arguments =
                   {
                     build = pkgs ;
-                    err = "/dev/stderr" ;
-                    fun =
-                      fun :
-                        let
-                          hooks = fun ( { script } : script ) ;
-                          inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                          in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.simple inputs.private inputs.resource ] ; } ; } ;
                     host = pkgs ;
-                    null = "/dev/null" ;
-                    out = "/dev/stdout" ;
 		    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
                     scripts =
                       {
@@ -35,28 +26,47 @@
 			init =
 			  { bash-variable , target } :
 			    ''
-			      ${ target.coreutils }/bin/mkdir ${ bash-variable "@" }
+			      ${ target.coreutils }/bin/mkdir ${ bash-variable 1 }
 			    '' ;
+                        isolated =
+                          { bash-variable , isolated , target } :
+                            ''
+                              ISOLATED_DIRECTORY=${ isolated { init = scripts : scripts.init ; } } &&
+			      ${ target.coreutils }/bin/echo "${ bash-variable "ISOLATED_DIRECTORY" }" &&
+			      cd ${ bash-variable "ISOLATED_DIRECTORY" } &&
+			      ${ target.bashInteractiveFHS }/bin/bash
+                            '' ;
 			private =
 			  { private , target } :
 			    ''
 			      ${ target.coreutils }/bin/echo ${ private }
 			    '' ;
                         simple =
-                          { target } :
+                          { hash , target , shared , timestamp } :
                             ''
-                              ${ target.cowsay }/bin/cowsay SIMPLE
-                            '' ;
-                        resource =
-                          { target , resource } :
-                            ''
-                              ${ target.coreutils }/bin/echo ${ resource { init = scripts : scripts.init ; } }
+                              ${ target.cowsay }/bin/cowsay SIMPLE ${ timestamp }
+			      ${ target.coreutils }/bin/sleep 10s &&
+			      ${ target.coreutils }/bin/echo ${ timestamp } &&
+			      ${ target.coreutils }/bin/echo '${ hash }' &&
+			      ${ target.coreutils }/bin/echo ${ shared.temporary-1 }
                             '' ;
                       } ;
+		    shared =
+		      {
+		        temporary-1 = resource : resource { init = scripts : scripts.init ; } ;
+		        temporary-2 = resource : resource { init = scripts : scripts.init ; } ;
+		      } ;
                     structure-directory = "/home/emory/formation" ;
                     target = pkgs ;
                   } ;
+                fun =
+                  fun :
+                    let
+                      hooks = fun ( { code } : code ) ;
+                      inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.isolated inputs.simple ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
-                in shell.lib arguments ;
+                in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
   }
+
