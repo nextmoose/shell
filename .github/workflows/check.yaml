@@ -5,8 +5,6 @@ jobs:
   check:
     needs:
       - simple
-      - private
-      - resource
     runs-on: ubuntu-latest
     steps:
       - run: echo check
