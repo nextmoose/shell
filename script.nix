@@ -25,7 +25,9 @@
 	    set = track : track.interim ;
 	    undefined = track : track.throw "3318b42b-515d-4b9f-b210-096ea97e928c" ;
 	    in visit { lambda = lambda ; list = list ; null = null ; set = set ; undefined = undefined ; } arguments.shared ;
-        ultimate = arguments // { bash-variable = bash-variable ; hash = bash-variable hash ; isolated = isolated ; private = private ; shared = shared ; timestamp = bash-variable arguments.timestamp ; } ;
+	shell-script-bins = inject scripts arguments ( { shell-script-bin } : shell-script-bin ) ;
+	shell-scripts = inject scripts arguments ( { shell-script } : shell-script ) ;
+        ultimate = arguments // { bash-variable = bash-variable ; hash = bash-variable hash ; isolated = isolated ; private = private ; shared = shared ; shell-scripts = shell-scripts ; shell-script-bins = shell-script-bins ; timestamp = bash-variable arguments.timestamp ; } ;
         in inject lambda ultimate ;
     inject = builtins.import ./inject.nix ;
     lambda =

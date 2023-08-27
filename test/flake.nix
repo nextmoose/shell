@@ -41,14 +41,20 @@
 			    ''
 			      ${ target.coreutils }/bin/echo ${ private }
 			    '' ;
+			queer =
+			  { target } :
+			    ''
+			      ${ target.coreutils }/bin/echo HI
+			    '' ;
                         simple =
-                          { hash , target , shared , timestamp } :
+                          { hash , target , shared , shell-script-bins , timestamp } :
                             ''
                               ${ target.cowsay }/bin/cowsay SIMPLE ${ timestamp }
 			      ${ target.coreutils }/bin/sleep 10s &&
 			      ${ target.coreutils }/bin/echo ${ timestamp } &&
 			      ${ target.coreutils }/bin/echo '${ hash }' &&
-			      ${ target.coreutils }/bin/echo ${ shared.temporary-1 }
+			      ${ target.coreutils }/bin/echo ${ shared.temporary-1 } &&
+			      ${ target.coreutils }/bin/echo ${ shell-script-bins.queer }
                             '' ;
                       } ;
 		    shared =
