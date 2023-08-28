@@ -127,6 +127,8 @@
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         if [ -d ${ bash-variable "RESOURCE_DIRECTORY" } ]
         then
+          ${ target.coreutils }/bin/echo LEFT=${ bash-variable "HASH_PROGRAM" } > /tmp/debug &&
+	  ${ target.coreutils }/bin/echo RIGHT=$( ${ target.coreutils }/bin/readlink ${ bash-variable "RESOURCE_DIRECTORY" }/hash.sh ) >> /tmp/debug &&
           if [ ${ bash-variable "HASH_PROGRAM" } != $( ${ target.coreutils }/bin/readlink ${ bash-variable "RESOURCE_DIRECTORY" }/hash.sh ) ]
           then
             ${ target.coreutils }/bin/echo HASH COLLISION DETECTED > ${ err } &&
