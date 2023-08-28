@@ -106,7 +106,7 @@
       let
         bool = track : "$(( ( ${ bash-variable 1 } + ( 60 * 60 * ( if track.input then 6 else 18 ) ) ) / ( ( 60 * 60 * 24 ) ) ))" ;
         int = track : "$(( ${ bash-variable 1 } / ${ builtins.toString track.input } ))" ;
-        lambda = track : "${ track.input ( scripts arguments ) ( { shell-script } : shell-script ) } ${ bash-variable 1 }" ;
+        lambda = track : "$( ${ track.input ( scripts arguments ) ( { shell-script } : shell-script ) } ${ bash-variable 1 } )" ;
         null = track : "$(( ${ bash-variable 1 } / ( 60 * 60 * 24 * 7 ) ))" ;
         undefined = track : track.throw "0bc8165d-9603-41a7-8d4c-b1eb5babae6c" ;
         in visit { bool = bool ; int = int ; lambda = lambda ; null = null ; undefined = undefined ; } parameters.salt ;
@@ -121,7 +121,7 @@
         fi &&
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
-        HASH_PROGRAM=${ target.writeShellScript "hash" "${ target.coreutils }/bin/echo ${ pre-salt } $( ${ salt  } ) | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128  " } &&
+        HASH_PROGRAM=${ target.writeShellScript "hash" "${ target.coreutils }/bin/echo ${ pre-salt } ${ salt  } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128  " } &&
 	export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } ) &&
         RESOURCE_DIRECTORY=${ structure-directory }/${ bash-variable hash } &&
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
