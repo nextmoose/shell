@@ -27,7 +27,7 @@
 		    err = if builtins.hasAttr "err" _arguments then _arguments.err else "/dev/err" ;
 		    hash = if builtins.hasAttr "hash" _arguments then _arguments.hash else builtins.null ;
 		    host = _arguments.host ;
-		    null = _arguments.null ;
+		    null = if builtins.hasAttr "null" _arguments then _arguments.null else "/dev/null" ;
 		    out = _arguments.out ;
 		    path = if builtins.hasAttr "path" _arguments then _arguments.path else builtins.null ;
 		    private = _arguments.private ;
