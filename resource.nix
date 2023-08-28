@@ -122,10 +122,7 @@
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
         HASH_PROGRAM=${ target.writeShellScript "hash" "${ target.coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128  " } &&
-	${ target.coreutils }/bin/echo 'export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } )' > /tmp/debug &&
-	${ target.coreutils }/bin/echo "export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } )" >> /tmp/debug &&
-	${ target.coreutils }/bin/echo "export ${ hash }=\$\( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } \)" >> /tmp/debug &&
-	export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } ) &&
+	export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable timestamp } ) &&
         RESOURCE_DIRECTORY=${ structure-directory }/${ bash-variable hash } &&
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         if [ -d ${ bash-variable "RESOURCE_DIRECTORY" } ]
