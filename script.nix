@@ -19,6 +19,16 @@
     code =
       let
         isolated = { init ? builtins.null , release ? builtins.null } : resource arguments { init = init ; release = release ; salt = builtins.null ; track = builtins.null ; } ;
+        penultimate =
+	  {
+	    bash-variable = bash-variable ;
+	    hash = bash-variable hash ;
+	    isolated = isolated ;
+	    shared = shared ;
+	    shell-scripts = shell-scripts ;
+	    shell-script-bins = shell-script-bins ;
+	    timestamp = bash-variable arguments.timestamp ;
+	  } ;
 	shared =
 	  let
 	    lambda = track : track.input ( { init ? builtins.null , release ? builtins.null , salt ? builtins.null } : resource arguments { init = init ; release = release ; salt = salt ; track = track ; } ) ;
@@ -29,7 +39,7 @@
 	    in visit { lambda = lambda ; list = list ; null = null ; set = set ; undefined = undefined ; } arguments.shared ;
 	shell-script-bins = inject scripts arguments ( { shell-script-bin } : shell-script-bin ) ;
 	shell-scripts = inject scripts arguments ( { shell-script } : shell-script ) ;
-        ultimate = arguments // { bash-variable = bash-variable ; hash = bash-variable hash ; isolated = isolated ; private = private ; shared = shared ; shell-scripts = shell-scripts ; shell-script-bins = shell-script-bins ; timestamp = bash-variable arguments.timestamp ; } ;
+	ultimate = arguments // penultimate ;
         in inject lambda ultimate ;
     inject = builtins.import ./inject.nix ;
     lambda =
