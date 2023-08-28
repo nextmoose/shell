@@ -24,7 +24,7 @@
 	        arguments =
 		  {
 		    build = _arguments.build ;
-		    err = _arguments.err ;
+		    err = if builtins.hasAttr "err" _arguments then _arguments.err else "/dev/err" ;
 		    hash = if builtins.hasAttr "hash" _arguments then _arguments.hash else builtins.null ;
 		    host = _arguments.host ;
 		    null = _arguments.null ;
