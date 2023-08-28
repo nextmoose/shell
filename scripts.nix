@@ -63,10 +63,10 @@
                           in try fun ;
                     in
                       {
-                        hash = builtins.concatStringsSep "_" [ "HASH" ( builtins.elemAt output 1 ) ] ;
-                        path = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 2 ) ] ;
-                        process = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 3 ) ] ;
-                        timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 0 ) ] ;
+                        hash = builtins.concatStringsSep "_" [ "HASH" ( builtins.elemAt output 0 ) ] ;
+                        path = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 1 ) ] ;
+                        process = builtins.concatStringsSep "_" [ "PROCESS" ( builtins.elemAt output 2 ) ] ;
+                        timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 3 ) ] ;
                       } ;
                 in inject script ( arguments // { hash = variables.hash ; path = variables.path ; process = variables.process ; timestamp = variables.timestamp ; } ) fun track ;
           list = track : track.interim ;
