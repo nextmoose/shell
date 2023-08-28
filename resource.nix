@@ -19,7 +19,7 @@
     code = strip ( if builtins.typeOf parameters.track == "null" then isolated else shared ) ;
     command =
       ''
-        $( export ${ process }=${ bash-variable "!" } && ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable "process" }" )
+        $( export ${ process }=${ bash-variable "!" } && ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable process }" )
       '' ;
     hash =
       let
