@@ -15,7 +15,7 @@
                   {
                     build = pkgs ;
                     host = pkgs ;
-		    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
+                    private = "954428b3-8ec0-4940-9806-f1161d153320" ;
                     scripts =
                       {
                         entrypoint =
@@ -23,45 +23,45 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
-			init =
-			  { bash-variable , target } :
-			    ''
-			      ${ target.coreutils }/bin/mkdir ${ bash-variable 1 }
-			    '' ;
+                        init =
+                          { bash-variable , target } :
+                            ''
+                              ${ target.coreutils }/bin/mkdir ${ bash-variable 1 }
+                            '' ;
                         isolated =
                           { bash-variable , isolated , target } :
                             ''
                               ISOLATED_DIRECTORY=${ isolated { init = scripts : scripts.init ; } } &&
-			      ${ target.coreutils }/bin/echo "${ bash-variable "ISOLATED_DIRECTORY" }" &&
-			      cd ${ bash-variable "ISOLATED_DIRECTORY" } &&
-			      ${ target.bashInteractiveFHS }/bin/bash
+                              ${ target.coreutils }/bin/echo "${ bash-variable "ISOLATED_DIRECTORY" }" &&
+                              cd ${ bash-variable "ISOLATED_DIRECTORY" } &&
+                              ${ target.bashInteractiveFHS }/bin/bash
                             '' ;
-			private =
-			  { private , target } :
-			    ''
-			      ${ target.coreutils }/bin/echo ${ private }
-			    '' ;
-			queer =
-			  { target } :
-			    ''
-			      ${ target.coreutils }/bin/echo HI
-			    '' ;
+                        private =
+                          { private , target } :
+                            ''
+                              ${ target.coreutils }/bin/echo ${ private }
+                            '' ;
+                        queer =
+                          { target } :
+                            ''
+                              ${ target.coreutils }/bin/echo HI
+                            '' ;
                         simple =
                           { hash , target , shared , shell-script-bins , timestamp } :
                             ''
                               ${ target.cowsay }/bin/cowsay SIMPLE ${ timestamp }
-			      ${ target.coreutils }/bin/sleep 10s &&
-			      ${ target.coreutils }/bin/echo ${ timestamp } &&
-			      ${ target.coreutils }/bin/echo '${ hash }' &&
-			      ${ target.coreutils }/bin/echo ${ shared.temporary-1 } &&
-			      ${ target.coreutils }/bin/echo ${ shell-script-bins.queer }
+                              ${ target.coreutils }/bin/sleep 10s &&
+                              ${ target.coreutils }/bin/echo ${ timestamp } &&
+                              ${ target.coreutils }/bin/echo '${ hash }' &&
+                              ${ target.coreutils }/bin/echo ${ shared.temporary-1 } &&
+                              ${ target.coreutils }/bin/echo ${ shell-script-bins.queer }
                             '' ;
                       } ;
-		    shared =
-		      {
-		        temporary-1 = resource : resource { init = scripts : scripts.init ; } ;
-		        temporary-2 = resource : resource { init = scripts : scripts.init ; } ;
-		      } ;
+                    shared =
+                      {
+                        temporary-1 = resource : resource { init = scripts : scripts.init ; } ;
+                        temporary-2 = resource : resource { init = scripts : scripts.init ; } ;
+                      } ;
                     structure-directory = "/home/emory/formation" ;
                     target = pkgs ;
                   } ;
