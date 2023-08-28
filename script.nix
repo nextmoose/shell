@@ -25,7 +25,9 @@
 	    hash = bash-variable hash ;
 	    isolated = isolated ;
 	    shared = shared ;
+	    shell-script = shell-script ;
 	    shell-scripts = shell-scripts ;
+	    shell-script-bin = shell-script-bins ;
 	    shell-script-bins = shell-script-bins ;
 	    timestamp = bash-variable arguments.timestamp ;
 	  } ;
@@ -37,7 +39,9 @@
 	    set = track : track.interim ;
 	    undefined = track : track.throw "3318b42b-515d-4b9f-b210-096ea97e928c" ;
 	    in visit { lambda = lambda ; list = list ; null = null ; set = set ; undefined = undefined ; } arguments.shared ;
+	shell-script-bin = scripts : scripts shell-script-bins ;
 	shell-script-bins = inject scripts arguments ( { shell-script-bin } : shell-script-bin ) ;
+	shell-script = scripts : scripts shell-scripts ;
 	shell-scripts = inject scripts arguments ( { shell-script } : shell-script ) ;
 	ultimate = arguments // penultimate ;
         in inject lambda ultimate ;
