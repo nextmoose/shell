@@ -7,6 +7,7 @@
   out ,
   path ,
   private ,
+  process ,
   scripts ,
   shared ,
   structure-directory ,

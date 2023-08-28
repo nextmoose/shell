@@ -7,6 +7,7 @@
   out ,
   path ,
   private ,
+  process ,
   scripts ,
   shared ,
   structure-directory ,
@@ -18,7 +19,7 @@
     code = strip ( if builtins.typeOf parameters.track == "null" then isolated else shared ) ;
     command =
       ''
-        $( ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable "!" }" )
+        $( export ${ process }=${ bash-variable "!" } && ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable "process" }" )
       '' ;
     hash =
       let
@@ -80,6 +81,12 @@
 	undefined = track : track.throw "ccd2062c-6607-4d89-8414-138a2f31edca" ;
         in visit { null = null ; string = string ; undefined = undefined ; } arguments.path ;
     pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ init release salt track ] ) ;
+    process =
+      let
+        null = track : "UNDEFINED PROCESS" ;
+	string = track : track.input ;
+	undefined = track : track.throw "77a2498b-9ef9-42fc-8db7-5cfdfd7a6e20" ;
+        in visit { null = null ; string = string ; undefined = undefined ; } arguments.process ;
     release =
       let
         lambda =
