@@ -11,6 +11,7 @@
               host ,
               null ? "/dev/null" ,
               out ? "/dev/out" ,
+	      path ? builtins.null ,
               private ? builtins.null ,
               scripts ,
               shared ,
@@ -27,6 +28,7 @@
 		    host = _arguments.host ;
 		    null = _arguments.null ;
 		    out = _arguments.out ;
+		    path = if builtins.hasAttr "path" _arguments then _arguments.path else builtins.null ;
 		    private = _arguments.private ;
 		    scripts = _arguments.scripts ;
 		    shared = _arguments.shared ;

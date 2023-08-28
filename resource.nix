@@ -5,6 +5,7 @@
   hash ,
   null ,
   out ,
+  path ,
   private ,
   scripts ,
   shared ,
@@ -53,6 +54,7 @@
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
         RESOURCE_DIRECTORY=$( ${ target.coreutils }/bin/mktemp --directory ${ structure-directory }/XXXXXXXX ) &&
+	export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
         ${ strip init } &&
@@ -69,8 +71,14 @@
 	  ${ target.coreutils }/bin/echo ${ bash-variable "PID" } > ${ bash-variable "PID_FILE" } &&
 	  ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "PID_FILE" }
 	fi &&
-        ${ target.coreutils }/bin/echo ${ bash-variable "RESOURCE_DIRECTORY" }/resource
+        ${ target.coreutils }/bin/echo ${ bash-variable path }
       '' ;
+    path =
+      let
+        null = track : "UNDEFINED PATH" ;
+	string = track : track.input ;
+	undefined = track : track.throw "ccd2062c-6607-4d89-8414-138a2f31edca" ;
+        in visit { null = null ; string = string ; undefined = undefined ; } arguments.path ;
     pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ init release salt track ] ) ;
     release =
       let
@@ -107,6 +115,7 @@
         ${ target.flock }/bin/flock -s 201 &&
 	export ${ hash }=$( ${ target.coreutils }/bin/echo ${ pre-salt } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
         RESOURCE_DIRECTORY=${ structure-directory }/${ bash-variable hash } &&
+	${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
 	if [ ! -d ${ bash-variable "RESOURCE_DIRECTORY" } ]
 	then
 	  ${ target.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIRECTORY" }
@@ -133,7 +142,7 @@
 	  ${ target.coreutils }/bin/cat ${ bash-variable "PID" } > ${ bash-variable "PID_FILE" } &&
 	  ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "PID_FILE" }
 	fi &&
-        ${ target.coreutils }/bin/echo ${ bash-variable "RESOURCE_DIRECTORY" }/resource
+        ${ target.coreutils }/bin/echo ${ bash-variable "PATH" }
       '' ;
     shell-scripts = scripts arguments ( { shell-script } : shell-script ) ;
     strip = builtins.import ./strip.nix ;
