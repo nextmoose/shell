@@ -59,7 +59,7 @@
         ${ strip release } &&
 	if [ ${ bash-variable "HASH" } ]
 	then
-	  INVALIDATION_FILE=$( ${ target.coreutils }/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
+	  INVALIDATION_FILE=$( ${ target.coreutils }/bin/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
 	  ${ target.coreutils }/bin/echo ${ bash-variable "INVALIDATION" } > ${ bash-variable "INVALIDATION_FILE" } &&
 	  ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "INVALIDATION_FILE" }
 	fi &&
