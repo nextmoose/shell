@@ -5,6 +5,7 @@
   host ,
   null ,
   out ,
+  path ,
   private ,
   scripts ,
   shared ,
@@ -24,7 +25,7 @@
               let
                 variables =
                   let
-                    input = builtins.genList ( x : null ) 2 ;
+                    input = builtins.genList ( x : null ) 3 ;
                     output = builtins.foldl' reducer [ ] input ;
                     reducer =
                       previous : current :
@@ -62,9 +63,10 @@
                     in
                       {
                         hash = builtins.concatStringsSep "_" [ "HASH" ( builtins.elemAt output 1 ) ] ;
+                        path = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 1 ) ] ;
                         timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 0 ) ] ;
                       } ;
-                in inject script ( arguments // { hash = variables.hash ; timestamp = variables.timestamp ; } ) fun track ;
+                in inject script ( arguments // { hash = variables.hash ; path = variables.path ; timestamp = variables.timestamp ; } ) fun track ;
           list = track : track.interim ;
           null = track : builtins.null ;
           set = track : track.interim ;

@@ -5,6 +5,7 @@
   host ,
   null ,
   out ,
+  path ,
   private ,
   scripts ,
   shared ,
