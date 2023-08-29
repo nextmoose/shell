@@ -61,14 +61,14 @@
                                     value = builtins.concatLists [ previous [ value ] ] ;
                                   } ;
                           in try fun ;
-                    in
+                    in 
                       {
                         hash = builtins.concatStringsSep "_" [ "HASH" ( builtins.elemAt output 0 ) ] ;
                         path = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 1 ) ] ;
                         process = builtins.concatStringsSep "_" [ "PROCESS" ( builtins.elemAt output 2 ) ] ;
-                        timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 2 ) ] ;
+                        timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 3 ) ] ;
                       } ;
-                in inject script ( arguments // { hash = variables.hash ; path = variables.path ; process = variables.process ; timestamp = variables.timestamp ; } ) fun track ;
+                in inject script ( arguments // variables ) fun track ;
           list = track : track.interim ;
           null = track : builtins.null ;
           set = track : track.interim ;
