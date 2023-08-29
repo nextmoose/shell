@@ -139,7 +139,7 @@
               exit 64
           fi
         else
-          ${ target.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIRECTORY" } **
+          ${ target.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIRECTORY" } &&
           ${ target.coreutils }/bin/ln ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "RESOURCE_DIRECTORY" }/hash.sh
         fi &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
