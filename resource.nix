@@ -165,7 +165,7 @@
           ${ target.coreutils }/bin/cat ${ bash-variable "PID" } > ${ bash-variable "PID_FILE" } &&
           ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "PID_FILE" }
         fi &&
-        ${ target.coreutils }/bin/echo ${ bash-variable "PATH" }
+        ${ target.coreutils }/bin/echo ${ bash-variable path }
       '' ;
     shell-scripts = scripts arguments ( { shell-script } : shell-script ) ;
     strip = builtins.import ./strip.nix ;
