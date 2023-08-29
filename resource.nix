@@ -140,6 +140,7 @@
           fi
         else
           ${ target.coreutils }/bin/mkdir ${ bash-variable "RESOURCE_DIRECTORY" } &&
+          ${ target.coreutils }/bin/echo ${ target.coreutils }/bin/ln --symbolic ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "RESOURCE_DIRECTORY" }/hash.sh > /tmp/debug &&
           ${ target.coreutils }/bin/ln --symbolic ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "RESOURCE_DIRECTORY" }/hash.sh
         fi &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
