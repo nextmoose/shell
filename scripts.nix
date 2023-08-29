@@ -26,7 +26,7 @@
               let
                 variables =
                   let
-                    input = builtins.genList ( x : null ) 3 ;
+                    input = builtins.genList ( x : null ) 4 ;
                     output = builtins.foldl' reducer [ ] input ;
                     reducer =
                       previous : current :
