@@ -19,7 +19,7 @@
     code = strip ( if builtins.typeOf parameters.track == "null" then isolated else shared ) ;
     command =
       ''
-        $( export ${ process }=${ bash-variable "!" } && ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable "process" }" )
+        $( export ${ process }=${ bash-variable "!" } && ${ target.writeShellScript "resource" code } "${ bash-variable hash }" "${ bash-variable process }" )
       '' ;
     hash =
       let
@@ -121,8 +121,8 @@
         fi &&
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
-        HASH_PROGRAM=${ target.writeShellScript "hash" "${ target.coreutils }/bin/echo ${ pre-salt } ${ salt  } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128  " } &&
-	export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable "TIMESTAMP" } ) &&
+        HASH_PROGRAM=${ target.writeShellScript "hash" "${ target.coreutils }/bin/echo ${ pre-salt } ${ salt } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128  " } &&
+        export ${ hash }=$( ${ bash-variable "HASH_PROGRAM" } ${ bash-variable timestamp } ) &&
         RESOURCE_DIRECTORY=${ structure-directory }/${ bash-variable hash } &&
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         if [ -d ${ bash-variable "RESOURCE_DIRECTORY" } ]
