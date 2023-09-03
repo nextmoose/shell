@@ -322,7 +322,7 @@
                     shared =
                       {
                       } ;
-                    structure-directory = "/home/emory/formation" ;
+                    structure-directory = "/home/runner/resources" ;
                     target = pkgs ;
                   } ;
                 fun =

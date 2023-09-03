@@ -60,7 +60,7 @@
         PID=${ bash-variable 2 } &&
         if [ ! -d ${ structure-directory } ]
         then
-          ${ target.coreutils }/bin/mkdir ${ structure-directory }
+          ${ target.coreutils }/bin/mkdir --parents ${ structure-directory }
         fi &&
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
