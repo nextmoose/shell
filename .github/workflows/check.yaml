@@ -24,34 +24,34 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-000
+      - run: cd test && nix develop --command init . && nix develop --command isolated-000
   isolated-001:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-001
+      - run: cd test && nix develop --command init . && nix develop --command isolated-001
   isolated-010:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-010
+      - run: cd test && nix develop --command init . && nix develop --command isolated-010
   isolated-011:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-011
+      - run: cd test && nix develop --command init . && nix develop --command isolated-011
   isolated-101:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-101
+      - run: cd test && nix develop --command init . && nix develop --command isolated-101
   isolated-111:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command init . && gpg --gen-key nix develop --command isolated-111
+      - run: cd test && nix develop --command init . && nix develop --command isolated-111
