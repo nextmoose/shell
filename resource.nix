@@ -32,7 +32,17 @@
         lambda =
           track :
             ''
-              ${ target.coreutils }/bin/ln --symbolic ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              cleanup ( ) {
+                if [ ${ bash-variable "?" } != 0 ] && [ -x ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
+                then
+                  ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
+                  exit 64
+                fi
+              } &&
+              trap cleanup EXIT &&
               ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource
             '' ;
         null =
@@ -58,8 +68,8 @@
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
-        ${ strip init } &&
         ${ strip release } &&
+        ${ strip init } &&
         if [ ${ bash-variable "HASH" } ]
         then
           INVALIDATION_FILE=$( ${ target.coreutils }/bin/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
@@ -92,7 +102,9 @@
         lambda =
           track :
             ''
-              ${ target.coreutils }/bin/ln --symbolic ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
+              ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
+              ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
+              ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
             '' ;
         null =
           track :
@@ -145,17 +157,17 @@
         fi &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
-        if [ ! -L ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ]
-        then
-          ${ strip init }
-        fi &&
-        if [ ! -L ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
+        if [ ! -x ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
         then
           ${ strip release }
         fi &&
+        if [ ! -x ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ]
+        then
+          ${ strip init }
+        fi &&
         if [ ${ bash-variable "INVALIDATION" } ]
         then
-          INVALIDATION_FILE=$( ${ target.coreutils }/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
+          INVALIDATION_FILE=$( ${ target.coreutils }/bin/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
           ${ target.coreutils }/bin/echo ${ bash-variable "INVALIDATION" } > ${ bash-variable "INVALIDATION_FILE" } &&
           ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "INVALIDATION_FILE" }
         fi &&
