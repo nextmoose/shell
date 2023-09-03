@@ -4,6 +4,12 @@ on:
 jobs:
   check:
     needs:
+      - isolated
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo check
+  isolated:
+    needs:
       - isolated-000
       - isolated-001
       - isolated-010
@@ -12,7 +18,7 @@ jobs:
       - isolated-111
     runs-on: ubuntu-latest
     steps:
-      - run: echo check
+      - run: echo isolated
   isolated-000:
     runs-on: ubuntu-latest
     steps:
