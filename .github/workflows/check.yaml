@@ -5,6 +5,7 @@ jobs:
   check:
     needs:
       - bash-variable
+      - hash
       - isolated
     runs-on: ubuntu-latest
     steps:
@@ -15,7 +16,7 @@ jobs:
       - bash-variable-1
     runs-on: ubuntu-latest
     steps:
-      - run: echo isolated
+      - run: echo bash-variable
   bash-variable-0:
     runs-on: ubuntu-latest
     steps:
@@ -28,6 +29,18 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
       - run: cd test && nix develop --command bash-variable-1
+  hash:
+    needs:
+      - hash-0
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hash
+  hash-0 :
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-000
   isolated:
     needs:
       - isolated-000

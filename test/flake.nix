@@ -44,6 +44,15 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
+			hash =
+			  { target } :
+			    ''
+			      if [ -z "${ hash }" ]
+			      then
+			        ${ target.coreutils }/bin/echo NONEMPTY HASH &&
+				  exit 64
+			      fi
+			    '' ;
                         isolated =
                           {
                             isolated-000 =
@@ -171,6 +180,12 @@
                                     #
                                   ''
                                 )
+                                (
+                                  ''
+                                    # script
+                                    #
+                                    ''
+                                )
                               ] ;
                             sad =
                               [
@@ -211,6 +226,11 @@
                               # set
                               # a321d8b405e3ef2604959847b36d171eebebc4a8941dc70a4784935a4fca5d5813de84dfa049f06549aa61b20848c1633ce81b675286ea8fb53db240d831c568
                             '' ;
+			shell-script =
+			  { shell-script } :
+			    ''
+			      ${ shell-script : scripts : builtins.elemAt scripts.scripts.happy 3 }
+			    '' ;
                         simple =
                           {
                             simple-0 =
@@ -267,7 +287,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
