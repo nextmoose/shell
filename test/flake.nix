@@ -40,6 +40,10 @@
                                   ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
 				  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec stat --format "%n %x %y %z" {} \; &&
 				  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -type f -exec sha512sum {} \; &&
+                                  ${ target.gnutar }/bin/tar --create --file isolated-000.tar --directory ${ bash-variable "DIRECTORY" } . &&
+				  ${ target.coreutils }/bin/echo &&
+				  ${ target.coreutils }/bin/cat isolated-000.tar &&
+				  ${ target.coreutils }/bin/echo &&
                                   NUMBER=$( ${ target.gnutar }/bin/tar --create --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
                                   if [ ${ bash-variable "NUMBER" } != "d36af67b66966d3c244f60f12cdfa4b47a89848e21e07ad7ea2bef2b5f3fc39bf7adf3176dc3259bf389a8afba2239c2c3b35e2527d3862e460e7fb536939a56" ]
