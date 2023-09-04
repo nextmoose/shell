@@ -38,6 +38,15 @@
                                   ISOLATED=${ isolated { } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+
+
+				  ${ target.coreutils }/bin/echo BEFORE &&
+                                  ${ target.gnutar }/bin/tar --create --file isolated-000.tar --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . &&
+				  ${ target.coreutils }/bin/cat isolated-000.tar &&
+				  ${ target.coreutils }/bin/echo AFTER &&
+				  
+
+
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
                                   if [ ${ bash-variable "NUMBER" } != "1ad81d155208933de17925d1b19762983ebdc0e898f7eaea52ddb7a1ddf4b5e061a04c7a44b38a23422ddd1cf3c82250996363244ae46eeb2d0a89312d099592" ]
                                   then
