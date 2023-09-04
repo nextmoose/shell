@@ -18,6 +18,27 @@
                     private = "82b71638-804f-4533-b6dc-2f87b7ae5afc" ;
                     scripts =
                       {
+		        bash-variable =
+			  {
+			    bash-variable-0 =
+			      { bash-variable , target } :
+			        ''
+				  if [ '${ bash-variable 1 }' != '${ builtins.concatStringsSep "" [ "$" "{" "1" "}" ] }' ]
+				  then
+				    ${ target.coreutils }/bin/echo bash-variable fails on numbers &&
+				      exit 64
+				  fi
+				'' ;
+			    bash-variable-1 =
+			      { bash-variable , target } :
+			        ''
+				  if [ '${ bash-variable "1" }' != '${ builtins.concatStringsSep "" [ "$" "{" "1" "}" ] }' ]
+				  then
+				    ${ target.coreutils }/bin/echo bash-variable fails on strings &&
+				      exit 64
+				  fi
+				'' ;
+			  } ;
                         entrypoint =
                           { target } :
                             ''
@@ -246,7 +267,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
