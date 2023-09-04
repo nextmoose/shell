@@ -99,7 +99,7 @@
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "652997a0290a10cdb1e921b7ee81868c3f7c6e1d49a6121dec7e8b78962503f038a3f337495766d8d11869b87b5972af753ac7c04858ba661226d0198ac88240" ]
+                                  if [ ${ bash-variable "NUMBER" } != "1d6dd2fb6080beec97e2a66c62210c06bc9127ed023ce82b79ee5607317706a946f710e6d4f6c0bdced46756c8dfccaf3120ed2aa654f77f268538bf430dfe0b" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
