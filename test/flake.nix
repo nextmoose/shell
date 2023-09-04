@@ -57,9 +57,9 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "579f227f63b35cc28dc953966d2f3d64a6deeffe27a8e0a2764480009887749c7b2665dd23cebd1677d816afd47b93495771f9a5f6615f553a7a862ba5d1c732" ]
+                                  if [ ${ bash-variable "NUMBER" } != "9fbfc233092fc999169627cad4e2386933d0fe20995a53754b1312767f542512899913ff33d1b4a05e0174330a80d3459edc3231aa6dd6bf85ef616f96453653" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
