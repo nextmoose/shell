@@ -32,6 +32,18 @@
         lambda =
           track :
             ''
+              cleanup ( ) {
+                EXIT_CODE=${ bash-variable "?" } &&
+                  ${ target.coreutils }/bin/echo ${ bash-variable "EXIT_CODE" } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.code &&
+                  ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "RESOURCE_DIRECTORY" }/init.code &&
+                  if [ ${ bash-variable "EXIT_CODE" } == 0 ]
+                  then
+                    exit 0
+                  else
+                    exit 64
+                  fi
+              } &&
+              trap cleanup EXIT &&
               ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
               ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
               ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
@@ -61,7 +73,6 @@
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
         ${ strip release } &&
-        ${ strip init } &&
         if [ ${ bash-variable "HASH" } ]
         then
           INVALIDATION_FILE=$( ${ target.coreutils }/bin/mktemp --suffix ".invalidation" ${ bash-variable "RESOURCE_DIRECTORY" }/XXXXXXXX ) &&
@@ -74,6 +85,7 @@
           ${ target.coreutils }/bin/echo ${ bash-variable "PID" } > ${ bash-variable "PID_FILE" } &&
           ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "PID_FILE" }
         fi &&
+        ${ strip init } &&
         ${ target.coreutils }/bin/echo ${ bash-variable path }
       '' ;
     path =
