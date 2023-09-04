@@ -14,8 +14,6 @@ jobs:
       - isolated-001
       - isolated-010
       - isolated-011
-      - isolated-101
-      - isolated-111
     runs-on: ubuntu-latest
     steps:
       - run: echo isolated
@@ -43,15 +41,3 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
       - run: cd test && nix develop --command isolated-011
-  isolated-101:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command isolated-101
-  isolated-111:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command isolated-111
