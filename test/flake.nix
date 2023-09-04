@@ -37,7 +37,7 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
                                   if [ ${ bash-variable "NUMBER" } != "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ]
                                   then
@@ -77,7 +77,7 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
                                   if [ ${ bash-variable "NUMBER" } != "afee6f1efcd0945751a70ae68eb52f4abf74fe37c0899d4d57c2428c22b57f7e4abab1b189c010c2dc650e295bd44a56a2f2aa8418b9b7c3a01e08f662712f14" ]
                                   then
@@ -97,7 +97,7 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
                                   if [ ${ bash-variable "NUMBER" } != "652997a0290a10cdb1e921b7ee81868c3f7c6e1d49a6121dec7e8b78962503f038a3f337495766d8d11869b87b5972af753ac7c04858ba661226d0198ac88240" ]
                                   then
