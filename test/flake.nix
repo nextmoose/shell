@@ -45,7 +45,7 @@
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
 			hash =
-			  { target } :
+			  { hash , target } :
 			    ''
 			      if [ -z "${ hash }" ]
 			      then
