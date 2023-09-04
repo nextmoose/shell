@@ -12,7 +12,7 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp ? "shell/scripts.nix"
+  timestamp
 } @ arguments :
   let
     inject = builtins.import ./inject.nix ;
@@ -44,13 +44,30 @@
                                             let
                                               scripts =
                                                 let
-                                                  lambda = track : "" ;
+                                                  lambda =
+                                                    track :
+                                                      let
+                                                        lambda = x : string ;
+                                                        penultimate =
+                                                          {
+                                                            bash-variable = lambda ;
+                                                            isolated = lambda ;
+                                                            shell-script = lambda ;
+                                                            shell-script-bin = lambda ;
+                                                            hash = string ;
+                                                            path = string ;
+                                                            process = string ;
+                                                            timestamp = string ;
+                                                          } ;
+                                                        string = "" ;
+                                                        in inject track.input ( arguments // penultimate ) ;
                                                   list = track : track.interim ;
                                                   null = track : builtins.null ;
                                                   set = track : track.interim ;
+                                                  string = track : track.input ;
                                                   undefined = track : track.throw "000c437d-a0f9-4a58-951d-7d5b2a6101f9" ;
-                                                  in visit { lambda = lambda ; list = list ; null = null ; set = set ; undefined = undefined ; } arguments.scripts ;
-                                              string = inject script ( arguments // { scripts = scripts ; } ) ( { code } : code ) track ;
+                                                  in visit { lambda = lambda ; list = list ; null = null ; set = set ; string = string ; undefined = undefined ; } arguments.scripts ;
+                                              string = builtins.toJSON scripts ;
                                               in builtins.replaceStrings [ value ] [ "" ] string == string && builtins.all ( p : p != value ) previous ;
                                         list = track : builtins.all ( x : x ) track.interim ;
                                         null = track : true ;
