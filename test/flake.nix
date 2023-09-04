@@ -37,16 +37,9 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-				  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec stat --format "%n %x %y %z" {} \; &&
-				  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -type f -exec sha512sum {} \; &&
-                                  ${ target.gnutar }/bin/tar --create --file isolated-000.tar --directory ${ bash-variable "DIRECTORY" } . &&
-				  ${ target.coreutils }/bin/echo &&
-				  ${ target.coreutils }/bin/cat isolated-000.tar &&
-				  ${ target.coreutils }/bin/echo &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "d36af67b66966d3c244f60f12cdfa4b47a89848e21e07ad7ea2bef2b5f3fc39bf7adf3176dc3259bf389a8afba2239c2c3b35e2527d3862e460e7fb536939a56" ]
+                                  if [ ${ bash-variable "NUMBER" } != "1ad81d155208933de17925d1b19762983ebdc0e898f7eaea52ddb7a1ddf4b5e061a04c7a44b38a23422ddd1cf3c82250996363244ae46eeb2d0a89312d099592" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
