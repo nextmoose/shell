@@ -59,7 +59,7 @@
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
                                   ${ target.coreutils }/bin/echo &&
                                   ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
@@ -84,11 +84,11 @@
                                   ISOLATED=${ isolated { release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
                                   ${ target.coreutils }/bin/echo &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "f61312766062404f855b05bfe5547b23c727d18e07200c3f9b9db15d3a7218269561070675a46d16c07d348cc675e68b032fa10b491ef732d071068d2dcb134e" ]
+                                  if [ ${ bash-variable "NUMBER" } != "ad57810457862fc02bcbde7e910afdf69dba2e9b94862f79598cfdc5ebf2642621ed9a11089aa86e92cef0715a30018ee103992655634f86efcf20342bf8e7c3" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
@@ -107,13 +107,13 @@
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
                                   ${ target.coreutils }/bin/echo &&
                                   ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
                                   ${ target.coreutils }/bin/echo &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "345f5668bae6ec65eb073ab93a913aab11a4f3a7a4b48db6ab1419582e7c0faf86f28feba2730c3affe37b0ff0245cb0a110e0270c8b1bca949ddb0fb62f1c80" ]
+                                  if [ ${ bash-variable "NUMBER" } != "3068dfd1341980134ea57570acf65e306e4d96cef4d560384894c88a4}=1693790424" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
