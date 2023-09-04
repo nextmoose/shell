@@ -37,10 +37,9 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "c1ffebcba98aaa4cb37b21f52c1388928718f2156afba036a07ffb1450797b034616d6b2e57f477fa571b00d35a54e36b8a2d19fedaed4f5121ce9b675fafcfc" ]
+                                  if [ ${ bash-variable "NUMBER" } != "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
@@ -58,14 +57,9 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                  ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
-                                  ${ target.coreutils }/bin/echo &&
-                                  ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
-                                  ${ target.coreutils }/bin/echo &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "84b45bcc2d9aab2f1c2ce4b15a5b815b8b033b983f6ddc7b763fa94870799c9074841795dbe6ea9beb7973eb8d292605b74d82ed2e554873b15d127e437f35ce" ]
+                                  if [ ${ bash-variable "NUMBER" } != "579f227f63b35cc28dc953966d2f3d64a6deeffe27a8e0a2764480009887749c7b2665dd23cebd1677d816afd47b93495771f9a5f6615f553a7a862ba5d1c732" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
@@ -83,12 +77,9 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                  ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
-                                  ${ target.coreutils }/bin/echo &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "ad57810457862fc02bcbde7e910afdf69dba2e9b94862f79598cfdc5ebf2642621ed9a11089aa86e92cef0715a30018ee103992655634f86efcf20342bf8e7c3" ]
+                                  if [ ${ bash-variable "NUMBER" } != "afee6f1efcd0945751a70ae68eb52f4abf74fe37c0899d4d57c2428c22b57f7e4abab1b189c010c2dc650e295bd44a56a2f2aa8418b9b7c3a01e08f662712f14" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
@@ -106,68 +97,13 @@
                                   ${ target.coreutils }/bin/echo &&
                                   ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
-                                  ${ target.findutils }/bin/find ${ bash-variable "DIRECTORY" } -exec ${ target.coreutils }/bin/touch --date @0 {} \; &&
-                                  NUMBER=$( ${ target.gnutar }/bin/tar --create --owner=938 --group=938 --numeric-owner --directory ${ bash-variable "DIRECTORY" } . | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                  ${ target.coreutils }/bin/echo ${ bash-variable "ISOLATED" } &&
-                                  ${ target.coreutils }/bin/echo &&
-                                  ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
-                                  ${ target.coreutils }/bin/echo &&
+                                  NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "3068dfd1341980134ea57570acf65e306e4d96cef4d560384894c88a4}=1693790424" ]
+                                  if [ ${ bash-variable "NUMBER" } != "652997a0290a10cdb1e921b7ee81868c3f7c6e1d49a6121dec7e8b78962503f038a3f337495766d8d11869b87b5972af753ac7c04858ba661226d0198ac88240" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
                                   fi
-                                '' ;
-                            isolated-101 =
-                              { bash-variable , hash , isolated , path , process , target , timestamp } :
-                                ''
-                                  # isolated
-                                  # 3c9ad55147a7144f6067327c3b82ea70e7c5426add9ceea4d07dc2902239bf9e049b88625eb65d014a7718f79354608cab0921782c643f0208983fffa3582e40
-                                  ${ target.coreutils }/bin/echo HASH='${ hash }'=${ hash } &&
-                                  ${ target.coreutils }/bin/echo PATH='${ path }'=${ path } &&
-                                  ${ target.coreutils }/bin/echo PROCESS='${ process }'=${ process } &&
-                                  ${ target.coreutils }/bin/echo TIMESTAMP='${ timestamp }'=${ timestamp } &&
-                                  ${ target.coreutils }/bin/echo &&
-                                  cleanup ( ) {
-                                    EXIT_CODE=${ bash-variable "?" } &&
-                                      ${ target.coreutils }/bin/echo EXIT_CODE=${ bash-variable "EXIT_CODE" } &&
-                                      if [ ${ bash-variable "EXIT_CODE" } == 64 ]
-                                      then
-                                        ${ target.coreutils }/bin/echo SINCE WE EXPECTED THE ISOLATION TO FAIL WITH EXIT CODE 64, THIS IS A SUCCESS &&
-                                          exit 0
-                                      else
-                                        ${ target.coreutils }/bin/echo SINCE WE EXPECTED THE ISOLATION TO FAIL WITH EXIT CODE 64, THIS IS A FAILURE ${ bash-variable "EXIT_CODE" } &&
-                                          exit 64
-                                      fi
-                                  } &&
-                                  trap cleanup EXIT &&
-                                  ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.sad 0 ; } }
-                                '' ;
-                            isolated-111 =
-                              { bash-variable , hash , isolated , path , process , target , timestamp } :
-                                ''
-                                  # isolated
-                                  # 3c9ad55147a7144f6067327c3b82ea70e7c5426add9ceea4d07dc2902239bf9e049b88625eb65d014a7718f79354608cab0921782c643f0208983fffa3582e40
-                                  ${ target.coreutils }/bin/echo HASH='${ hash }'=${ hash } &&
-                                  ${ target.coreutils }/bin/echo PATH='${ path }'=${ path } &&
-                                  ${ target.coreutils }/bin/echo PROCESS='${ process }'=${ process } &&
-                                  ${ target.coreutils }/bin/echo TIMESTAMP='${ timestamp }'=${ timestamp } &&
-                                  ${ target.coreutils }/bin/echo &&
-                                  cleanup ( ) {
-                                    EXIT_CODE=${ bash-variable "?" } &&
-                                      ${ target.coreutils }/bin/echo EXIT_CODE=${ bash-variable "EXIT_CODE" } &&
-                                      if [ ${ bash-variable "EXIT_CODE" } == 64 ]
-                                      then
-                                        ${ target.coreutils }/bin/echo SINCE WE EXPECTED THE ISOLATION TO FAIL WITH EXIT CODE 64, THIS IS A SUCCESS &&
-                                          exit 0
-                                      else
-                                        ${ target.coreutils }/bin/echo SINCE WE EXPECTED THE ISOLATION TO FAIL WITH EXIT CODE 64, THIS IS A FAILURE ${ bash-variable "EXIT_CODE" } &&
-                                          exit 64
-                                      fi
-                                  } &&
-                                  trap cleanup EXIT &&
-                                  ISOLATED=${ isolated { init = scripts : builtins.elemAt scripts.scripts.sad 0 ; release = scripts : builtins.elemAt scripts.scripts.happy 0 ; } }
                                 '' ;
                           } ;
                         private =
@@ -193,10 +129,6 @@
                                       then
                                         ${ target.coreutils }/bin/echo "${ bash-variable 1 } != ${ path }" > ${ bash-variable 1 } &&
                                           exit 64
-                                      elif [ "${ path }" != "${ structure-directory }/${ hash }" ]
-                                      then
-                                        ${ target.coreutils }/bin/echo "${ path } != ${ structure-directory }/${ hash }" &&
-                                          exit 64
                                       else
                                         ${ target.coreutils }/bin/echo HASH='${ hash }' > ${ bash-variable 1 } &&
                                           ${ target.coreutils }/bin/echo PATH='${ path }' >> ${ bash-variable 1 } &&
@@ -209,23 +141,7 @@
                                 (
                                   { bash-variable , hash , path , process , target , structure-directory , timestamp } :
                                     ''
-                                      # script
-                                      #
-                                      if [ "${ bash-variable 1 }" != "${ path }" ]
-                                      then
-                                        ${ target.coreutils }/bin/echo "${ bash-variable 1 } != ${ path }" > ${ bash-variable 1 } &&
-                                          exit 64
-                                      elif [ "${ path }" != "${ structure-directory }/${ hash }" ]
-                                      then
-                                        ${ target.coreutils }/bin/echo "${ path } != ${ structure-directory }/${ hash }" &&
-                                          exit 64
-                                      else
-                                        ${ target.coreutils }/bin/echo HASH='${ hash }' > ${ bash-variable 1 } &&
-                                          ${ target.coreutils }/bin/echo PATH='${ path }' >> ${ bash-variable 1 } &&
-                                          ${ target.coreutils }/bin/echo PROCESS='${ process }' >> ${ bash-variable 1 } &&
-                                          ${ target.coreutils }/bin/echo TIMESTAMP='${ timestamp }' >> ${ bash-variable 1 } &&
-                                          ${ target.coreutils }/bin/chmod 0400 ${ bash-variable 1 }
-                                      fi                               
+				      # release
                                     ''
                                 )
                                 (
@@ -330,7 +246,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.isolated.isolated-101 inputs.isolated.isolated-111 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.isolated.isolated-000 inputs.isolated.isolated-001 inputs.isolated.isolated-010 inputs.isolated.isolated-011 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;

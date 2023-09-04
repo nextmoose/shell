@@ -35,14 +35,6 @@
               ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
               ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
               ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
-              cleanup ( ) {
-                if [ ${ bash-variable "?" } != 0 ] && [ -x ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
-                then
-                  ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
-                  exit 64
-                fi
-              } &&
-              trap cleanup EXIT &&
               ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource
             '' ;
         null =
