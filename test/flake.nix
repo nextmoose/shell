@@ -113,7 +113,8 @@
                                         then
                                           ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                              exit 64
-                                        fi
+                                        fi &&
+					exit 0
 				      done
 				    else
 				      ${ target.coreutils }/bin/echo EXIT CODE=${ bash-variable "EXIT_CODE" }
@@ -138,7 +139,8 @@
                                         then
                                           ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                              exit 64
-                                        fi
+                                        fi &&
+					exit 0
 				      done
 				    else
 				      ${ target.coreutils }/bin/echo EXIT CODE=${ bash-variable "EXIT_CODE" }
