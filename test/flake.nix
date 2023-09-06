@@ -271,6 +271,17 @@
                               # set
                               # a321d8b405e3ef2604959847b36d171eebebc4a8941dc70a4784935a4fca5d5813de84dfa049f06549aa61b20848c1633ce81b675286ea8fb53db240d831c568
                             '' ;
+			shell-script =
+			  { bash-variable , shell-script , target } :
+			    ''
+			      SCRIPT=${ shell-script ( scripts : builtins.elemAt scripts.scripts.happy 0 ) } &&
+			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
+			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/50ynsgls3id094v79lf1h2k9ll4jrhwh-script" ]
+			        then
+			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
+				    exit 0\64
+			        fi
+			    '' ;
                         simple =
                           {
                             simple-0 =
@@ -318,14 +329,15 @@
 			timestamp =
 			  {
 			    timestamp-0 =
-			      { timestamp , target } :
+			      { bash-variable , timestamp , target } :
 			        ''
-				  if [ -z "${ timestamp }" ]
+				  CURRENT_TIME=$( ${ target.coreutils }/bin/date +%s ) &&
+				  if [ ${ timestamp } == ${ bash-variable "CURRENT_TIME" } ] || [ ${ timestamp } == $(( ${ bash-variable "CURRENT_TIME" } - 1 )) ]
 				  then
-				    ${ target.coreutils }/bin/echo timestamp IS EMPTY WHICH IS CORRECT &&
+				    ${ target.coreutils }/bin/echo timestamp IS CORRECT &&
 				      exit 0
 				  else
-				    ${ target.coreutils }/bin/echo timestamp IS NOT EMPTY &&
+				    ${ target.coreutils }/bin/echo timestamp IS NOT CORRECT &&
 				      ${ target.coreutils }/bin/echo ${ timestamp } &&
 				      exit 64
 				  fi
@@ -343,7 +355,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;

@@ -28,6 +28,7 @@ jobs:
       - isolated
       - path
       - process
+      - shell-script
       - timestamp
     runs-on: ubuntu-latest
     steps:
@@ -115,6 +116,14 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
       - run: cd test && nix develop --command process-0
+  shell-script:
+    needs:
+      - shell-script-0
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command shell-script-0
   timestamp:
     needs:
       - timestamp-0
