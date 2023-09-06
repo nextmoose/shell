@@ -2,15 +2,89 @@ name: "check"
 on:
   push:
 jobs:
-  check:
+  bash-variable:
     needs:
-      - simple
+      - bash-variable-0
+      - bash-variable-1
     runs-on: ubuntu-latest
     steps:
-      - run: echo check
-  simple:
+      - run: echo bash
+  bash-variable-0:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
-      - run: cd test && nix develop --command simple
+      - run: cd test && nix develop --command bash-variable-0
+  bash-variable-1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command bash-variable-1
+  check:
+    needs:
+      - bash-variable
+      - hash
+      - isolated
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo check
+  hash:
+    needs:
+      - hash-0
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hash
+  hash-0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command hash-0
+  isolated:
+    needs:
+      - isolated-0000
+      - isolated-0001
+      - isolated-0010
+      - isolated-0011
+      - isolated-0101
+      - isolated-0111
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo isolated
+  isolated-0000:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0000
+  isolated-0001:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0001
+  isolated-0010:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0010
+  isolated-0011:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0011
+  isolated-0101:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0101
+  isolated-0111:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-0111

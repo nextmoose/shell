@@ -22,14 +22,16 @@
         penultimate =
           {
             bash-variable = bash-variable ;
-            hash = bash-variable hash ;
             isolated = isolated ;
-            shared = shared ;
             shell-script = shell-script ;
-            shell-scripts = shell-scripts ;
             shell-script-bin = shell-script-bins ;
-            shell-script-bins = shell-script-bins ;
+            
+            hash = bash-variable hash ;
+            path = bash-variable path ;
+            process = bash-variable process ;
             timestamp = bash-variable arguments.timestamp ;
+
+            shared = shared ;
           } ;
         shared =
           let
@@ -60,12 +62,13 @@
       '' ;
     resource = builtins.import ./resource.nix ;
     scripts = builtins.import ./scripts.nix ;
-    shell-script = target.writeShellScript simple-name program ;
-    shell-script-bin = target.writeShellScriptBin simple-name program ;
+    shell-script = target.writeShellScript ( simple-name "script" ) program ;
+    shell-script-bin = target.writeShellScriptBin ( simple-name ( builtins.throw "199234b8-fcfd-477f-a71a-6a303201deeb" ) ) program ;
     simple-name =
-      if builtins.length track.path == 0 then builtins.throw "eb08324d-2f45-437a-93a1-1ff7694caa4f"
-      else if builtins.typeOf ( builtins.elemAt track.path ( builtins.length track.path - 1 ) ) != "string" then builtins.throw "199234b8-fcfd-477f-a71a-6a303201deeb"
-      else builtins.elemAt track.path ( builtins.length track.path - 1 ) ;
+      default :
+        if builtins.length track.path == 0 then builtins.throw "eb08324d-2f45-437a-93a1-1ff7694caa4f"
+        else if builtins.typeOf ( builtins.elemAt track.path ( builtins.length track.path - 1 ) ) != "string" then default
+        else builtins.elemAt track.path ( builtins.length track.path - 1 ) ;
     strip = builtins.import ./strip.nix ;
     timestamp =
       let
