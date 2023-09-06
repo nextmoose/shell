@@ -201,6 +201,22 @@
                                 exit 64
                               fi
                             '' ;
+			process =
+			  {
+			    process-0 =
+			      { process , target } :
+			        ''
+				  if [ -z "${ process }" ]
+				  then
+				    ${ target.coreutils }/bin/echo process IS EMPTY WHICH IS CORRECT &&
+				      exit 0
+				  else
+				    ${ target.coreutils }/bin/echo process IS NOT EMPTY &&
+				      ${ target.coreutils }/bin/echo ${ process } &&
+				      exit 64
+				  fi
+				'' ;
+			  } ;
                         scripts =
                           {
                             happy =
@@ -311,7 +327,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
