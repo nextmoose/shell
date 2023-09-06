@@ -24,7 +24,7 @@
             bash-variable = bash-variable ;
             isolated = isolated ;
             shell-script = shell-script ;
-            shell-script-bin = shell-script-bins ;
+            shell-script-bin = shell-script-bin ;
             
             hash = bash-variable hash ;
             path = bash-variable path ;
