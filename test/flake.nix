@@ -62,7 +62,7 @@
 			  } ;
                         isolated =
                           {
-                            isolated-000 =
+                            isolated-0000 =
                               { bash-variable , isolated , target } :
                                 ''
                                   ISOLATED=${ isolated { } } &&
