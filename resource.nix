@@ -32,7 +32,21 @@
         lambda =
           track :
             ''
-              ${ target.coreutils }/bin/ln --symbolic ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              cleanup ( ) {
+                EXIT_CODE=${ bash-variable "?" } &&
+                  ${ target.coreutils }/bin/echo ${ bash-variable "EXIT_CODE" } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.code &&
+                  ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "RESOURCE_DIRECTORY" }/init.code &&
+                  if [ ${ bash-variable "EXIT_CODE" } == 0 ]
+                  then
+                    exit 0
+                  else
+                    exit 64
+                  fi
+              } &&
+              trap cleanup EXIT &&
+              ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
+              ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh &&
               ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ${ bash-variable "RESOURCE_DIRECTORY" }/resource
             '' ;
         null =
@@ -50,7 +64,7 @@
         PID=${ bash-variable 2 } &&
         if [ ! -d ${ structure-directory } ]
         then
-          ${ target.coreutils }/bin/mkdir ${ structure-directory }
+          ${ target.coreutils }/bin/mkdir --parents ${ structure-directory }
         fi &&
         exec 201<>${ structure-directory }/lock &&
         ${ target.flock }/bin/flock -s 201 &&
@@ -58,7 +72,6 @@
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
-        ${ strip init } &&
         ${ strip release } &&
         if [ ${ bash-variable "HASH" } ]
         then
@@ -72,6 +85,7 @@
           ${ target.coreutils }/bin/echo ${ bash-variable "PID" } > ${ bash-variable "PID_FILE" } &&
           ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "PID_FILE" }
         fi &&
+        ${ strip init } &&
         ${ target.coreutils }/bin/echo ${ bash-variable path }
       '' ;
     path =
@@ -92,7 +106,9 @@
         lambda =
           track :
             ''
-              ${ target.coreutils }/bin/ln --symbolic ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
+              ${ target.coreutils }/bin/cat ${ track.input ( scripts arguments ( { shell-script } : shell-script ) ) } > ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
+              ${ target.coreutils }/bin/touch --date @0 ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh &&
+              ${ target.coreutils }/bin/chmod 0500 ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh
             '' ;
         null =
           track :
@@ -145,13 +161,13 @@
         fi &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
-        if [ ! -L ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ]
-        then
-          ${ strip init }
-        fi &&
-        if [ ! -L ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
+        if [ ! -x ${ bash-variable "RESOURCE_DIRECTORY" }/release.sh ]
         then
           ${ strip release }
+        fi &&
+        if [ ! -x ${ bash-variable "RESOURCE_DIRECTORY" }/init.sh ]
+        then
+          ${ strip init }
         fi &&
         if [ ${ bash-variable "INVALIDATION" } ]
         then
