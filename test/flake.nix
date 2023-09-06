@@ -287,7 +287,7 @@
 			    ''
 			      SCRIPT=${ shell-script-bin ( scripts : scripts.set ) } &&
 			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
-			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/50ynsgls3id094v79lf1h2k9ll4jrhwh-script" ]
+			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/4msjvvvb73br399057srj0hcypnp1zkb-set" ]
 			        then
 			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
 				    exit 0\64
