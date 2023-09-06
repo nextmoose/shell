@@ -175,6 +175,22 @@
                                   fi
                                 '' ;
                           } ;
+			path =
+			  {
+			    path-0 =
+			      { path , target } :
+			        ''
+				  if [ -z "${ path }" ]
+				  then
+				    ${ target.coreutils }/bin/echo path IS EMPTY WHICH IS CORRECT &&
+				      exit 0
+				  else
+				    ${ target.coreutils }/bin/echo path IS NOT EMPTY &&
+				      ${ target.coreutils }/bin/echo ${ path } &&
+				      exit 64
+				  fi
+				'' ;
+			  } ;
                         private =
                           { private } :
                             ''
@@ -185,6 +201,22 @@
                                 exit 64
                               fi
                             '' ;
+			process =
+			  {
+			    process-0 =
+			      { process , target } :
+			        ''
+				  if [ -z "${ process }" ]
+				  then
+				    ${ target.coreutils }/bin/echo process IS EMPTY WHICH IS CORRECT &&
+				      exit 0
+				  else
+				    ${ target.coreutils }/bin/echo process IS NOT EMPTY &&
+				      ${ target.coreutils }/bin/echo ${ process } &&
+				      exit 64
+				  fi
+				'' ;
+			  } ;
                         scripts =
                           {
                             happy =
@@ -239,6 +271,28 @@
                               # set
                               # a321d8b405e3ef2604959847b36d171eebebc4a8941dc70a4784935a4fca5d5813de84dfa049f06549aa61b20848c1633ce81b675286ea8fb53db240d831c568
                             '' ;
+			shell-script =
+			  { bash-variable , shell-script , target } :
+			    ''
+			      SCRIPT=${ shell-script ( scripts : builtins.elemAt scripts.scripts.happy 0 ) } &&
+			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
+			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/50ynsgls3id094v79lf1h2k9ll4jrhwh-script" ]
+			        then
+			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
+				    exit 0\64
+			        fi
+			    '' ;
+			shell-script-bin =
+			  { bash-variable , shell-script-bin , target } :
+			    ''
+			      SCRIPT=${ shell-script-bin ( scripts : scripts.set ) } &&
+			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
+			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/4msjvvvb73br399057srj0hcypnp1zkb-set" ]
+			        then
+			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
+				    exit 0\64
+			        fi
+			    '' ;
                         simple =
                           {
                             simple-0 =
@@ -283,6 +337,23 @@
                             # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
                             # 3bafbf08882a2d10133093a1b8433f50563b93c14acd05b79028eb1d12799027241450980651994501423a66c276ae26c43b739bc65c4e16b10c3af6c202aebb
                           '' ;
+			timestamp =
+			  {
+			    timestamp-0 =
+			      { bash-variable , timestamp , target } :
+			        ''
+				  CURRENT_TIME=$( ${ target.coreutils }/bin/date +%s ) &&
+				  if [ ${ timestamp } == ${ bash-variable "CURRENT_TIME" } ] || [ ${ timestamp } == $(( ${ bash-variable "CURRENT_TIME" } - 1 )) ]
+				  then
+				    ${ target.coreutils }/bin/echo timestamp IS CORRECT &&
+				      exit 0
+				  else
+				    ${ target.coreutils }/bin/echo timestamp IS NOT CORRECT &&
+				      ${ target.coreutils }/bin/echo ${ timestamp } &&
+				      exit 64
+				  fi
+				'' ;
+			  } ;
                       } ; 
                     shared =
                       {
@@ -295,7 +366,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.private inputs.set inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
