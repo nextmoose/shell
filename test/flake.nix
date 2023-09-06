@@ -95,7 +95,7 @@
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "686c8cc840d960a2a1452f4afa96f5e0f8a81a0409ed3c856e5721e869c5ddb7dbd1523d63ca3583c5eb6695128b51bfb56dc2bd6fff21086700d80ea15a7b9a" ]
+                                  if [ ${ bash-variable "NUMBER" } != "84a3eb05016483e001e70d8f4b5fdf390e9c1575bf4fc383362b73c9a89755d03dfb038cba8ef1fe6809948e74264bc2029f0124228b653b731563cc2da5c2e8" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
@@ -108,7 +108,7 @@
                                   DIRECTORY=$( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) &&
                                   NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                   ${ target.coreutils }/bin/echo ${ bash-variable "NUMBER" } &&
-                                  if [ ${ bash-variable "NUMBER" } != "b580ff8523d9289913f091e6d285d4f0a8699e70f06950fb157c38e4d35006f90c8b5336993cbfd38af94c1a8c2df594edd13efd95031e80459abfd96b018da7" ]
+                                  if [ ${ bash-variable "NUMBER" } != "84a3eb05016483e001e70d8f4b5fdf390e9c1575bf4fc383362b73c9a89755d03dfb038cba8ef1fe6809948e74264bc2029f0124228b653b731563cc2da5c2e8" ]
                                   then
                                     ${ target.coreutils }/bin/echo THE ISOLATED DIRECTORY IS DIFFERENT THAN EXPECTED &&
                                        exit 64
