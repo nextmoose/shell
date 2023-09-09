@@ -54,6 +54,10 @@ jobs:
       - isolated-0011
       - isolated-0101
       - isolated-0111
+      - isolated-1000
+      - isolated-1001
+      - isolated-1010
+      - isolated-1101
     runs-on: ubuntu-latest
     steps:
       - run: echo isolated
@@ -93,6 +97,36 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
       - run: cd test && nix develop --command isolated-0111
+  isolated-1000:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-1000
+  isolated-1001:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-1001
+  isolated-1010:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-1010
+  isolated-1011:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-1011
+  isolated-1101:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@a4b8aaf5a24260b643f571235829e53e6b3cc920
+      - run: cd test && nix develop --command isolated-1101
   path:
     needs:
       - path-0
