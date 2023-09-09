@@ -125,6 +125,7 @@
                                 array =
                                   [
                                     "27b95b43c398025730c7b1fdfc735adb6d49b6d42603c8400c4448d0a176b05300f81b42673ad3d9d721365e1404e0e07305b472291bac1aef1731022a159563"
+                                    "d25054898eb39ae8f26feced2be3e6e796e869dda716b8cbf51479da21b46dbbab712821b3b2fce11ab8365c0102700accc862713daa6425fd365b0a568a7957"
                                   ] ;
                                 reducer =
                                   previous : current :
@@ -134,6 +135,7 @@
                               in
                                 {
                                   isolated-0000 = isolated 0 null null ;
+                                  isolated-0001 = isolated 1 0 null ;
                                 } ;
                         operations =
                           let
@@ -142,7 +144,7 @@
                                 { path , target } :
                                   ''  
                                     ${ target.coreutils }/bin/mkdir ${ path } &&
-                                      ${ target.coreutils }/bin/echo ${ value } ${ path }/${ key } &&
+                                      ${ target.coreutils }/bin/echo ${ value } > ${ path }/${ key } &&
                                       ${ target.coreutils }/bin/chmod 0400 ${ path }/${ key } &&
                                       exit ${ builtins.toString exit }
                                   '' ;
@@ -461,7 +463,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
