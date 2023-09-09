@@ -72,6 +72,11 @@
         export ${ path }=${ bash-variable "RESOURCE_DIRECTORY" }/resource &&
         exec 203<>${ bash-variable "RESOURCE_DIRECTORY" }/lock &&
         ${ target.flock }/bin/flock 203 &&
+	if [ ! -z "${ hash }" ]
+	then
+	  ${ target.coreutils }/bin/echo ${ hash } > ${ bash-variable "RESOURCE_DIRECTORY" }/control &&
+	    ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "RESOURCE_DIRECTORY" }/control
+	fi &&
         ${ strip release } &&
         if [ ${ bash-variable "HASH" } ]
         then

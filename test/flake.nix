@@ -44,22 +44,22 @@
                             ''
                               ${ target.cowsay }/bin/cowsay ENTRY POINT
                             '' ;
-			hash =
-			  {
-			    hash-0 =
-			      { hash , target } :
-			        ''
-				  if [ -z "${ hash }" ]
-				  then
-				    ${ target.coreutils }/bin/echo hash IS EMPTY WHICH IS CORRECT &&
-				      exit 0
-				  else
-				    ${ target.coreutils }/bin/echo hash IS NOT EMPTY &&
-				      ${ target.coreutils }/bin/echo ${ hash } &&
-				      exit 64
-				  fi
-				'' ;
-			  } ;
+                        hash =
+                          {
+                            hash-0 =
+                              { hash , target } :
+                                ''
+                                  if [ -z "${ hash }" ]
+                                  then
+                                    ${ target.coreutils }/bin/echo hash IS EMPTY WHICH IS CORRECT &&
+                                      exit 0
+                                  else
+                                    ${ target.coreutils }/bin/echo hash IS NOT EMPTY &&
+                                      ${ target.coreutils }/bin/echo ${ hash } &&
+                                      exit 64
+                                  fi
+                                '' ;
+                          } ;
                         isolated =
                           {
                             isolated-0000 =
@@ -174,23 +174,78 @@
                                       fi
                                   fi
                                 '' ;
+                            isolated-1000 =
+                              { bash-variable , isolated , path , target } :
+                                ''
+                                  ISOLATED=${ isolated { init = scripts : scripts.scripts.isolated.isolated-1000 ; } } &&
+                                    ${ target.coreutils }/bin/echo ISOLATED='${ bash-variable "ISOLATED" }'=${ bash-variable "ISOLATED" } > /tmp/debug &&
+                                    if [ -f ${ bash-variable "ISOLATED" } ]
+                                    then
+                                      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
+                                        exit 64
+                                    fi
+                                '' ;
+                            isolated-1001 =
+                              { bash-variable , isolated , path , target } :
+                                ''
+                                  ISOLATED=${ isolated { init = scripts : scripts.scripts.isolated.isolated-1001 ; } } &&
+                                    ${ target.coreutils }/bin/echo ISOLATED='${ bash-variable "ISOLATED" }'=${ bash-variable "ISOLATED" } > /tmp/debug &&
+                                    if [ -f ${ bash-variable "ISOLATED" } ]
+                                    then
+                                      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
+                                        exit 64
+                                    fi
+                                '' ;
+                            isolated-1010 =
+                              { bash-variable , isolated , path , target } :
+                                ''
+                                  ISOLATED=${ isolated { init = scripts : scripts.scripts.isolated.isolated-1010 ; } } &&
+                                    ${ target.coreutils }/bin/echo ISOLATED='${ bash-variable "ISOLATED" }'=${ bash-variable "ISOLATED" } > /tmp/debug &&
+                                    if [ -f ${ bash-variable "ISOLATED" } ]
+                                    then
+                                      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
+                                        exit 64
+                                    fi
+                                '' ;
+                            isolated-1011 =
+                              { bash-variable , isolated , path , target } :
+                                ''
+                                  ISOLATED=${ isolated { init = scripts : scripts.scripts.isolated.isolated-1011 ; } } &&
+                                    ${ target.coreutils }/bin/echo ISOLATED='${ bash-variable "ISOLATED" }'=${ bash-variable "ISOLATED" } > /tmp/debug &&
+                                    if [ -f ${ bash-variable "ISOLATED" } ]
+                                    then
+                                      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
+                                        exit 64
+                                    fi
+                                '' ;
+                            isolated-1101 =
+                              { bash-variable , isolated , path , target } :
+                                ''
+                                  ISOLATED=${ isolated { init = scripts : scripts.scripts.isolated.isolated-1101 ; } } &&
+                                    ${ target.coreutils }/bin/echo ISOLATED='${ bash-variable "ISOLATED" }'=${ bash-variable "ISOLATED" } > /tmp/debug &&
+                                    if [ -f ${ bash-variable "ISOLATED" } ]
+                                    then
+                                      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" } &&
+                                        exit 64
+                                    fi
+                                '' ;
                           } ;
-			path =
-			  {
-			    path-0 =
-			      { path , target } :
-			        ''
-				  if [ -z "${ path }" ]
-				  then
-				    ${ target.coreutils }/bin/echo path IS EMPTY WHICH IS CORRECT &&
-				      exit 0
-				  else
-				    ${ target.coreutils }/bin/echo path IS NOT EMPTY &&
-				      ${ target.coreutils }/bin/echo ${ path } &&
-				      exit 64
-				  fi
-				'' ;
-			  } ;
+                        path =
+                          {
+                            path-0 =
+                              { path , target } :
+                                ''
+                                  if [ -z "${ path }" ]
+                                  then
+                                    ${ target.coreutils }/bin/echo path IS EMPTY WHICH IS CORRECT &&
+                                      exit 0
+                                  else
+                                    ${ target.coreutils }/bin/echo path IS NOT EMPTY &&
+                                      ${ target.coreutils }/bin/echo ${ path } &&
+                                      exit 64
+                                  fi
+                                '' ;
+                          } ;
                         private =
                           { private } :
                             ''
@@ -201,22 +256,22 @@
                                 exit 64
                               fi
                             '' ;
-			process =
-			  {
-			    process-0 =
-			      { process , target } :
-			        ''
-				  if [ -z "${ process }" ]
-				  then
-				    ${ target.coreutils }/bin/echo process IS EMPTY WHICH IS CORRECT &&
-				      exit 0
-				  else
-				    ${ target.coreutils }/bin/echo process IS NOT EMPTY &&
-				      ${ target.coreutils }/bin/echo ${ process } &&
-				      exit 64
-				  fi
-				'' ;
-			  } ;
+                        process =
+                          {
+                            process-0 =
+                              { process , target } :
+                                ''
+                                  if [ -z "${ process }" ]
+                                  then
+                                    ${ target.coreutils }/bin/echo process IS EMPTY WHICH IS CORRECT &&
+                                      exit 0
+                                  else
+                                    ${ target.coreutils }/bin/echo process IS NOT EMPTY &&
+                                      ${ target.coreutils }/bin/echo ${ process } &&
+                                      exit 64
+                                  fi
+                                '' ;
+                          } ;
                         scripts =
                           {
                             happy =
@@ -252,6 +307,117 @@
                                   ''
                                 )
                               ] ;
+                            isolated =
+                              {
+                                isolated-1000 =
+                                  { bash-variable , hash , isolated , path , target } :
+                                    ''
+                                      OLD=${ isolated { } } &&
+                                        NEW=${ isolated { } } &&
+                                        ${ target.coreutils }/bin/cp --recursive $( ${ target.coreutils }/bin/dirname ${ bash-variable "OLD" } ) ${ bash-variable "NEW" } &&
+                                        ${ target.coreutils }/bin/chmod 0600 ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/echo 727b9de6-a205-4053-9bf3-83d6a4710efe > ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "NEW" }/control &&
+                                        NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "NEW" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                        if [ ${ bash-variable "NUMBER" } != "a2daf0649caea4a5a4d87695f5c9c0902459c51153b32df8f62acc32eb0c2c222c6ec72634daa2f565e592c7aeb6a25f785219ae94be1eca19a685d1b0f3a61e" ]
+                                        then
+                                          ( ${ target.coreutils }/bin/cat > ${ path } <<EOF
+                                      OLD=${ bash-variable "OLD" }
+                                      NEW=${ bash-variable "NEW" }
+                                      NUMBER=${ bash-variable "NUMBER" }
+                                      HASH=${ hash }
+                                      PATH=${ path }
+                                      1=${ bash-variable 1 }
+                                      EOF
+                                          ) &&
+                                            ${ target.coreutils }/bin/chmod 0400 ${ bash-variable 1 }
+                                        fi
+                                    '' ;
+                                isolated-1001 =
+                                  { bash-variable , hash , isolated , path , target } :
+                                    ''
+                                      OLD=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; } } &&
+                                        NEW=${ isolated { } } &&
+                                        ${ target.coreutils }/bin/cp --recursive $( ${ target.coreutils }/bin/dirname ${ bash-variable "OLD" } ) ${ bash-variable "NEW" } &&
+                                        ${ target.coreutils }/bin/chmod 0600 ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/echo 727b9de6-a205-4053-9bf3-83d6a4710efe > ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "NEW" }/control &&
+                                        NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "NEW" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                        if [ ${ bash-variable "NUMBER" } != "fdf59195afe63e4f854bf7387941ab20572ddccd7fa46b35f157dcd9c5a2b1a541274ee168226613bf2f9fc421284c3ed2c1528f9bcd8b20d3427879c84a3b72" ]
+                                        then
+                                          ( ${ target.coreutils }/bin/cat > ${ path } <<EOF
+                                      OLD=${ bash-variable "OLD" }
+                                      NEW=${ bash-variable "NEW" }
+                                      NUMBER=${ bash-variable "NUMBER" }
+                                      HASH=${ hash }
+                                      PATH=${ path }
+                                      1=${ bash-variable 1 }
+                                      EOF
+                                          ) &&
+                                            ${ target.coreutils }/bin/chmod 0400 ${ bash-variable 1 }
+                                        fi
+                                    '' ;
+                                isolated-1010 =
+                                  { bash-variable , hash , isolated , path , target } :
+                                    ''
+                                      OLD=${ isolated { release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
+                                        NEW=${ isolated { } } &&
+                                        ${ target.coreutils }/bin/cp --recursive $( ${ target.coreutils }/bin/dirname ${ bash-variable "OLD" } ) ${ bash-variable "NEW" } &&
+                                        ${ target.coreutils }/bin/chmod 0600 ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/echo 727b9de6-a205-4053-9bf3-83d6a4710efe > ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "NEW" }/control &&
+                                        NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "NEW" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                        if [ ${ bash-variable "NUMBER" } != "cfff4ffcf5aa84dc7fce122c0ca40648505b16436979a93c13576969d0dcaca3be540b7c3b50ee5b9689def267785f6259d6ab83d08d70f497b47e81e19c0dac" ]
+                                        then
+                                          ( ${ target.coreutils }/bin/cat > ${ path } <<EOF
+                                      OLD=${ bash-variable "OLD" }
+                                      NEW=${ bash-variable "NEW" }
+                                      NUMBER=${ bash-variable "NUMBER" }
+                                      HASH=${ hash }
+                                      PATH=${ path }
+                                      1=${ bash-variable 1 }
+                                      EOF
+                                          ) &&
+                                            ${ target.coreutils }/bin/chmod 0400 ${ bash-variable 1 }
+                                        fi
+                                    '' ;
+                                isolated-1011 =
+                                  { bash-variable , hash , isolated , path , target } :
+                                    ''
+                                      OLD=${ isolated { init = scripts : builtins.elemAt scripts.scripts.happy 0 ; release = scripts : builtins.elemAt scripts.scripts.happy 1 ; } } &&
+                                        NEW=${ isolated { } } &&
+                                        ${ target.coreutils }/bin/cp --recursive $( ${ target.coreutils }/bin/dirname ${ bash-variable "OLD" } ) ${ bash-variable "NEW" } &&
+                                        ${ target.coreutils }/bin/chmod 0600 ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/echo 727b9de6-a205-4053-9bf3-83d6a4710efe > ${ bash-variable "NEW" }/control &&
+                                        ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "NEW" }/control &&
+                                        NUMBER=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "NEW" } ) -mindepth 1 -type f | sort | while read FILE ; do ${ target.coreutils }/bin/cat ${ bash-variable "FILE" } ; done | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                        if [ ${ bash-variable "NUMBER" } != "0fe0712591f11d1d04a12b050fcc67de1bb74d62f1ac0a5f69a13c8249bc56e59a4e9553e25870c3229af68311176b4911eb8d781c6e3fa124a2434dbf7baadc" ]
+                                        then
+                                          ( ${ target.coreutils }/bin/cat > ${ path } <<EOF
+                                      OLD=${ bash-variable "OLD" }
+                                      NEW=${ bash-variable "NEW" }
+                                      NUMBER=${ bash-variable "NUMBER" }
+                                      HASH=${ hash }
+                                      PATH=${ path }
+                                      1=${ bash-variable 1 }
+                                      EOF
+                                          ) &&
+                                            ${ target.coreutils }/bin/chmod 0400 ${ bash-variable 1 }
+                                        fi
+                                    '' ;
+                                isolated-1101 =
+                                  { bash-variable , hash , isolated , path , structure-directory , target } :
+                                    ''
+				      NEW=${ isolated { } } &&
+                                        if ${ isolated { init = scripts : builtins.elemAt scripts.scripts.sad 0 ; } }
+				        then
+					  ${ target.coreutils }/bin/echo WE EXPECT THIS TO FAIL > ${ bash-variable "NEW" } &&
+					    ${ target.coreutils }/bin/chmod 0400 ${ bash-variable "NEW" }
+				        else
+					  ${ target.coreutils }/bin/true ## FILLER
+				        fi
+				    '' ;
+                              } ;
                             sad =
                               [
                                 ''
@@ -271,28 +437,28 @@
                               # set
                               # a321d8b405e3ef2604959847b36d171eebebc4a8941dc70a4784935a4fca5d5813de84dfa049f06549aa61b20848c1633ce81b675286ea8fb53db240d831c568
                             '' ;
-			shell-script =
-			  { bash-variable , shell-script , target } :
-			    ''
-			      SCRIPT=${ shell-script ( scripts : builtins.elemAt scripts.scripts.happy 0 ) } &&
-			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
-			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/50ynsgls3id094v79lf1h2k9ll4jrhwh-script" ]
-			        then
-			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
-				    exit 0\64
-			        fi
-			    '' ;
-			shell-script-bin =
-			  { bash-variable , shell-script-bin , target } :
-			    ''
-			      SCRIPT=${ shell-script-bin ( scripts : scripts.set ) } &&
-			        ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
-			        if [ ${ bash-variable "SCRIPT" } != "/nix/store/4msjvvvb73br399057srj0hcypnp1zkb-set" ]
-			        then
-			          ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
-				    exit 0\64
-			        fi
-			    '' ;
+                        shell-script =
+                          { bash-variable , shell-script , target } :
+                            ''
+                              SCRIPT=${ shell-script ( scripts : builtins.elemAt scripts.scripts.happy 0 ) } &&
+                                ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
+                                if [ ${ bash-variable "SCRIPT" } != "/nix/store/50ynsgls3id094v79lf1h2k9ll4jrhwh-script" ]
+                                then
+                                  ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
+                                    exit 0\64
+                                fi
+                            '' ;
+                        shell-script-bin =
+                          { bash-variable , shell-script-bin , target } :
+                            ''
+                              SCRIPT=${ shell-script-bin ( scripts : scripts.set ) } &&
+                                ${ target.coreutils }/bin/echo ${ bash-variable "SCRIPT" } &&
+                                if [ ${ bash-variable "SCRIPT" } != "/nix/store/4msjvvvb73br399057srj0hcypnp1zkb-set" ]
+                                then
+                                  ${ target.coreutils }/bin/echo THE SHELL SCRIPT DOES NOT MATCH EXPECTED &&
+                                    exit 0\64
+                                fi
+                            '' ;
                         simple =
                           {
                             simple-0 =
@@ -337,23 +503,23 @@
                             # 31bca02094eb78126a517b206a88c73cfa9ec6f704c7030d18212cace820f025f00bf0ea68dbf3f3a5436ca63b53bf7bf80ad8d5de7d8359d0b7fed9dbc3ab99
                             # 3bafbf08882a2d10133093a1b8433f50563b93c14acd05b79028eb1d12799027241450980651994501423a66c276ae26c43b739bc65c4e16b10c3af6c202aebb
                           '' ;
-			timestamp =
-			  {
-			    timestamp-0 =
-			      { bash-variable , timestamp , target } :
-			        ''
-				  CURRENT_TIME=$( ${ target.coreutils }/bin/date +%s ) &&
-				  if [ ${ timestamp } == ${ bash-variable "CURRENT_TIME" } ] || [ ${ timestamp } == $(( ${ bash-variable "CURRENT_TIME" } - 1 )) ]
-				  then
-				    ${ target.coreutils }/bin/echo timestamp IS CORRECT &&
-				      exit 0
-				  else
-				    ${ target.coreutils }/bin/echo timestamp IS NOT CORRECT &&
-				      ${ target.coreutils }/bin/echo ${ timestamp } &&
-				      exit 64
-				  fi
-				'' ;
-			  } ;
+                        timestamp =
+                          {
+                            timestamp-0 =
+                              { bash-variable , timestamp , target } :
+                                ''
+                                  CURRENT_TIME=$( ${ target.coreutils }/bin/date +%s ) &&
+                                  if [ ${ timestamp } == ${ bash-variable "CURRENT_TIME" } ] || [ ${ timestamp } == $(( ${ bash-variable "CURRENT_TIME" } - 1 )) ]
+                                  then
+                                    ${ target.coreutils }/bin/echo timestamp IS CORRECT &&
+                                      exit 0
+                                  else
+                                    ${ target.coreutils }/bin/echo timestamp IS NOT CORRECT &&
+                                      ${ target.coreutils }/bin/echo ${ timestamp } &&
+                                      exit 64
+                                  fi
+                                '' ;
+                          } ;
                       } ; 
                     shared =
                       {
@@ -366,7 +532,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.isolated.isolated-1000 inputs.isolated.isolated-1001 inputs.isolated.isolated-1010 inputs.isolated.isolated-1011 inputs.isolated.isolated-1101 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
