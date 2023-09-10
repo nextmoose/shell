@@ -75,8 +75,13 @@
                                     else builtins.concatLists [ previous [ current ] ] ;
                                 script = { target , util } : "${ target.coreutils }/bin/echo hI '${ util.bash-variable "1" }'" ;
                                 test =
-                                  context : init : release : salt : index : { } :
+                                  context : init : release : salt : index : { isolated , shared , target } :
                                     ''
+				      cleanup ( ) {
+				        ${ target.coreutils }/bin/echo 2
+				      } &&
+				        trap cleanup EXIT &&
+					${ target.coreutils }/bin/echo 1
                                     '' ;
 				tests =
 				  [
