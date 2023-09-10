@@ -77,11 +77,12 @@
                                       do
                                         if [ $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) == ${ value } ]
                                         then
-                                          FILE_CAT=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            FILE_BASENAME=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            FILE_STAT=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            DIR_BASENAME=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            DIR_STAT=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          FILE_CAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                            FILE_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                            FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                            DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                            DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                            ${ target.coreutils }/bin/rm $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) &&
                                             NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             if [ ${ bash-variable "NUMBER" } != ${ builtins.elemAt numbers expected } ]
                                             then
@@ -90,7 +91,7 @@
                                             fi
                                         else
                                           ${ target.coreutils }/bin/echo THE OBSERVED VALUE $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) DOES NOT EQUAL THE EXPECTED VALUE ${ value } &&
-                                            exit 64
+                                            exit 84
                                         fi
                                       done
                                     } &&
@@ -119,8 +120,10 @@
                                   [
                                     "27b95b43c398025730c7b1fdfc735adb6d49b6d42603c8400c4448d0a176b05300f81b42673ad3d9d721365e1404e0e07305b472291bac1aef1731022a159563"
                                     "d25054898eb39ae8f26feced2be3e6e796e869dda716b8cbf51479da21b46dbbab712821b3b2fce11ab8365c0102700accc862713daa6425fd365b0a568a7957"
-				    "1d1d140f9dc4465d4efceedf4de081379495f9bae02895a18137415a9819c45cf23d4d9e803a828b290889fcdf862ddbd6a577ab4600ca1c60cbfa201d88032b"
-				    ""
+                                    "1d1d140f9dc4465d4efceedf4de081379495f9bae02895a18137415a9819c45cf23d4d9e803a828b290889fcdf862ddbd6a577ab4600ca1c60cbfa201d88032b"
+                                    "6886a155a4830b8418d7e10b1d4e8afdbf1c80df79702b26a986fed3c735a569d8575c04f48b4a4249023a3eb2caa66d712bbd098e2e8ea4c8ad0fd08a17b7af"
+                                    "a"
+                                    "b"
                                   ] ;
                                 reducer =
                                   previous : current :
@@ -132,7 +135,9 @@
                                   isolated-0000 = isolated 0 null null ;
                                   isolated-0001 = find 1 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" null "47f0298c-845e-4518-a034-517ed24678b5" ;
                                   isolated-0010 = isolated 2 null 2 ;
-				  isolated-0011 = isolated 3 0 2 ;
+                                  isolated-0011 = find 3 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" 2 "47f0298c-845e-4518-a034-517ed24678b5" ;
+                                  isolated-0101 = find 4 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" null "e1a849b6-c0f1-41ce-916d-e710848405af" ;
+                                  isolated-0111 = find 5 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" 2 "e1a849b6-c0f1-41ce-916d-e710848405af" ;
                                 } ;
                         operations =
                           let
@@ -151,10 +156,10 @@
                                 ( script 0 "5d4a6a7f-a808-42be-bb48-ef22837a057d" "47f0298c-845e-4518-a034-517ed24678b5" )
                                 ( script 64 "2ecb972c-a3cb-408d-a32c-e91e2cbd0a98" "c564ec7c-0dd6-4e70-96d1-6f37effafa43" )
                                 ( script 64 "11f50471-2fa5-4676-906d-6bd85e896206" "a09a1c59-c8f9-4c0c-bf11-676502e20956" )
-                                ( script 64 "d3e5cb27-9c14-4fe6-b0ee-17a7c24107d7" "ca7365df-464c-448f-9402-d6c4273edc95" )
-                                ( script 64 "c6260af5-1de3-44af-a773-4a27da60d78a" "b490f454-b3b2-41da-967d-581f0bc40c96" )
-                                ( script 0 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" "e1a849b6-c0f1-41ce-916d-e710848405af" )
-                                ( script 0 "c05607a8-71c2-400f-a510-f051b59bad3e" "62032b44-9e55-40df-935a-5167adc630eb" )
+                                ( script 0 "d3e5cb27-9c14-4fe6-b0ee-17a7c24107d7" "ca7365df-464c-448f-9402-d6c4273edc95" )
+                                ( script 0 "c6260af5-1de3-44af-a773-4a27da60d78a" "b490f454-b3b2-41da-967d-581f0bc40c96" )
+                                ( script 64 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" "e1a849b6-c0f1-41ce-916d-e710848405af" )
+                                ( script 64 "c05607a8-71c2-400f-a510-f051b59bad3e" "62032b44-9e55-40df-935a-5167adc630eb" )
                                 ( script 64 "1843896b-8a9e-4ab9-8181-ab8d319d07ec" "003b89ff-3900-42c8-8fc3-68f324467038" )
                                 ( script 64 "c564ec7c-0dd6-4e70-96d1-6f37effafa43" "707c638e-6a80-4af4-90d1-eaaa8198ea8e" )
                               ] ;
@@ -460,7 +465,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.isolated.isolated-0011 inputs.isolated.isolated-0101 inputs.isolated.isolated-0111 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
