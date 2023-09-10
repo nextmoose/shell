@@ -119,6 +119,7 @@
                                   [
                                     "27b95b43c398025730c7b1fdfc735adb6d49b6d42603c8400c4448d0a176b05300f81b42673ad3d9d721365e1404e0e07305b472291bac1aef1731022a159563"
                                     "d25054898eb39ae8f26feced2be3e6e796e869dda716b8cbf51479da21b46dbbab712821b3b2fce11ab8365c0102700accc862713daa6425fd365b0a568a7957"
+				    "1d1d140f9dc4465d4efceedf4de081379495f9bae02895a18137415a9819c45cf23d4d9e803a828b290889fcdf862ddbd6a577ab4600ca1c60cbfa201d88032b"
                                   ] ;
                                 reducer =
                                   previous : current :
@@ -129,6 +130,7 @@
                                 {
                                   isolated-0000 = isolated 0 null null ;
                                   isolated-0001 = isolated 1 0 null ;
+                                  isolated-0010 = isolated 2 null 2 ;
                                 } ;
                         operations =
                           let
@@ -456,7 +458,7 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
+                      in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = [ inputs.bash-variable.bash-variable-0 inputs.bash-variable.bash-variable-1 inputs.hash.hash-0 inputs.isolated.isolated-0000 inputs.isolated.isolated-0001 inputs.isolated.isolated-0010 inputs.path.path-0 inputs.private inputs.process.process-0 inputs.set inputs.shell-script inputs.shell-script-bin inputs.simple.simple-0 inputs.simple.simple-1 inputs.simple.simple-3 inputs.string inputs.timestamp.timestamp-0 ] ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;
           in flake-utils.lib.eachDefaultSystem fun ;
