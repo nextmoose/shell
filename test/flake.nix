@@ -17,31 +17,79 @@
                     host = pkgs ;
                     private = "82b71638-804f-4533-b6dc-2f87b7ae5afc" ;
                     scripts =
-                      {
-                        entrypoint =
-                          { target } :
-                            ''
-                              ${ target.cowsay }/bin/cowsay ENTRY POINT
-                            '' ;
-			resource =
-			  let
-			    script = { target , util } : "${ target.coreutils }/bin/echo hI '${ util.bash-variable "1" }'" ;
-			    in
-			      {
-			        isolated-000 = script ;
-			        isolated-100 = script ;
-			        isolated-200 = script ;
-			        isolated-010 = script ;
-			        isolated-110 = script ;
-			        isolated-210 = script ;
-			        isolated-001 = script ;
-			        isolated-101 = script ;
-			        isolated-201 = script ;
-			        isolated-011 = script ;
-			        isolated-111 = script ;
-			        isolated-211 = script ;
-			      } ;
-                      } ; 
+                      let
+                        numbers =
+                          [
+                            "a"
+                            "b"
+                            "c"
+                            "d"
+                            "e"
+                            "f"
+                            "g"
+                            "h"
+                            "i"
+                            "j"
+                            "k"
+                            "l"
+                            "a"
+                          ] ;
+                        in
+                          {
+                            entrypoint =
+                              { target } :
+                                ''
+                                  ${ target.cowsay }/bin/cowsay ENTRY POINT
+                                '' ;
+                            handlers =
+			      let
+			        gen =
+				  index :
+				    { expressions , target } :
+				      let
+					key = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
+					value = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
+				        in
+				        ''
+				          ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
+					    ${ target.coreutils }/bin/echo ${ value } > ${ expressions.path }/${ key } &&
+					    ${ target.coreutils }/bin/chmod 0400 ${ expressions.path }/key
+				        '' ;
+                                in builtins.genList gen ( builtins.length numbers ) ;
+                            resource =
+                              let
+                                call =
+                                  context : init : isolated : release : salt : shared :
+                                    if context then isolated init release
+                                    else builtins.throw "NOT IMPLEMENTED YET" ;
+                                isolated =
+                                  isolated : init : release :
+                                    if builtins.typeOf init == "null" && builtins.typeOf release == "null" then isolated { }
+                                    else if builtins.typeOf init == "int" && builtins.typeOf release == "null" then isolated { init = scripts : builtins.elemAt scripts.handlers init ; }
+                                    else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.handlers release ; }
+                                    else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.handlers release ; }
+                                    else builtins.throw "70e2b7ff-a54c-4a8b-b5c2-e658f02de640" ;
+                                reducer =
+                                  previous : current :
+                                    if builtins.any ( p : previous == p ) then builtins.throw "3b413367-585d-45be-b065-e03e45a9412a"
+                                    else builtins.concatLists [ previous [ current ] ] ;
+                                script = { target , util } : "${ target.coreutils }/bin/echo hI '${ util.bash-variable "1" }'" ;
+                                test =
+                                  context : init : release : salt : index : { isolated , shared ,  target } :
+                                    ''
+                                       cleanup ( ) {
+                                         ${ target.coreutils }/bin/echo NUMBER
+                                       } &&
+                                         trap cleanup EXIT &&
+                                         ISOLATED=${ call context init isolated release salt shared }
+                                    '' ;
+				tests =
+				  [
+				    ( test true null null )
+				  ] ;
+                                verified = builtins.foldl' reducer [ ] numbers ;
+                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = "${ builtins.typeOf ( builtins.elemAt tests index index ) }" ; } ) ( builtins.length tests ) ) ;
+                          } ; 
                     shared =
                       {
                       } ;
@@ -53,21 +101,10 @@
                     let
                       hooks = fun ( { code } : code ) ;
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
-		      path =
-		        [
-			  inputs.resource.isolated-000
-			  inputs.resource.isolated-100
-			  inputs.resource.isolated-200
-			  inputs.resource.isolated-010
-			  inputs.resource.isolated-110
-			  inputs.resource.isolated-210
-			  inputs.resource.isolated-001
-			  inputs.resource.isolated-101
-			  inputs.resource.isolated-201
-			  inputs.resource.isolated-011
-			  inputs.resource.isolated-111
-			  inputs.resource.isolated-211
-			] ;
+                      path =
+                        [
+                          inputs.resource.resource-0
+                        ] ;
                       in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = path ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
                 in shell.lib arguments fun ;

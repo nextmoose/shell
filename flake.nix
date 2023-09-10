@@ -25,7 +25,6 @@
                     host = _arguments.host ;
                     null = if builtins.hasAttr "null" _arguments then _arguments.null else "/dev/null" ;
                     out = _arguments.out ;
-                    path = if builtins.hasAttr "path" _arguments then _arguments.path else builtins.null ;
                     private = _arguments.private ;
                     process = if builtins.hasAttr "process" _arguments then _arguments.process else builtins.null ;
                     scripts = _arguments.scripts ;

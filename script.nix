@@ -5,7 +5,6 @@
   host ,
   null ,
   out ,
-  path ,
   private ,
   process ,
   scripts ,
@@ -26,10 +25,9 @@
             shell-script = shell-script ;
             shell-script-bin = shell-script-bin ;
 
-	    expressions = builtins.mapAttrs ( name : value : bash-variable value ) ;
+	    expressions = builtins.mapAttrs ( name : value : bash-variable value ) variables ;
             
             hash = bash-variable hash ;
-            path = bash-variable path ;
             process = bash-variable process ;
             timestamp = bash-variable arguments.timestamp ;
 

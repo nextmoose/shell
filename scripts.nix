@@ -5,7 +5,6 @@
   host ,
   null ,
   out ,
-  path ,
   private ,
   process ,
   scripts ,

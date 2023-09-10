@@ -5,7 +5,6 @@
   hash ,
   null ,
   out ,
-  path ,
   private ,
   process ,
   scripts ,
@@ -99,7 +98,7 @@
         null = track : "UNDEFINED PATH" ;
         string = track : track.input ;
         undefined = track : track.throw "ccd2062c-6607-4d89-8414-138a2f31edca" ;
-        in visit { null = null ; string = string ; undefined = undefined ; } arguments.path ;
+        in visit { null = null ; string = string ; undefined = undefined ; } arguments.variables.path ;
     pre-salt = builtins.hashString "sha512" ( builtins.concatStringsSep "" [ init release salt track ] ) ;
     process =
       let
