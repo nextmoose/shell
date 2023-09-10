@@ -7,18 +7,14 @@
             {
               build ,
               err ? "/dev/err" ,
-              hash ? builtins.null ,
               host ,
               null ? "/dev/null" ,
               out ? "/dev/out" ,
-              path ? builtins.null ,
               private ? builtins.null ,
-              process ? builtins.null ,
               scripts ,
               shared ,
               structure-directory ,
               target ,
-              timestamp ? builtins.null ,
             } @ _arguments : fun :
               let
                 arguments =
