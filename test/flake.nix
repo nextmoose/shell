@@ -62,58 +62,73 @@
                           } ;
                         isolated =
                           let
-                              call =
-                                init : isolated : release :
-                                  if builtins.typeOf init == "null" && builtins.typeOf release == "null" then isolated { }
-                                  else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.operations release ; }
-                                  else if builtins.typeOf init == "int" && builtins.typeOf release == "null" then isolated { init = scripts : builtins.elemAt scripts.operations init ; }
-                                  else if builtins.typeOf init == "int" && builtins.typeOf release == "int" then isolated { init = scripts : builtins.elemAt scripts.operations init ; release = scripts : builtins.elemAt scripts.operations release ; }
-                                  else builtins.throw "6799de91-dbfd-49cc-a76d-7cd38d35a7b5" ;
-                              find =
-                                expected : init : key : release : value : { bash-variable , isolated , structure-directory , target } :
-                                  ''
-                                    cleanup ( ) {
-                                      ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } | while read KEY
-                                      do
-                                        if [ $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) == ${ value } ]
-                                        then
-                                          FILE_CAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            FILE_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            ${ target.coreutils }/bin/rm ${ bash-variable "KEY" } &&
-                                            NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            if [ ${ bash-variable "NUMBER" } != ${ builtins.elemAt numbers expected } ]
-                                            then
-                                              ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } &&
-                                                exit 64
-                                            fi
-                                        else
-                                          ${ target.coreutils }/bin/echo THE OBSERVED VALUE $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) DOES NOT EQUAL THE EXPECTED VALUE ${ value } &&
-                                            exit 84
-                                        fi
-                                      done
-                                    } &&
-                                      trap cleanup EXIT &&
-                                      ISOLATED=${ call init isolated release }
-                                  '' ;
-                              isolated =
-                                expected : init : release : { bash-variable , isolated , structure-directory , target } :
-                                  ''
-                                    ISOLATED=${ call init isolated release } &&
-                                      FILE_CAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      FILE_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                      if [ "${ bash-variable "NUMBER" }" != "${ builtins.elemAt numbers expected }" ]
+                            call =
+                              init : isolated : release :
+                                if builtins.typeOf init == "null" && builtins.typeOf release == "null" then isolated { }
+                                else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.operations release ; }
+                                else if builtins.typeOf init == "int" && builtins.typeOf release == "null" then isolated { init = scripts : builtins.elemAt scripts.operations init ; }
+                                else if builtins.typeOf init == "int" && builtins.typeOf release == "int" then isolated { init = scripts : builtins.elemAt scripts.operations init ; release = scripts : builtins.elemAt scripts.operations release ; }
+                                else builtins.throw "6799de91-dbfd-49cc-a76d-7cd38d35a7b5" ;
+                            find =
+                              expected : init : key : release : value : { bash-variable , isolated , structure-directory , target } :
+                                ''
+                                  cleanup ( ) {
+                                    ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } | while read KEY
+                                    do
+                                      if [ $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) == ${ value } ]
                                       then
-                                        ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } &&
-                                          exit 64
+                                        FILE_CAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          FILE_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          ${ target.coreutils }/bin/rm ${ bash-variable "KEY" } &&
+                                          NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                          if [ ${ bash-variable "NUMBER" } != ${ builtins.elemAt numbers expected } ]
+                                          then
+                                            ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } &&
+                                              exit 64
+                                          fi
+                                      else
+                                        ${ target.coreutils }/bin/echo THE OBSERVED VALUE $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) DOES NOT EQUAL THE EXPECTED VALUE ${ value } &&
+                                          exit 84
                                       fi
-                                  '' ;
+                                    done
+                                  } &&
+                                    trap cleanup EXIT &&
+                                    ISOLATED=${ call init isolated release }
+                                '' ;
+                            isolated =
+                              expected : init : release : { bash-variable , isolated , structure-directory , path , target } :
+                                ''
+				  cleanup ( ) {
+				    EXIT_CODE=${ bash-variable "?" } &&
+				      if [ ${ bash-variable "EXIT_CODE" } != 0 ] && [ ${ bash-variable "EXIT_CODE" } != 64 ] && [ -z "${ path }" ]
+				      then
+				        ${ target.coreutils }/bin/echo UNEXPECTED EXIT CODE ${ bash-variable "EXIT_CODE" }
+				      elif [ ${ bash-variable "EXIT_CODE" } != 0 ] && [ ${ bash-variable "EXIT_CODE" } != 64 ] && [ ! -z "${ path }" ]
+				      then
+				        ${ target.coreutils }/bin/echo UNEXPECTED EXIT CODE ${ bash-variable "EXIT_CODE" } > ${ path } &&
+					  ${ target.coreutils }/bin/chmod 0400 ${ path }
+				      fi
+				  } &&
+                                    ISOLATED=${ call init isolated release } &&
+                                    FILE_CAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/cat {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    FILE_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname ${ bash-variable "ISOLATED" } ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
+                                    if [ "${ bash-variable "NUMBER" }" != "${ builtins.elemAt numbers expected }" ] && [ -z "${ path }" ]
+                                    then
+                                      ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } &&
+                                        exit 64
+				    else
+                                      ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } > ${ path } &&
+				        ${ target.coreutils }/bin/chmod 0400 ${ path } &&
+                                        exit 64
+                                    fi
+                                '' ;
                             numbers =
                               let
                                 array =
@@ -130,15 +145,26 @@
                                     if builtins.any ( p : p == current ) previous then builtins.throw "0faa721d-f974-43bf-8129-10807b002bd1"
                                     else builtins.concatLists [ previous [ current ] ] ;
                                 in builtins.foldl' reducer [ ] array ;
-                              in
-                                {
-                                  isolated-0000 = isolated 0 null null ;
-                                  isolated-0001 = find 1 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" null "47f0298c-845e-4518-a034-517ed24678b5" ;
-                                  isolated-0010 = isolated 2 null 2 ;
-                                  isolated-0011 = find 3 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" 2 "47f0298c-845e-4518-a034-517ed24678b5" ;
-                                  isolated-0101 = find 4 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" null "e1a849b6-c0f1-41ce-916d-e710848405af" ;
-                                  isolated-0111 = find 5 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" 2 "e1a849b6-c0f1-41ce-916d-e710848405af" ;
-                                } ;
+			    redirect =
+			      init :
+			        { bash-variable , isolated , target } :
+			          ''
+				    ISOLATED=${ isolated { init = scripts : builtins.getAttr isolated scripts.isolated ; } } &&
+				    if [ -f ${ bash-variable "ISOLATED" } ]
+				    then
+				      ${ target.coreutils }/bin/cat ${ bash-variable "ISOLATED" }
+				    fi
+				  '' ;
+                            in
+                              {
+                                isolated-0000 = isolated 0 null null ;
+                                isolated-0001 = find 1 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" null "47f0298c-845e-4518-a034-517ed24678b5" ;
+                                isolated-0010 = isolated 2 null 2 ;
+                                isolated-0011 = find 3 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" 2 "47f0298c-845e-4518-a034-517ed24678b5" ;
+                                isolated-0101 = find 4 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" null "e1a849b6-c0f1-41ce-916d-e710848405af" ;
+                                isolated-0111 = find 5 6 "71dd6da2-e6ac-4c1d-b228-7c6623d1ce69" 2 "e1a849b6-c0f1-41ce-916d-e710848405af" ;
+                                isolated-1000 = redirect "0000" ;
+                              } ;
                         operations =
                           let
                             script =
