@@ -11,7 +11,6 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp ,
   variables
 } @ arguments : fun : track :
   let
@@ -81,10 +80,10 @@
         string =
           track :
             ''
-              export ${ arguments.timestamp }=${ bash-variable "${ arguments.timestamp }:=$( ${ target.coreutils }/bin/date +%s )" }
+              export ${ variables.timestamp }=${ bash-variable "${ variables.timestamp }:=$( ${ target.coreutils }/bin/date +%s ) &&" }
             '' ;
         undefined = track : track.throw "491ed2c7-73ed-4fe6-bee8-f6462cc0f0ca" ;
-        in visit { null = null ; string = string ; undefined = undefined ; } arguments.timestamp ;
+        in visit { null = null ; string = string ; undefined = undefined ; } variables.timestamp ;
     try = builtins.import ./try.nix ;
     visit = builtins.import ./visit.nix ;
     in

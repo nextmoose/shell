@@ -11,7 +11,6 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp ,
   variables
 } @ arguments :
   let

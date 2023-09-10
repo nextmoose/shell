@@ -31,7 +31,6 @@
                     shared = _arguments.shared ;
                     structure-directory = _arguments.structure-directory ;
                     target = _arguments.target ;
-                    timestamp = if builtins.hasAttr "timestamp" _arguments then _arguments.timestamp else builtins.null ;
                     variables =
                       let
                         input = builtins.genList ( x : null ) ( builtins.length reserved ) ;

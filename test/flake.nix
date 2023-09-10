@@ -42,19 +42,19 @@
                                   ${ target.cowsay }/bin/cowsay ENTRY POINT
                                 '' ;
                             handlers =
-			      let
-			        gen =
-				  index :
-				    { expressions , target } :
-				      let
-					key = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
-					value = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
-				        in
-				        ''
-				          ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
-					    ${ target.coreutils }/bin/echo ${ value } > ${ expressions.path }/${ key } &&
-					    ${ target.coreutils }/bin/chmod 0400 ${ expressions.path }/key
-				        '' ;
+                              let
+                                gen =
+                                  index :
+                                    { expressions , target } :
+                                      let
+                                        key = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
+                                        value = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
+                                        in
+                                        ''
+                                          ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
+                                            ${ target.coreutils }/bin/echo ${ value } > ${ expressions.path }/${ key } &&
+                                            ${ target.coreutils }/bin/chmod 0400 ${ expressions.path }/key
+                                        '' ;
                                 in builtins.genList gen ( builtins.length numbers ) ;
                             resource =
                               let
@@ -64,16 +64,16 @@
                                     else builtins.throw "NOT IMPLEMENTED YET" ;
                                 isolated =
                                   isolated : init : release :
-				    let
-				      index = ( if builtins.typeOf init == "null" then 0 else 2 ) + ( if builtins.typeOf release == "null" then 0 else 1 ) ;
-				      list =
-				        [
-					  ( isolated { } )
-					  ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; } )
-					  ( isolated { release = scripts : builtins.elemAt scripts.handlers release ; } )
-					  ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; release = scripts : builtins.elemAt scripts.handlers release ; } )
-					] ;
-				      in builtins.elemAt list index ;
+                                    let
+                                      index = ( if builtins.typeOf init == "null" then 0 else 2 ) + ( if builtins.typeOf release == "null" then 0 else 1 ) ;
+                                      list =
+                                        [
+                                          ( isolated { } )
+                                          ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; } )
+                                          ( isolated { release = scripts : builtins.elemAt scripts.handlers release ; } )
+                                          ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; release = scripts : builtins.elemAt scripts.handlers release ; } )
+                                        ] ;
+                                      in builtins.elemAt list index ;
                                 reducer =
                                   previous : current :
                                     if builtins.any ( p : previous == p ) then builtins.throw "3b413367-585d-45be-b065-e03e45a9412a"
@@ -82,15 +82,16 @@
                                 test =
                                   context : init : release : salt : index : { isolated , shared , target } :
                                     ''
-				      cleanup ( ) {
-				        ${ target.coreutils }/bin/echo 2
-				      } &&
-				        trap cleanup EXIT
+                                      cleanup ( ) {
+                                        ${ target.coreutils }/bin/echo 2
+                                      } &&
+                                        trap cleanup EXIT
+                                          ${ target.coreutils }/bin/echo 1
                                     '' ;
-				tests =
-				  [
-				    ( test true null null null )
-				  ] ;
+                                tests =
+                                  [
+                                    ( test true null null null )
+                                  ] ;
                                 verified = builtins.foldl' reducer [ ] numbers ;
                                 in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = builtins.elemAt tests index index ; } ) ( builtins.length tests ) ) ;
                           } ; 

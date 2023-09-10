@@ -11,7 +11,6 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp ? "scripts/resource.nix" ,
   variables
 } @ arguments : { init , release , salt , track } @ parameters :
   let
