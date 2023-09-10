@@ -73,7 +73,12 @@
                                 expected : init : key : release : value : { bash-variable , isolated , structure-directory , target } :
                                   ''
                                     cleanup ( ) {
-                                      ${ target.findutils }/bin/find ${ structure-directory } -mindepth 2 -maxdepth 2 -name ${ key } | while read KEY
+				      ${ target.coreutils }/bin/echo BEFORE &&
+				      ${ target.coreutils }/bin/echo STRUCTURE_DIRECTORY=${ structure-directory } &&
+				      ${ target.coreutils }/bin/echo NAME=${ key } &&
+                                      ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } &&
+				      ${ target.coreutils }/bin/echo AFTER &&
+                                      ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } | while read KEY
                                       do
                                         if [ $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) == ${ value } ]
                                         then
@@ -82,7 +87,7 @@
                                             FILE_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type f -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             DIR_BASENAME=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             DIR_STAT=$( ${ target.findutils }/bin/find $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            ${ target.coreutils }/bin/rm $( ${ target.coreutils }/bin/dirname $( ${ target.coreutils }/bin/dirname ${ bash-variable "KEY" } ) ) &&
+                                            ${ target.coreutils }/bin/rm ${ bash-variable "KEY" } &&
                                             NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             if [ ${ bash-variable "NUMBER" } != ${ builtins.elemAt numbers expected } ]
                                             then
