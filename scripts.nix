@@ -12,7 +12,8 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp
+  timestamp ,
+  variables
 } @ arguments :
   let
     inject = builtins.import ./inject.nix ;

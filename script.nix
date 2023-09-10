@@ -12,7 +12,8 @@
   shared ,
   structure-directory ,
   target ,
-  timestamp
+  timestamp ,
+  variables
 } @ arguments : fun : track :
   let
     bash-variable = builtins.import ./bash-variable.nix ;
