@@ -22,7 +22,6 @@
         isolated = { init ? builtins.null , release ? builtins.null } : resource arguments { init = init ; release = release ; salt = builtins.null ; track = builtins.null ; } ;
         penultimate =
           {
-            bash-variable = bash-variable ;
             isolated = isolated ;
             shell-script = shell-script ;
             shell-script-bin = shell-script-bin ;
@@ -35,6 +34,11 @@
             timestamp = bash-variable arguments.timestamp ;
 
             shared = shared ;
+
+	    util =
+	      {
+	        bash-variable = bash-variable ;
+	      } ;
           } ;
         shared =
           let
