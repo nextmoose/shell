@@ -86,7 +86,6 @@
 				        ${ target.coreutils }/bin/echo 2
 				      } &&
 				        trap cleanup EXIT
-					${ builtins.trace ( builtins.typeOf ( isolated { } ) ) "" }
                                     '' ;
 				tests =
 				  [
