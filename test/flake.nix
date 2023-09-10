@@ -73,11 +73,6 @@
                                 expected : init : key : release : value : { bash-variable , isolated , structure-directory , target } :
                                   ''
                                     cleanup ( ) {
-				      ${ target.coreutils }/bin/echo BEFORE &&
-				      ${ target.coreutils }/bin/echo STRUCTURE_DIRECTORY=${ structure-directory } &&
-				      ${ target.coreutils }/bin/echo NAME=${ key } &&
-                                      ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } &&
-				      ${ target.coreutils }/bin/echo AFTER &&
                                       ${ target.findutils }/bin/find ${ structure-directory } -mindepth 3 -maxdepth 3 -name ${ key } | while read KEY
                                       do
                                         if [ $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) == ${ value } ]
@@ -127,8 +122,8 @@
                                     "d25054898eb39ae8f26feced2be3e6e796e869dda716b8cbf51479da21b46dbbab712821b3b2fce11ab8365c0102700accc862713daa6425fd365b0a568a7957"
                                     "1d1d140f9dc4465d4efceedf4de081379495f9bae02895a18137415a9819c45cf23d4d9e803a828b290889fcdf862ddbd6a577ab4600ca1c60cbfa201d88032b"
                                     "6886a155a4830b8418d7e10b1d4e8afdbf1c80df79702b26a986fed3c735a569d8575c04f48b4a4249023a3eb2caa66d712bbd098e2e8ea4c8ad0fd08a17b7af"
-                                    "a"
-                                    "b"
+                                    "637d360968226da5fac137cc14e805544dda64aae04ec8015b96cd33a0387dd01fdcbd95ce60b5a94a5739b4918e032672f487534a1067cc80365a057e132c50"
+                                    "4544c44ae6fd03a4cbebd26fb6f575aade5bdf8142883bbf94700c8e68c983f130d7d68fb9351342f9874aa0d72b61774e385f020511fda2507e3f186677370e"
                                   ] ;
                                 reducer =
                                   previous : current :
