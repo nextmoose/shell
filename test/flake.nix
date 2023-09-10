@@ -80,10 +80,10 @@
                                     '' ;
 				tests =
 				  [
-				    ( test true null null )
+				    ( test true null null null )
 				  ] ;
                                 verified = builtins.foldl' reducer [ ] numbers ;
-                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = "${ builtins.typeOf ( builtins.elemAt tests index index { } ) }" ; } ) ( builtins.length tests ) ) ;
+                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = builtins.elemAt tests index index ; } ) ( builtins.length tests ) ) ;
                           } ; 
                     shared =
                       {
