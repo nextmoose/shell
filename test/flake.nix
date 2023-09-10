@@ -75,20 +75,15 @@
                                     else builtins.concatLists [ previous [ current ] ] ;
                                 script = { target , util } : "${ target.coreutils }/bin/echo hI '${ util.bash-variable "1" }'" ;
                                 test =
-                                  context : init : release : salt : index : { isolated , shared ,  target } :
+                                  context : init : release : salt : index : { } :
                                     ''
-                                       cleanup ( ) {
-                                         ${ target.coreutils }/bin/echo NUMBER
-                                       } &&
-                                         trap cleanup EXIT &&
-                                         ISOLATED=${ call context init isolated release salt shared }
                                     '' ;
 				tests =
 				  [
 				    ( test true null null )
 				  ] ;
                                 verified = builtins.foldl' reducer [ ] numbers ;
-                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = "${ builtins.typeOf ( builtins.elemAt tests index index ) }" ; } ) ( builtins.length tests ) ) ;
+                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = "${ builtins.typeOf ( builtins.elemAt tests index index { } ) }" ; } ) ( builtins.length tests ) ) ;
                           } ; 
                     shared =
                       {
