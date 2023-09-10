@@ -64,7 +64,6 @@
                                                                 isolated = lambda ;
                                                                 shell-script = lambda ;
                                                                 shell-script-bin = lambda ;
-                                                                process = string ;
                                                                 timestamp = string ;
 								variables = builtins.listToAttrs ( builtins.map ( name : { name = name ; value = string ; } list ) ) ;
                                                               } ;
