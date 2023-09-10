@@ -35,7 +35,8 @@
                     timestamp = if builtins.hasAttr "timestamp" _arguments then _arguments.timestamp else builtins.null ;
                     variables =
                       let
-                        input = builtins.genList ( x : null ) 4 ;
+                        input = builtins.genList ( x : null ) ( builtins.length list ) ;
+			list = [ "hash" "path" "process" "timestamp" ] ;
                         output = builtins.foldl' reducer [ ] input ;
                         reducer =
                           previous : current :
@@ -67,6 +68,7 @@
                                                                 path = string ;
                                                                 process = string ;
                                                                 timestamp = string ;
+								variables = builtins.listToAttrs ( builtins.map ( name : { name = name ; value = string ; } list ) ) ;
                                                               } ;
                                                             string = "" ;
                                                             in inject track.input ( arguments // penultimate ) ;
@@ -87,13 +89,8 @@
                                         value = builtins.concatLists [ previous [ value ] ] ;
                                       } ;
                               in try fun ;
-                        in 
-                          {
-                            hash = builtins.concatStringsSep "_" [ "HASH" ( builtins.elemAt output 0 ) ] ;
-                            path = builtins.concatStringsSep "_" [ "PATH" ( builtins.elemAt output 1 ) ] ;
-                            process = builtins.concatStringsSep "_" [ "PROCESS" ( builtins.elemAt output 2 ) ] ;
-                            timestamp = builtins.concatStringsSep "_" [ "TIMESTAMP" ( builtins.elemAt output 3 ) ] ;
-                          } ;
+		        uppercase = builtins.replaceStrings [ "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" ] [ "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" ] ;
+                        in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.elemAt list index ; value = builtins.concatStringsSep "_" [ ( uppercase ( builtins.elemAt list index ) ) ( builtins.elemAt output index ) ] ; } ) ( builtins.length list ) ) ;
                   } ;
 		inject = builtins.import ./inject.nix ;
                 scripts = builtins.import ./scripts.nix ;
