@@ -26,6 +26,8 @@
             isolated = isolated ;
             shell-script = shell-script ;
             shell-script-bin = shell-script-bin ;
+
+	    expressions = builtins.mapAttrs ( name : value : bash-variable value ) ;
             
             hash = bash-variable hash ;
             path = bash-variable path ;
