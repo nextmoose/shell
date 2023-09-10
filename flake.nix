@@ -60,8 +60,6 @@
                                                             lambda = x : string ;
                                                             penultimate =
                                                               {
-                                                                bash-variable = lambda ;
-                                                                isolated = lambda ;
                                                                 shell-script = lambda ;
                                                                 shell-script-bin = lambda ;
 								variables = builtins.listToAttrs ( builtins.map ( name : { name = name ; value = string ; } list ) ) ;
