@@ -64,11 +64,16 @@
                                     else builtins.throw "NOT IMPLEMENTED YET" ;
                                 isolated =
                                   isolated : init : release :
-                                    if builtins.typeOf init == "null" && builtins.typeOf release == "null" then isolated { }
-                                    else if builtins.typeOf init == "int" && builtins.typeOf release == "null" then isolated { init = scripts : builtins.elemAt scripts.handlers init ; }
-                                    else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.handlers release ; }
-                                    else if builtins.typeOf init == "null" && builtins.typeOf release == "int" then isolated { release = scripts : builtins.elemAt scripts.handlers release ; }
-                                    else builtins.throw "70e2b7ff-a54c-4a8b-b5c2-e658f02de640" ;
+				    let
+				      index = ( if builtins.typeOf init == "null" then 0 else 2 ) + ( if builtins.typeOf release == "null" then 0 else 1 ) ;
+				      list =
+				        [
+					  ( isolated { } )
+					  ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; } )
+					  ( isolated { release = scripts : builtins.elemAt scripts.handlers release ; } )
+					  ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; release = scripts : builtins.elemAt scripts.handlers release ; } )
+					] ;
+				      in builtins.elemAt list index ;
                                 reducer =
                                   previous : current :
                                     if builtins.any ( p : previous == p ) then builtins.throw "3b413367-585d-45be-b065-e03e45a9412a"
@@ -80,8 +85,8 @@
 				      cleanup ( ) {
 				        ${ target.coreutils }/bin/echo 2
 				      } &&
-				        trap cleanup EXIT &&
-					${ target.coreutils }/bin/echo 1
+				        trap cleanup EXIT
+					${ builtins.trace ( builtins.typeOf ( isolated { } ) ) "" }
                                     '' ;
 				tests =
 				  [
