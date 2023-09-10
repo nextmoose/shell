@@ -70,7 +70,7 @@
                                   else if builtins.typeOf init == "int" && builtins.typeOf release == "int" then isolated { init = scripts : builtins.elemAt scripts.operations init ; release = scripts : builtins.elemAt scripts.operations release ; }
                                   else builtins.throw "6799de91-dbfd-49cc-a76d-7cd38d35a7b5" ;
                               find =
-                                bash-variable : expected : init : isolated : key : release : structure-directory : target : value :
+                                expected : init : key : release : value : { bash-variable , isolated , structure-directory , target } :
                                   ''
                                     cleanup ( ) {
                                       ${ target.findutils }/bin/find ${ structure-directory } -mindepth 2 -maxdepth 2 -name ${ key } | while read KEY
@@ -83,19 +83,19 @@
                                             DIR_BASENAME=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type d -exec ${ target.coreutils }/bin/basename {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             DIR_STAT=$( ${ target.findutils }/bin/find ${ bash-variable "KEY" } -mindepth 1 -type d -exec ${ target.coreutils }/bin/stat --format "%a%A%b%B%F%s" {} \; | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
                                             NUMBER=$( ${ target.coreutils }/bin/echo ${ bash-variable "FILE_CAT" } ${ bash-variable "FILE_BASENAME" } ${ bash-variable "FILE_STAT" } ${ bash-variable "DIR_BASENAME" } ${ bash-variable "DIR_STAT" } | ${ target.coreutils }/bin/sha512sum | ${ target.coreutils }/bin/cut --bytes -128 ) &&
-                                            if [ ${ bash-variable "NUMBER" } != ${ expected } ]
+                                            if [ ${ bash-variable "NUMBER" } != ${ builtins.elemAt numbers expected } ]
                                             then
-                                              ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER &&
+                                              ${ target.coreutils }/bin/echo THE OBSERVED NUMBER ${ bash-variable "NUMBER" } DOES NOT EQUAL THE EXPECTED NUMBER ${ builtins.elemAt numbers expected } &&
                                                 exit 64
                                             fi
                                         else
                                           ${ target.coreutils }/bin/echo THE OBSERVED VALUE $( ${ target.coreutils }/bin/cat ${ bash-variable "KEY" } ) DOES NOT EQUAL THE EXPECTED VALUE ${ value } &&
                                             exit 64
-                                        fi &&
+                                        fi
                                       done
                                     } &&
                                       trap cleanup EXIT &&
-                                      ${ call init isolated release }
+                                      ISOLATED=${ call init isolated release }
                                   '' ;
                               isolated =
                                 expected : init : release : { bash-variable , isolated , structure-directory , target } :
@@ -120,6 +120,7 @@
                                     "27b95b43c398025730c7b1fdfc735adb6d49b6d42603c8400c4448d0a176b05300f81b42673ad3d9d721365e1404e0e07305b472291bac1aef1731022a159563"
                                     "d25054898eb39ae8f26feced2be3e6e796e869dda716b8cbf51479da21b46dbbab712821b3b2fce11ab8365c0102700accc862713daa6425fd365b0a568a7957"
 				    "1d1d140f9dc4465d4efceedf4de081379495f9bae02895a18137415a9819c45cf23d4d9e803a828b290889fcdf862ddbd6a577ab4600ca1c60cbfa201d88032b"
+				    ""
                                   ] ;
                                 reducer =
                                   previous : current :
@@ -129,8 +130,9 @@
                               in
                                 {
                                   isolated-0000 = isolated 0 null null ;
-                                  isolated-0001 = isolated 1 0 null ;
+                                  isolated-0001 = find 1 0 "173a493f-58d0-4698-978c-f64dc1feb7a8" null "47f0298c-845e-4518-a034-517ed24678b5" ;
                                   isolated-0010 = isolated 2 null 2 ;
+				  isolated-0011 = isolated 3 0 2 ;
                                 } ;
                         operations =
                           let
