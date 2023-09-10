@@ -64,7 +64,6 @@
                                                                 isolated = lambda ;
                                                                 shell-script = lambda ;
                                                                 shell-script-bin = lambda ;
-                                                                hash = string ;
                                                                 path = string ;
                                                                 process = string ;
                                                                 timestamp = string ;
