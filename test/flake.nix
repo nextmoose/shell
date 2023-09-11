@@ -36,65 +36,37 @@
                           ] ;
                         in
                           {
+			    handlers =
+			      let
+			        fun =
+				  word : exit : index : { expressions , target , util }
+				    ''
+				      ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
+				        FILE=${ expressions.path }/${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ word index ] ) ) } &&
+					${ target.coreutils }/bin/touch ${ util.bash-variable "FILE" } &&
+					${ target.coreutils }/bin/touch ${ util.bash-variable "FILE" } &&
+					exit { if exit then "0" else "64" }
+				    '' ;
+				tree =
+				  {
+				    init
+				    happy =
+				      {
+				        
+				      } ;
+				    sad
+				      {
+				      } ;
+				  } ;
+			        in
+				  {
+				  } ;
                             entrypoint =
                               { target } :
                                 ''
                                   ${ target.cowsay }/bin/cowsay ENTRY POINT
                                 '' ;
-                            handlers =
-                              let
-                                gen =
-                                  index :
-                                    { expressions , target } :
-                                      let
-                                        key = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
-                                        value = builtins.hashString "sha512" ( builtins.concatStringsSep "_" [ ( builtins.toString index ) "value" ] ) ;
-                                        in
-                                        ''
-                                          ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
-                                            ${ target.coreutils }/bin/echo ${ value } > ${ expressions.path }/${ key } &&
-                                            ${ target.coreutils }/bin/chmod 0400 ${ expressions.path }/key
-                                        '' ;
-                                in builtins.genList gen ( builtins.length numbers ) ;
-                            resource =
-                              let
-                                call =
-                                  context : init : isolated : release : salt : shared :
-                                    if context then isolated init release
-                                    else builtins.throw "NOT IMPLEMENTED YET" ;
-                                isolated =
-                                  isolated : init : release :
-                                    let
-                                      index = ( if builtins.typeOf init == "null" then 0 else 2 ) + ( if builtins.typeOf release == "null" then 0 else 1 ) ;
-                                      list =
-                                        [
-                                          ( isolated { } )
-                                          ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; } )
-                                          ( isolated { release = scripts : builtins.elemAt scripts.handlers release ; } )
-                                          ( isolated { init = scripts : builtins.elemAt scripts.handlers init ; release = scripts : builtins.elemAt scripts.handlers release ; } )
-                                        ] ;
-                                      in builtins.elemAt list index ;
-                                reducer =
-                                  previous : current :
-                                    if builtins.any ( p : previous == p ) then builtins.throw "3b413367-585d-45be-b065-e03e45a9412a"
-                                    else builtins.concatLists [ previous [ current ] ] ;
-                                script = { target , util } : "${ target.coreutils }/bin/echo hI '${ util.bash-variable "1" }'" ;
-                                test =
-                                  context : init : release : salt : index : { isolated , shared , target } :
-                                    ''
-                                      cleanup ( ) {
-                                        ${ target.coreutils }/bin/echo 2
-                                      } &&
-                                        trap cleanup EXIT
-                                          ${ target.coreutils }/bin/echo 1
-                                    '' ;
-                                tests =
-                                  [
-                                    ( test true null null null )
-                                  ] ;
-                                verified = builtins.foldl' reducer [ ] numbers ;
-                                in builtins.listToAttrs ( builtins.genList ( index : { name = builtins.concatStringsSep "-" [ "resource" ( builtins.toString index ) ] ; value = builtins.elemAt tests index index ; } ) ( builtins.length tests ) ) ;
-                          } ; 
+			  } ;
                     shared =
                       {
                       } ;
@@ -108,7 +80,6 @@
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
                       path =
                         [
-                          inputs.resource.resource-0
                         ] ;
                       in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = path ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
