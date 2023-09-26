@@ -35,7 +35,6 @@
 				  } &&
 				    ${ target.coreutils }/bin/chmod 0400 ${ bash-variable path }
 				'' ;
-			    arguments =
 			    in product lambda arguments ;
 		      } ;
                     shared =
