@@ -48,6 +48,7 @@
                       inputs = fun ( { shell-script-bin } : shell-script-bin ) ;
                       path =
                         [
+			  inputs.entrypoint
                         ] ;
                       in { devShell = pkgs.mkShell { shellHook = hooks.entrypoint ; buildInputs = path ; } ; } ;
                 pkgs = builtins.getAttr system nixpkgs.legacyPackages ;
