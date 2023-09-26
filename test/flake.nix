@@ -19,7 +19,7 @@
                     scripts =
           	      {
 		        entrypoint =
-			  { shell-script , target } :
+			  { target } :
 			    ''
 			      ${ target.cowsay }/bin/cowsay Hello
 			    '' ;
