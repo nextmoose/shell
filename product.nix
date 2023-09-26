@@ -1,4 +1,13 @@
 let
+  denulled =
+    lambda :
+      let
+        list = track : track.interim ;
+	null = track : builtins.foldl' ( previous : current : previous current ) ( lambda track.index ) track.path ;
+	set = track : track.interim ;
+	undefined = track : track.throw "46098193-2176-441d-a426-22ef6b995136" ;
+	in visit { list = list ; null = null ; set = set ; undefined = undefined ; } ;
+  nulled = builtins.foldl' reducer null ;
   reducer =
     previous : current :
       let
@@ -17,4 +26,4 @@ let
 	    in visit { list = list ; null = null ; set = set ; undefined = undefined ; } previous ;
         in p ;
   visit = builtins.import ./visit.nix ;
-  in builtins.foldl' reducer null
+  in lambda : arguments : denulled lambda ( nulled arguments )

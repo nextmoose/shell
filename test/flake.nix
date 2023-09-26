@@ -17,56 +17,11 @@
                     host = pkgs ;
                     private = "82b71638-804f-4533-b6dc-2f87b7ae5afc" ;
                     scripts =
-                      let
-                        numbers =
-                          [
-                            "a"
-                            "b"
-                            "c"
-                            "d"
-                            "e"
-                            "f"
-                            "g"
-                            "h"
-                            "i"
-                            "j"
-                            "k"
-                            "l"
-                            "a"
-                          ] ;
-                        in
-                          {
-			    handlers =
-			      let
-			        fun =
-				  word : exit : index : { expressions , target , util }
-				    ''
-				      ${ target.coreutils }/bin/mkdir ${ expressions.path } &&
-				        FILE=${ expressions.path }/${ builtins.hashString "sha512" ( builtins.concatStringsSep "" ( builtins.map builtins.toString [ word index ] ) ) } &&
-					${ target.coreutils }/bin/touch ${ util.bash-variable "FILE" } &&
-					${ target.coreutils }/bin/touch ${ util.bash-variable "FILE" } &&
-					exit { if exit then "0" else "64" }
-				    '' ;
-				tree =
-				  {
-				    init
-				    happy =
-				      {
-				        
-				      } ;
-				    sad
-				      {
-				      } ;
-				  } ;
-			        in
-				  {
-				  } ;
-                            entrypoint =
-                              { target } :
-                                ''
-                                  ${ target.cowsay }/bin/cowsay ENTRY POINT
-                                '' ;
-			  } ;
+          	      {
+		        handlers =
+			  let
+			    
+		      } ;
                     shared =
                       {
                       } ;
