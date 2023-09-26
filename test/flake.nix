@@ -23,17 +23,6 @@
 			    ''
 			      ${ target.cowsay }/bin/cowsay Hello
 			    '' ;
-		        handlers =
-			  let
-			    arguments = [ [ "red" "green" "blue" ] ] ;
-			    lambda =
-			      index : color : { bash-variable , path , target } :
-			        ''
-				  ${ target.coreutils }/bin/echo ${ color } ${ builtins.toString index } > ${ bash-variable path }
-				  } &&
-				    ${ target.coreutils }/bin/chmod 0400 ${ bash-variable path }
-				'' ;
-			    in product lambda arguments ;
 		      } ;
                     shared =
                       {
