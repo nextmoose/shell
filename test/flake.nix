@@ -19,13 +19,24 @@
                     scripts =
           	      {
 		        entrypoint =
-			  { target } :
+			  { shell-scripts , target } :
 			    ''
-			      ${ target.cowsay }/bin/cowsay Hello
+			      ${ target.cowsay }/bin/cowsay Hello &&
+			        ${ target.coreutils }/bin/echo ${ shell-scripts ( scripts : scripts.handlers.red ) } &&
+			        ${ target.coreutils }/bin/cat ${ shell-scripts ( scripts : scripts.handlers.red ) }
 			    '' ;
 		        handlers =
 			  let
-			    
+			    arguments = [ [ "red" "green" "blue" ] ] ;
+			    lambda =
+			      index : color : { target }
+			        ''
+				  ${ target.coreutils }/bin/echo ${ color } ${ builtins.toString index } > ${ bash-variable path
+				  } &&
+				    ${ target.coreutils }/bin/chmod 0400 ${ bash-variable path }
+				'' ;
+			    arguments =
+			    in product lambda arguments ;
 		      } ;
                     shared =
                       {
