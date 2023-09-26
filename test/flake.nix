@@ -29,7 +29,7 @@
 			  let
 			    arguments = [ [ "red" "green" "blue" ] ] ;
 			    lambda =
-			      index : color : { target }
+			      index : color : { target } :
 			        ''
 				  ${ target.coreutils }/bin/echo ${ color } ${ builtins.toString index } > ${ bash-variable path
 				  } &&
