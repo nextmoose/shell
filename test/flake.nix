@@ -83,7 +83,7 @@
                           in visit { list = list ; null = null ; set = set ; undefined = undefined ; } previous ;
                       in p ;
               visit = builtins.import ./visit.nix ;
-            in lambda : arguments : denulled lambda ( nulled arguments )
+            in lambda : arguments : denulled lambda ( nulled arguments ) ;
           in flake-utils.lib.eachDefaultSystem fun ;
   }
 
