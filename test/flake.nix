@@ -19,11 +19,11 @@
                     scripts =
           	      {
 		        entrypoint =
-			  { shell-scripts , target } :
+			  { shell-script , target } :
 			    ''
 			      ${ target.cowsay }/bin/cowsay Hello &&
-			        ${ target.coreutils }/bin/echo ${ shell-scripts ( scripts : scripts.handlers.red ) } &&
-			        ${ target.coreutils }/bin/cat ${ shell-scripts ( scripts : scripts.handlers.red ) }
+			        ${ target.coreutils }/bin/echo ${ shell-script ( scripts : scripts.handlers.red ) } &&
+			        ${ target.coreutils }/bin/cat ${ shell-script ( scripts : scripts.handlers.red ) }
 			    '' ;
 		        handlers =
 			  let
